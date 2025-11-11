@@ -227,23 +227,23 @@
 
         <!-- Current L3 / number_of_starts -->
         <td style="width:16%;">
-            @php
-                $param = $siteData['parameters']['number_of_starts'] ?? null;
-                $value = isset($param['md']) ? floatval($param['md']) : null;
-                $low = isset($param['low']) ? floatval($param['low']) : null;
-                $high = isset($param['high']) ? floatval($param['high']) : null;
-
-                if (!is_null($value) && !is_null($low) && !is_null($high)) {
-                    $status = ($value >= $low && $value <= $high) ? 'normal' : 'abnormal';
-                    $bgColor = $status === 'normal' ? 'green' : 'red';
-                } else {
-                    $status = 'abnormal';
-                    $bgColor = 'red';
-                }
-            @endphp
+        <?php
+            $key = $sitejsonData->parameters->number_of_starts->add;
+            $addValue = '_';
+                foreach ($eventData as $event) {
+                    $eventArray = $event->getArrayCopy();
+                    if ($eventArray['module_id'] == $sitejsonData->parameters->number_of_starts->md) {
+                        if (array_key_exists($key, $eventArray)) {
+                    $addValue = number_format($eventArray[$key], 2);
+                            }
+                            break;
+                            }
+                        }
+                ?>
             <div class="status-box" style="padding:10px; font-size:14px;">
                 <p><strong>Supply_Status</strong></p>
-                <span class="status-box">waiting ...</span>
+                <!-- <span class="status-box">waiting ...</span> -->
+                <span class="status-box">{{ $addValue }}</span>
             </div>
         </td>
 
@@ -308,11 +308,11 @@
                                             <div class="parameter-box">
                                                 <span class="parameter-label">Avg kVA</span>
                                                 <?php
-                                                    $key = $sitejsonData->parameters->oil_temperature->add;
+                                                    $key = $sitejsonData->active_power_kva->add;
                                                     $addValue = '_';
                                                     foreach ($eventData as $event) {
                                                         $eventArray = $event->getArrayCopy();
-                                                        if ($eventArray['module_id'] == $sitejsonData->parameters->oil_temperature->md) {
+                                                        if ($eventArray['module_id'] == $sitejsonData->active_power_kva->md) {
                                                             if (array_key_exists($key, $eventArray)) {
                                                                 $addValue = number_format($eventArray[$key], 2);
                                                             }
@@ -346,11 +346,11 @@
                                             <div class="parameter-box">
                                                 <span class="parameter-label">Frequency</span>
                                                 <?php
-                                                    $key = $sitejsonData->parameters->rpm->add;
+                                                    $key = $sitejsonData->electric_parameters->frequency->add;
                                                     $addValue = '_';
                                                     foreach ($eventData as $event) {
                                                         $eventArray = $event->getArrayCopy();
-                                                        if ($eventArray['module_id'] == $sitejsonData->parameters->rpm->md) {
+                                                        if ($eventArray['module_id'] == $sitejsonData->electric_parameters->frequency->md) {
                                                             if (array_key_exists($key, $eventArray)) {
                                                                 $addValue = number_format($eventArray[$key], 2);
                                                             }
@@ -372,11 +372,11 @@
                                                 
                                                 <span class="parameter-label">KWH</span>
                                                 <?php
-                                                    $key = $sitejsonData->parameters->battery_voltage->add;
+                                                    $key = $sitejsonData->total_kwh->add;
                                                     $addValue = '_';
                                                     foreach ($eventData as $event) {
                                                         $eventArray = $event->getArrayCopy();
-                                                        if ($eventArray['module_id'] == $sitejsonData->parameters->battery_voltage->md) {
+                                                        if ($eventArray['module_id'] == $sitejsonData->total_kwh->md) {
                                                             if (array_key_exists($key, $eventArray)) {
                                                                 $addValue = number_format((float)$eventArray[$key], 2);
                                                             }
@@ -652,24 +652,24 @@
         </td>
 
         <!-- Current L3 / number_of_starts -->
-        <td style="width:16%;">
-            @php
-                $param = $siteData['parameters']['number_of_starts'] ?? null;
-                $value = isset($param['md']) ? floatval($param['md']) : null;
-                $low = isset($param['low']) ? floatval($param['low']) : null;
-                $high = isset($param['high']) ? floatval($param['high']) : null;
-
-                if (!is_null($value) && !is_null($low) && !is_null($high)) {
-                    $status = ($value >= $low && $value <= $high) ? 'normal' : 'abnormal';
-                    $bgColor = $status === 'normal' ? 'green' : 'red';
-                } else {
-                    $status = 'abnormal';
-                    $bgColor = 'red';
+                <td style="width:16%;">
+ <?php
+ $key = $sitejsonData->parameters->number_of_starts->add;
+    $addValue = '_';
+        foreach ($eventData as $event) {
+             $eventArray = $event->getArrayCopy();
+            if ($eventArray['module_id'] == $sitejsonData->parameters->number_of_starts->md) {
+                 if (array_key_exists($key, $eventArray)) {
+             $addValue = number_format($eventArray[$key], 2);
+                       }
+                      break;
+                     }
                 }
-            @endphp
+         ?>
             <div class="status-box" style="padding:10px; font-size:14px;">
                 <p><strong>Supply_Status</strong></p>
-                <span class="status-box">waiting ...</span>
+                <!-- <span class="status-box">waiting ...</span> -->
+                <span class="status-box">{{ $addValue }}</span>
             </div>
         </td>
 
@@ -730,18 +730,18 @@
                                                                         <div class="parameter-box">
                                                     <span class="parameter-label">Avg kVA</span>
                                                     <?php
-                                                        $key = $sitejsonData->parameters->oil_temperature->add;
-                                                        $addValue = '_';
-                                                        foreach ($eventData as $event) {
-                                                            $eventArray = $event->getArrayCopy();
-                                                            if ($eventArray['module_id'] == $sitejsonData->parameters->oil_temperature->md) {
-                                                                if (array_key_exists($key, $eventArray)) {
-                                                                    $addValue = number_format($eventArray[$key], 2);
-                                                                }
-                                                                break;
+                                                    $key = $sitejsonData->active_power_kva->add;
+                                                    $addValue = '_';
+                                                    foreach ($eventData as $event) {
+                                                        $eventArray = $event->getArrayCopy();
+                                                        if ($eventArray['module_id'] == $sitejsonData->active_power_kva->md) {
+                                                            if (array_key_exists($key, $eventArray)) {
+                                                                $addValue = number_format($eventArray[$key], 2);
                                                             }
+                                                            break;
                                                         }
-                                                    ?>
+                                                    }
+                                                ?>
                                                     <span class="parameter-value">{{ $addValue }} °C</span>
                                                 </div>
                                                                     </td>
@@ -768,18 +768,18 @@
                                                                     <div class="parameter-box">
                                                     <span class="parameter-label">Frequency</span>
                                                     <?php
-                                                        $key = $sitejsonData->parameters->rpm->add;
-                                                        $addValue = '_';
-                                                        foreach ($eventData as $event) {
-                                                            $eventArray = $event->getArrayCopy();
-                                                            if ($eventArray['module_id'] == $sitejsonData->parameters->rpm->md) {
-                                                                if (array_key_exists($key, $eventArray)) {
-                                                                    $addValue = number_format($eventArray[$key], 2);
-                                                                }
-                                                                break;
+                                                    $key = $sitejsonData->electric_parameters->frequency->add;
+                                                    $addValue = '_';
+                                                    foreach ($eventData as $event) {
+                                                        $eventArray = $event->getArrayCopy();
+                                                        if ($eventArray['module_id'] == $sitejsonData->electric_parameters->frequency->md) {
+                                                            if (array_key_exists($key, $eventArray)) {
+                                                                $addValue = number_format($eventArray[$key], 2);
                                                             }
+                                                            break;
                                                         }
-                                                    ?>
+                                                    }
+                                                ?>
                                                     <span class="parameter-value">{{ $addValue }}</span>
                                                 </div>
                                                                     </td>
@@ -792,19 +792,19 @@
                                                                     <td>
                                                                     <div class="parameter-box">
                                                     <span class="parameter-label">KWH</span>
-                                                    <?php
-                                                        $key = $sitejsonData->parameters->battery_voltage->add;
-                                                        $addValue = '_';
-                                                        foreach ($eventData as $event) {
-                                                            $eventArray = $event->getArrayCopy();
-                                                            if ($eventArray['module_id'] == $sitejsonData->parameters->battery_voltage->md) {
-                                                                if (array_key_exists($key, $eventArray)) {
-                                                                    $addValue = number_format((float)$eventArray[$key], 2);
-                                                                }
-                                                                break;
+                                                     <?php
+                                                    $key = $sitejsonData->total_kwh->add;
+                                                    $addValue = '_';
+                                                    foreach ($eventData as $event) {
+                                                        $eventArray = $event->getArrayCopy();
+                                                        if ($eventArray['module_id'] == $sitejsonData->total_kwh->md) {
+                                                            if (array_key_exists($key, $eventArray)) {
+                                                                $addValue = number_format((float)$eventArray[$key], 2);
                                                             }
+                                                            break;
                                                         }
-                                                    ?>
+                                                    }
+                                                ?>
                                                     <span class="parameter-value">{{ $addValue }} V</span>
                                                 </div>
                                                                     </td>

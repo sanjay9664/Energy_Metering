@@ -754,7 +754,7 @@
                           // Show "—" only if DG is OFFLINE
                           if (dgStatus === 'OFFLINE') {
                               row.find('.controller-status-text').html(
-                                  '<strong style="font-size: 1.3rem; font-weight: bold;">—</strong>'
+                                  // '<strong style="font-size: 1.3rem; font-weight: bold;">—</strong>'
                               );
                           }
                           // Else: do nothing, leave the ON/OFF text from Blade
@@ -766,7 +766,7 @@
                           .addClass('OFFLINE');
 
                       $('.controller-status-text').html(
-                          '<strong style="font-size: 1.3rem; font-weight: bold;">—</strong>'
+                          // '<strong style="font-size: 1.3rem; font-weight: bold;">—</strong>'
                       );
 
                       $('.site-name-link').css('color', 'red');
