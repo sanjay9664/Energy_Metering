@@ -12,7 +12,6 @@ return new class extends Migration
    public function up()
     {
         Schema::table('devices', function (Blueprint $table) {
-            // adjust type/length as needed (string(100) for shorter, text for long)
             $table->string('alternate_device_id')->nullable()->unique()->after('id');
         });
     }
@@ -23,11 +22,8 @@ return new class extends Migration
     public function down()
     {
         Schema::table('devices', function (Blueprint $table) {
-            // drop unique index first if your DB requires explicit name
             $table->dropUnique(['alternate_device_id']);
             $table->dropColumn('alternate_device_id');
         });
     }
-}
-
 };

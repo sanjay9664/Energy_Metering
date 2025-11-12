@@ -87,10 +87,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
 
     Route::delete('/delete-device-events/{deviceId}', [SiteController::class, 'apiDeleteDevice']);
 
-   
-
-Route::get('/admin/recharge-settings/{site_id?}', [RechargeSettingsController::class, 'index'])->name('admin.recharge-settings.index');
-Route::post('/admin/recharge-settings/save', [RechargeSettingsController::class, 'store'])->name('admin.recharge-settings.store');
-
+    Route::get('/recharge-settings/{site_id?}', [RechargeSettingsController::class, 'index'])->name('recharge-settings.index');
+    Route::post('/recharge-settings/store', [SiteController::class, 'storeRechargeSettings'])->name('recharge.store');
     
 })->middleware('auth:admin');

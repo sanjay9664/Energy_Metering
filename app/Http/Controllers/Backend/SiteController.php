@@ -12,6 +12,7 @@ use App\User;
 use App\Models\Admin;
 use App\Models\MongodbData;
 use App\Models\MongodbFrontend;
+use App\Models\RechargeSetting;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Hash;
@@ -1128,4 +1129,39 @@ class SiteController extends Controller
             ], 500);
         }
     }
+
+   public function storeRechargeSettings(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'm_site_id' => 'required|integer|exists:sites,id',
+                'm_recharge_amount' => 'nullable|numeric',
+                'm_fixed_charge' => 'nullable|numeric',
+                'm_unit_charge' => 'nullable|numeric',
+                'm_sanction_load' => 'nullable|numeric',
+                'dg_fixed_charge' => 'nullable|numeric',
+                'dg_unit_charge' => 'nullable|numeric',
+                'dg_sanction_load' => 'nullable|numeric',
+            ]);
+
+            RechargeSetting::updateOrCreate(
+                ['m_site_id' => $validated['m_site_id']],
+                $validated
+            );
+
+            return back()->with('success', 'Recharge settings saved successfully!');
+        } 
+        catch (\Illuminate\Validation\ValidationException $e) {
+            return back()
+                ->withErrors($e->validator)
+                ->withInput()
+                ->with('error', 'Please correct the highlighted errors.');
+        } 
+        catch (\Exception $e) {
+            return back()
+                ->with('error', 'An unexpected error occurred: ' . $e->getMessage())
+                ->withInput();
+        }
+    }
+
 }

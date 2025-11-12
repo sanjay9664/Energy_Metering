@@ -178,8 +178,8 @@
                 </td>
 
                 <!-- Current L1 / oil_pressure -->
-                 <td style="width:16%;">
-                <?php
+                <td style="width:16%;">
+                    <?php
                     $key = $sitejsonData->parameters->oil_pressure->add;
                     $Dg_Unit = '_';
                     foreach ($eventData as $event) {
@@ -192,10 +192,10 @@
                         }
                     }
                 ?>
-                <div class="status-box" style="padding:10px; font-size:14px;">
-                    <p><strong>DG_Unit</strong></p>
-                    <span class="status-box">{{ $Dg_Unit }}</span>
-                </div>
+                    <div class="status-box" style="padding:10px; font-size:14px;">
+                        <p><strong>DG_Unit</strong></p>
+                        <span class="status-box">{{ $Dg_Unit }}</span>
+                    </div>
                 </td>
 
                 <!-- Current L2 / oil_temperature -->
@@ -219,9 +219,9 @@
                     </div>
                 </td>
 
-            <!-- Current L3 / number_of_starts -->
-            <td style="width:16%;">
-                <?php
+                <!-- Current L3 / number_of_starts -->
+                <td style="width:16%;">
+                    <?php
             $key = $sitejsonData->parameters->number_of_starts->add;
             $addValue = '_';
                 foreach ($eventData as $event) {
@@ -234,45 +234,45 @@
                             }
                         }
                 ?>
-                <div class="status-box" style="padding:10px; font-size:14px;">
-                    <p><strong>Supply_Status</strong></p>
-                    <!-- <span class="status-box">waiting ...</span> -->
-                    <span class="status-box">{{ $addValue }}</span>
-                </div>
-            </td>
+                    <div class="status-box" style="padding:10px; font-size:14px;">
+                        <p><strong>Supply_Status</strong></p>
+                        <!-- <span class="status-box">waiting ...</span> -->
+                        <span class="status-box">{{ $addValue }}</span>
+                    </div>
+                </td>
 
-            <!-- Updated At -->
-            <td style="width:20%;">
-                <div class="status-box" style="padding:10px; font-size:14px;">
-                    <i class="fas fa-clock text-info" style="font-size:18px;"></i>
-                    <p><strong>Updated At:</strong></p>
-                    <h6 class="text-muted">{{ $latestCreatedAt }}</h6>
-                </div>
-            </td>
-            </tr>
-            </table>
-            </td>
-            </tr>
-            </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- Second Table for Electrical Parameters -->
-    <div class="col-md-12 mt-4">
-        <div class="card">
-            <div class="card-header text-center text-white fw-bold fs-5 p-3" style="background:#002E6E;">
-                Electrical Parameters
+                <!-- Updated At -->
+                <td style="width:20%;">
+                    <div class="status-box" style="padding:10px; font-size:14px;">
+                        <i class="fas fa-clock text-info" style="font-size:18px;"></i>
+                        <p><strong>Updated At:</strong></p>
+                        <h6 class="text-muted">{{ $latestCreatedAt }}</h6>
+                    </div>
+                </td>
+                </tr>
+                </table>
+                </td>
+                </tr>
+                </tbody>
+                </table>
             </div>
-            <div class=" card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-bordered table-striped table-hover m-0">
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <div class="parameter-box">
-                                        <span class="parameter-label">Avg Voltage</span>
-                                        <?php
+        </div>
+
+        <!-- Second Table for Electrical Parameters -->
+        <div class="col-md-12 mt-4">
+            <div class="card">
+                <div class="card-header text-center text-white fw-bold fs-5 p-3" style="background:#002E6E;">
+                    Electrical Parameters
+                </div>
+                <div class=" card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover m-0">
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="parameter-box">
+                                            <span class="parameter-label">Avg Voltage</span>
+                                            <?php
                                                     $key = $sitejsonData->parameters->coolant_temperature->add;
                                                     $addValue = '_';
                                                     foreach ($eventData as $event) {
@@ -285,13 +285,13 @@
                                                         }
                                                     }
                                                 ?>
-                                        <span class="parameter-value">{{ $addValue }} °C</span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="parameter-box">
-                                        <span class="parameter-label">Avg kVA</span>
-                                        <?php
+                                            <span class="parameter-value">{{ $addValue }} °C</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="parameter-box">
+                                            <span class="parameter-label">Avg kVA</span>
+                                            <?php
                                                     $key = $sitejsonData->active_power_kva->add;
                                                     $addValue = '_';
                                                     foreach ($eventData as $event) {
@@ -304,13 +304,13 @@
                                                         }
                                                     }
                                                 ?>
-                                        <span class="parameter-value">{{ $addValue }} °C</span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="parameter-box">
-                                        <span class="parameter-label">Avg Current</span>
-                                        <?php
+                                            <span class="parameter-value">{{ $addValue }} °C</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="parameter-box">
+                                            <span class="parameter-label">Avg Current</span>
+                                            <?php
                                                     $key = $sitejsonData->parameters->oil_pressure->add;
                                                     $addValue = '_';
                                                     foreach ($eventData as $event) {
@@ -323,13 +323,13 @@
                                                         }
                                                     }
                                                 ?>
-                                        <span class="parameter-value">{{ $addValue }} psi</span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="parameter-box">
-                                        <span class="parameter-label">Frequency</span>
-                                        <?php
+                                            <span class="parameter-value">{{ $addValue }} psi</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="parameter-box">
+                                            <span class="parameter-label">Frequency</span>
+                                            <?php
                                                     $key = $sitejsonData->electric_parameters->frequency->add;
                                                     $addValue = '_';
                                                     foreach ($eventData as $event) {
@@ -342,20 +342,20 @@
                                                         }
                                                     }
                                                 ?>
-                                        <span class="parameter-value">{{ $addValue }}</span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="parameter-box">
-                                        <span class="parameter-label">Avg kVAR</span>
-                                        <span class="parameter-value">-</span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="parameter-box">
+                                            <span class="parameter-value">{{ $addValue }}</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="parameter-box">
+                                            <span class="parameter-label">Avg kVAR</span>
+                                            <span class="parameter-value">-</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="parameter-box">
 
-                                        <span class="parameter-label">KWH</span>
-                                        <?php
+                                            <span class="parameter-label">KWH</span>
+                                            <?php
                                                     $key = $sitejsonData->total_kwh->add;
                                                     $addValue = '_';
                                                     foreach ($eventData as $event) {
@@ -368,16 +368,16 @@
                                                         }
                                                     }
                                                 ?>
-                                        <span class="parameter-value">{{ $addValue }} V</span>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="3">
-                                    <div class="parameter-box">
-                                        <span class="parameter-label">Voltage (L-L)</span>
-                                        <div class="phase-values">
-                                            <?php
+                                            <span class="parameter-value">{{ $addValue }} V</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">
+                                        <div class="parameter-box">
+                                            <span class="parameter-label">Voltage (L-L)</span>
+                                            <div class="phase-values">
+                                                <?php
                                                         $keys = [
                                                             'a' => $sitejsonData->electric_parameters->voltage_l_l->a->add,
                                                             'b' => $sitejsonData->electric_parameters->voltage_l_l->b->add,
@@ -397,27 +397,27 @@
                                                             }
                                                         }
                                                     ?>
-                                            <div class="phase-value">
-                                                <span class="phase-label">R-Y</span>
-                                                <span class="phase-number">{{ $values['R'] }} V</span>
-                                            </div>
-                                            <div class="phase-value">
-                                                <span class="phase-label">Y-B</span>
-                                                <span class="phase-number">{{ $values['Y'] }} V</span>
-                                            </div>
-                                            <div class="phase-value">
-                                                <span class="phase-label">B-R</span>
-                                                <span class="phase-number">{{ $values['B'] }} V</span>
+                                                <div class="phase-value">
+                                                    <span class="phase-label">R-Y</span>
+                                                    <span class="phase-number">{{ $values['R'] }} V</span>
+                                                </div>
+                                                <div class="phase-value">
+                                                    <span class="phase-label">Y-B</span>
+                                                    <span class="phase-number">{{ $values['Y'] }} V</span>
+                                                </div>
+                                                <div class="phase-value">
+                                                    <span class="phase-label">B-R</span>
+                                                    <span class="phase-number">{{ $values['B'] }} V</span>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </td>
-                                <td colspan="3">
-                                    <div class="parameter-box">
-                                        <i class="fas fa-bolt parameter-icon text-success"></i>
-                                        <span class="parameter-label">Current</span>
-                                        <div class="phase-values">
-                                            <?php
+                                    </td>
+                                    <td colspan="3">
+                                        <div class="parameter-box">
+                                            <i class="fas fa-bolt parameter-icon text-success"></i>
+                                            <span class="parameter-label">Current</span>
+                                            <div class="phase-values">
+                                                <?php
                                                         $keys = [
                                                             'a' => $sitejsonData->electric_parameters->current->a->add,
                                                             'b' => $sitejsonData->electric_parameters->current->b->add,
@@ -437,28 +437,28 @@
                                                             }
                                                         }
                                                     ?>
-                                            <div class="phase-value">
-                                                <span class="phase-label">Phase R</span>
-                                                <span class="phase-number">{{ $values['R'] }} A</span>
-                                            </div>
-                                            <div class="phase-value">
-                                                <span class="phase-label">Phase Y</span>
-                                                <span class="phase-number">{{ $values['Y'] }} A</span>
-                                            </div>
-                                            <div class="phase-value">
-                                                <span class="phase-label">Phase B</span>
-                                                <span class="phase-number">{{ $values['B'] }} A</span>
+                                                <div class="phase-value">
+                                                    <span class="phase-label">Phase R</span>
+                                                    <span class="phase-number">{{ $values['R'] }} A</span>
+                                                </div>
+                                                <div class="phase-value">
+                                                    <span class="phase-label">Phase Y</span>
+                                                    <span class="phase-number">{{ $values['Y'] }} A</span>
+                                                </div>
+                                                <div class="phase-value">
+                                                    <span class="phase-label">Phase B</span>
+                                                    <span class="phase-number">{{ $values['B'] }} A</span>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
     </div>
     </div>
 

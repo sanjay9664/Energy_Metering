@@ -75,8 +75,8 @@
         <div class="container-fluid">
             <!-- Logo on the left -->
             <a class="navbar-brand" href="#">
-                <img src="https://sochiot.com/wp-content/uploads/2022/04/sochiotlogo-re-e1688377669450.png" alt="Logo" width="120" height="40"
-                    class="logo-white">
+                <img src="https://sochiot.com/wp-content/uploads/2022/04/sochiotlogo-re-e1688377669450.png" alt="Logo"
+                    width="120" height="40" class="logo-white">
             </a>
 
             <!-- Centered title -->
@@ -180,7 +180,7 @@
             <div class="table-responsive" id="siteTable">
                 <table class="table table-bordered table-striped table-hover">
                     <thead class="table-primary">
-                     <tr>
+                        <tr>
                             <th>S.No</th>
                             <th>Site Name</th>
                             <th>Supply Status</th>
@@ -207,14 +207,14 @@
 
                         if (!empty($site->updatedAt) && $site->updatedAt !== 'N/A') {
                         try {
-                            $updatedAt = Carbon\Carbon::parse($site->updatedAt)->timezone('Asia/Kolkata');
-                            $now = Carbon\Carbon::now('Asia/Kolkata');
-                            $isRecent = $updatedAt->diffInHours($now) < 24; 
-                            $formattedUpdatedAt=$updatedAt->format("d M Y h:i A");
-                        } catch (\Exception $e) {
+                        $updatedAt = Carbon\Carbon::parse($site->updatedAt)->timezone('Asia/Kolkata');
+                        $now = Carbon\Carbon::now('Asia/Kolkata');
+                        $isRecent = $updatedAt->diffInHours($now) < 24; $formattedUpdatedAt=$updatedAt->format("d M Y
+                            h:i A");
+                            } catch (\Exception $e) {
                             \Log::error('Date Parsing Error: ' . $e->getMessage());
-                        }
-                        }
+                            }
+                            }
 
                             $gatewayStatus = $isRecent ? 'online' : 'offline';
                             $controllerStatus = $isRecent ? 'online' : 'offline';
@@ -356,200 +356,267 @@
                                 </td>
 
                                 <td class="setting-col text-center" style="cursor:pointer;">
-                                  <!-- Modal trigger ko alag span mein rakho -->
-                                  <span data-bs-toggle="modal" data-bs-target="#settingsModal1">
-                                    <i class="fa-solid fa-gear me-2 text-primary"></i> 
-                                    Recharge
-                                  </span>
+                                    <!-- Modal trigger ko alag span mein rakho -->
+                                    <span data-bs-toggle="modal" data-bs-target="#settingsModal1">
+                                        <i class="fa-solid fa-gear me-2 text-primary"></i>
+                                        Recharge
+                                    </span>
 
-                                  <!-- Modal with normal backdrop -->
-                                  <div class="modal fade" id="settingsModal1" tabindex="-1" aria-labelledby="settingsModalLabel1" aria-hidden="true">
-                                    <div class="modal-dialog modal-md modal-dialog-centered">
-                                      <div class="modal-content rounded-4 shadow-lg border-0 overflow-hidden">
-                                        
-                                        <!-- Modal Header -->
-                                        <div class="modal-header bg-gradient bg-primary text-white py-3">
-                                          <div class="d-flex align-items-center">
-                                            <i class="fa-solid fa-bolt me-2 fs-5"></i>
-                                            <h5 class="modal-title mb-0 fw-bold" id="settingsModalLabel1">Recharge & Load Settings</h5>
-                                          </div>
-                                          <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="modal"></button>
-                                        </div>
+                                    <!-- Modal with normal backdrop -->
+                                    <div class="modal fade" id="settingsModal1" tabindex="-1"
+                                        aria-labelledby="settingsModalLabel1" aria-hidden="true">
+                                        <div class="modal-dialog modal-md modal-dialog-centered">
+                                            <div class="modal-content rounded-4 shadow-lg border-0 overflow-hidden">
 
-                                        <!-- Modal Body -->
-                                        <div class="modal-body p-4">
-                                          <form id="rechargeForm" class="px-2">
-                                            
-                                            <!-- Recharge Section -->
-                                            <div class="card border-0 bg-light mb-4">
-                                              <div class="card-header bg-transparent border-0 py-2">
-                                                <div class="d-flex align-items-center">
-                                                  <i class="fa-solid fa-wallet text-primary me-2"></i>
-                                                  <h6 class="mb-0 fw-bold text-primary">Recharge Details</h6>
-                                                </div>
-                                              </div>
-                                              <div class="card-body pt-0">
-                                                <div class="row mb-3 align-items-center">
-                                                  <label class="col-sm-5 col-form-label fw-medium">Recharge Amount:</label>
-                                                  <div class="col-sm-7">
-                                                    <div class="input-group input-group-sm">
-                                                      <span class="input-group-text bg-primary text-white border-primary">
-                                                        <i class="fa-solid fa-indian-rupee-sign"></i>
-                                                      </span>
-                                                      <input type="text" id="recharge_amount" class="form-control border-primary" placeholder="Enter amount">
+                                                <!-- Modal Header -->
+                                                <div class="modal-header bg-gradient bg-primary text-white py-3">
+                                                    <div class="d-flex align-items-center">
+                                                        <i class="fa-solid fa-bolt me-2 fs-5"></i>
+                                                        <h5 class="modal-title mb-0 fw-bold" id="settingsModalLabel1">
+                                                            Recharge & Load Settings</h5>
                                                     </div>
-                                                  </div>
+                                                    <button type="button" class="btn-close btn-close-white shadow-none"
+                                                        data-bs-dismiss="modal"></button>
                                                 </div>
-                                              </div>
+
+                                                <!-- Modal Body -->
+                                                <div class="modal-body p-4">
+                                                    <form id="rechargeForm" method="POST"
+                                                        action="{{ route('admin.recharge.store') }}" class="px-2">
+                                                        @csrf
+
+                                                        <!-- Hidden Site ID -->
+                                                        <input type="hidden" name="m_site_id" id="m_site_id"
+                                                            value="{{ $site->id ?? '' }}">
+
+                                                        <!-- Recharge Section -->
+                                                        <div class="card border-0 bg-light mb-4">
+                                                            <div class="card-header bg-transparent border-0 py-2">
+                                                                <div class="d-flex align-items-center">
+                                                                    <i class="fa-solid fa-wallet text-primary me-2"></i>
+                                                                    <h6 class="mb-0 fw-bold text-primary">Recharge
+                                                                        Details</h6>
+                                                                </div>
+                                                            </div>
+                                                            <div class="card-body pt-0">
+                                                                <div class="row mb-3 align-items-center">
+                                                                    <label
+                                                                        class="col-sm-5 col-form-label fw-medium">Recharge
+                                                                        Amount:</label>
+                                                                    <div class="col-sm-7">
+                                                                        <div class="input-group input-group-sm">
+                                                                            <span
+                                                                                class="input-group-text bg-primary text-white border-primary">
+                                                                                <i
+                                                                                    class="fa-solid fa-indian-rupee-sign"></i>
+                                                                            </span>
+                                                                            <input type="text" name="m_recharge_amount"
+                                                                                class="form-control border-primary"
+                                                                                placeholder="Enter amount">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Mains Details -->
+                                                        <div class="card border-0 bg-light mb-4">
+                                                            <div class="card-header bg-transparent border-0 py-2">
+                                                                <div class="d-flex align-items-center">
+                                                                    <i class="fa-solid fa-plug text-success me-2"></i>
+                                                                    <h6 class="mb-0 fw-bold text-success">Mains Details
+                                                                    </h6>
+                                                                </div>
+                                                            </div>
+                                                            <div class="card-body pt-0">
+                                                                <div class="row mb-3 align-items-center">
+                                                                    <label
+                                                                        class="col-sm-5 col-form-label fw-medium">Fixed
+                                                                        Charge:</label>
+                                                                    <div class="col-sm-7">
+                                                                        <div class="input-group input-group-sm">
+                                                                            <span
+                                                                                class="input-group-text bg-success text-white border-success">
+                                                                                <i
+                                                                                    class="fa-solid fa-indian-rupee-sign"></i>
+                                                                            </span>
+                                                                            <input type="text" name="m_fixed_charge"
+                                                                                class="form-control border-success"
+                                                                                placeholder="Fixed Charge">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row mb-3 align-items-center">
+                                                                    <label
+                                                                        class="col-sm-5 col-form-label fw-medium">Unit
+                                                                        Charge:</label>
+                                                                    <div class="col-sm-7">
+                                                                        <div class="input-group input-group-sm">
+                                                                            <span
+                                                                                class="input-group-text bg-success text-white border-success">
+                                                                                <i
+                                                                                    class="fa-solid fa-indian-rupee-sign"></i>
+                                                                            </span>
+                                                                            <input type="text" name="m_unit_charge"
+                                                                                class="form-control border-success"
+                                                                                placeholder="Unit Charge">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row mb-2 align-items-center">
+                                                                    <label
+                                                                        class="col-sm-5 col-form-label fw-medium">Sanction
+                                                                        Load:</label>
+                                                                    <div class="col-sm-7">
+                                                                        <div class="input-group input-group-sm">
+                                                                            <span
+                                                                                class="input-group-text bg-success text-white border-success">
+                                                                                <i class="fa-solid fa-bolt"></i>
+                                                                            </span>
+                                                                            <input type="text" name="m_sanction_load"
+                                                                                class="form-control border-success"
+                                                                                placeholder="Sanction Load">
+                                                                            <span
+                                                                                class="input-group-text bg-success text-white border-success">kW</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- DG Details -->
+                                                        <div class="card border-0 bg-light mb-3">
+                                                            <div class="card-header bg-transparent border-0 py-2">
+                                                                <div class="d-flex align-items-center">
+                                                                    <i
+                                                                        class="fa-solid fa-gas-pump text-danger me-2"></i>
+                                                                    <h6 class="mb-0 fw-bold text-danger">DG Details</h6>
+                                                                </div>
+                                                            </div>
+                                                            <div class="card-body pt-0">
+                                                                <div class="row mb-3 align-items-center">
+                                                                    <label
+                                                                        class="col-sm-5 col-form-label fw-medium">Fixed
+                                                                        Charge:</label>
+                                                                    <div class="col-sm-7">
+                                                                        <div class="input-group input-group-sm">
+                                                                            <span
+                                                                                class="input-group-text bg-danger text-white border-danger">
+                                                                                <i
+                                                                                    class="fa-solid fa-indian-rupee-sign"></i>
+                                                                            </span>
+                                                                            <input type="text" name="dg_fixed_charge"
+                                                                                class="form-control border-danger"
+                                                                                placeholder="Fixed Charge">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row mb-3 align-items-center">
+                                                                    <label
+                                                                        class="col-sm-5 col-form-label fw-medium">Unit
+                                                                        Charge:</label>
+                                                                    <div class="col-sm-7">
+                                                                        <div class="input-group input-group-sm">
+                                                                            <span
+                                                                                class="input-group-text bg-danger text-white border-danger">
+                                                                                <i
+                                                                                    class="fa-solid fa-indian-rupee-sign"></i>
+                                                                            </span>
+                                                                            <input type="text" name="dg_unit_charge"
+                                                                                class="form-control border-danger"
+                                                                                placeholder="Unit Charge">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row mb-2 align-items-center">
+                                                                    <label
+                                                                        class="col-sm-5 col-form-label fw-medium">Sanction
+                                                                        Load:</label>
+                                                                    <div class="col-sm-7">
+                                                                        <div class="input-group input-group-sm">
+                                                                            <span
+                                                                                class="input-group-text bg-danger text-white border-danger">
+                                                                                <i class="fa-solid fa-bolt"></i>
+                                                                            </span>
+                                                                            <input type="text" name="dg_sanction_load"
+                                                                                class="form-control border-danger"
+                                                                                placeholder="Sanction Load">
+                                                                            <span
+                                                                                class="input-group-text bg-danger text-white border-danger">kW</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <button type="button" id="disconnectBtn"
+                                                            class="btn btn-danger btn-sm px-3 me-2">
+                                                            <i class="fa-solid fa-power-off me-1"></i> Disconnect
+                                                        </button>
+                                                        <button type="button" id="connectBtn"
+                                                            class="btn btn-success btn-sm px-3">
+                                                            <i class="fa-solid fa-link me-1"></i> Connect
+                                                        </button>
+
+                                                         <!-- Modal Footer -->
+                                                <div class="modal-footer bg-light py-3">
+                                                    <button type="button" class="btn btn-outline-secondary btn-sm px-3"
+                                                        data-bs-dismiss="modal">
+                                                        <i class="fa-solid fa-xmark me-1"></i> Cancel
+                                                    </button>
+                                                    <div>
+
+                                                        <div class="text-end">
+                                                            <button type="submit" class="btn btn-primary btn-sm">
+                                                                <i class="fa-solid fa-save me-1"></i> Save Settings
+                                                            </button>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                                    </form>
+
+                                                </div>
+
+                                               
+
                                             </div>
-
-                                            <!-- Mains Details -->
-                                            <div class="card border-0 bg-light mb-4">
-                                              <div class="card-header bg-transparent border-0 py-2">
-                                                <div class="d-flex align-items-center">
-                                                  <i class="fa-solid fa-plug text-success me-2"></i>
-                                                  <h6 class="mb-0 fw-bold text-success">Mains Details</h6>
-                                                </div>
-                                              </div>
-                                              <div class="card-body pt-0">
-                                                <div class="row mb-3 align-items-center">
-                                                  <label class="col-sm-5 col-form-label fw-medium">Fixed Charge:</label>
-                                                  <div class="col-sm-7">
-                                                    <div class="input-group input-group-sm">
-                                                      <span class="input-group-text bg-success text-white border-success">
-                                                        <i class="fa-solid fa-indian-rupee-sign"></i>
-                                                      </span>
-                                                      <input type="text" id="mains_fixed" class="form-control border-success" placeholder="Fixed Charge">
-                                                    </div>
-                                                  </div>
-                                                </div>
-                                                <div class="row mb-3 align-items-center">
-                                                  <label class="col-sm-5 col-form-label fw-medium">Unit Charge:</label>
-                                                  <div class="col-sm-7">
-                                                    <div class="input-group input-group-sm">
-                                                      <span class="input-group-text bg-success text-white border-success">
-                                                        <i class="fa-solid fa-indian-rupee-sign"></i>
-                                                      </span>
-                                                      <input type="text" id="mains_unit" class="form-control border-success" placeholder="Unit Charge">
-                                                    </div>
-                                                  </div>
-                                                </div>
-                                                <div class="row mb-2 align-items-center">
-                                                  <label class="col-sm-5 col-form-label fw-medium">Sanction Load:</label>
-                                                  <div class="col-sm-7">
-                                                    <div class="input-group input-group-sm">
-                                                      <span class="input-group-text bg-success text-white border-success">
-                                                        <i class="fa-solid fa-bolt"></i>
-                                                      </span>
-                                                      <input type="text" id="mains_load" class="form-control border-success" placeholder="Sanction Load">
-                                                      <span class="input-group-text bg-success text-white border-success">kW</span>
-                                                    </div>
-                                                  </div>
-                                                </div>
-                                              </div>
-                                            </div>
-
-                                            <!-- DG Details -->
-                                            <div class="card border-0 bg-light mb-3">
-                                              <div class="card-header bg-transparent border-0 py-2">
-                                                <div class="d-flex align-items-center">
-                                                  <i class="fa-solid fa-gas-pump text-danger me-2"></i>
-                                                  <h6 class="mb-0 fw-bold text-danger">DG Details</h6>
-                                                </div>
-                                              </div>
-                                              <div class="card-body pt-0">
-                                                <div class="row mb-3 align-items-center">
-                                                  <label class="col-sm-5 col-form-label fw-medium">Fixed Charge:</label>
-                                                  <div class="col-sm-7">
-                                                    <div class="input-group input-group-sm">
-                                                      <span class="input-group-text bg-danger text-white border-danger">
-                                                        <i class="fa-solid fa-indian-rupee-sign"></i>
-                                                      </span>
-                                                      <input type="text" id="dg_fixed" class="form-control border-danger" placeholder="Fixed Charge">
-                                                    </div>
-                                                  </div>
-                                                </div>
-                                                <div class="row mb-3 align-items-center">
-                                                  <label class="col-sm-5 col-form-label fw-medium">Unit Charge:</label>
-                                                  <div class="col-sm-7">
-                                                    <div class="input-group input-group-sm">
-                                                      <span class="input-group-text bg-danger text-white border-danger">
-                                                        <i class="fa-solid fa-indian-rupee-sign"></i>
-                                                      </span>
-                                                      <input type="text" id="dg_unit" class="form-control border-danger" placeholder="Unit Charge">
-                                                    </div>
-                                                  </div>
-                                                </div>
-                                                <div class="row mb-2 align-items-center">
-                                                  <label class="col-sm-5 col-form-label fw-medium">Sanction Load:</label>
-                                                  <div class="col-sm-7">
-                                                    <div class="input-group input-group-sm">
-                                                      <span class="input-group-text bg-danger text-white border-danger">
-                                                        <i class="fa-solid fa-bolt"></i>
-                                                      </span>
-                                                      <input type="text" id="dg_load" class="form-control border-danger" placeholder="Sanction Load">
-                                                      <span class="input-group-text bg-danger text-white border-danger">kW</span>
-                                                    </div>
-                                                  </div>
-                                                </div>
-                                              </div>
-                                            </div>
-
-                                          </form>
                                         </div>
-
-                                        <!-- Modal Footer -->
-                                        <div class="modal-footer bg-light py-3">
-                                          <button type="button" class="btn btn-outline-secondary btn-sm px-3" data-bs-dismiss="modal">
-                                            <i class="fa-solid fa-xmark me-1"></i> Cancel
-                                          </button>
-                                          <div>
-                                            <button type="button" id="disconnectBtn" class="btn btn-danger btn-sm px-3 me-2">
-                                              <i class="fa-solid fa-power-off me-1"></i> Disconnect
-                                            </button>
-                                            <button type="button" id="connectBtn" class="btn btn-success btn-sm px-3">
-                                              <i class="fa-solid fa-link me-1"></i> Connect
-                                            </button>
-                                          </div>
-                                        </div>
-                                        
-                                      </div>
                                     </div>
-                                  </div>
                                 </td>
                             </tr>
-                          @php $i++; 
-                          @endphp
-                        @endforeach
+                            @php $i++;
+                            @endphp
+                            @endforeach
                     </tbody>
 
-              </table>
-          </div>
-      </div>
+                </table>
+            </div>
+        </div>
     </div>
 
     <script src="{{url('backend/assets/js/admin-jquery-3.6.0.min.js')}}"></script>
 
-     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-          const storageKey = "recharge_settings";
-          const fields = [
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const storageKey = "recharge_settings";
+        const fields = [
             "recharge_amount",
             "mains_fixed", "mains_unit", "mains_load",
             "dg_fixed", "dg_unit", "dg_load"
-          ];
+        ];
 
-          // Load old data if exists
-          const saved = localStorage.getItem(storageKey);
-          if (saved) {
+        // Load old data if exists
+        const saved = localStorage.getItem(storageKey);
+        if (saved) {
             const data = JSON.parse(saved);
             fields.forEach(f => {
-              if (data[f]) document.getElementById(f).value = data[f];
+                if (data[f]) document.getElementById(f).value = data[f];
             });
-          }
+        }
 
-          // ✅ Save data as JSON and then clear inputs
-          document.getElementById("connectBtn").addEventListener("click", function() {
+        // ✅ Save data as JSON and then clear inputs
+        document.getElementById("connectBtn").addEventListener("click", function() {
             const obj = {};
             fields.forEach(f => obj[f] = document.getElementById(f).value.trim());
 
@@ -562,218 +629,233 @@
 
             // Optional: success feedback
             alert("Recharge settings saved successfully!");
-          });
+        });
 
-          // ✅ Clear all data on Disconnect
-          document.getElementById("disconnectBtn").addEventListener("click", function() {
+        // ✅ Clear all data on Disconnect
+        document.getElementById("disconnectBtn").addEventListener("click", function() {
             localStorage.removeItem(storageKey);
             fields.forEach(f => document.getElementById(f).value = "");
             console.log("LocalStorage cleared for", storageKey);
-          });
         });
-      </script>
-      <script>
-      function updateRefreshTime() {
-          const now = new Date();
-          const options = {
-              day: 'numeric',
-              month: 'short',
-              year: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit',
-              second: '2-digit',
-              hour12: true
-          };
-          const formattedTime = now.toLocaleString('en-IN', options);
-          document.getElementById('lastRefreshTime').textContent = `Last refreshed: ${formattedTime}`;
-      }
+    });
+    </script>
+    <script>
+    function updateRefreshTime() {
+        const now = new Date();
+        const options = {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: true
+        };
+        const formattedTime = now.toLocaleString('en-IN', options);
+        document.getElementById('lastRefreshTime').textContent = `Last refreshed: ${formattedTime}`;
+    }
 
-      function handleRefresh() {
-          $('#loader').show();
-          updateRefreshTime();
-          setTimeout(() => {
-              location.reload();
-          }, 500);
-      }
+    function handleRefresh() {
+        $('#loader').show();
+        updateRefreshTime();
+        setTimeout(() => {
+            location.reload();
+        }, 500);
+    }
 
-      setInterval(handleRefresh, 5 * 60 * 1000);
-      
-      document.addEventListener('DOMContentLoaded', updateRefreshTime);
+    setInterval(handleRefresh, 5 * 60 * 1000);
 
-      document.getElementById('downloadPdf').addEventListener('click', function() {
-          document.getElementById('loader').style.display = 'block';
+    document.addEventListener('DOMContentLoaded', updateRefreshTime);
 
-          const originalTable = document.getElementById('siteTable');
-          const clonedTable = originalTable.cloneNode(true);
+    document.getElementById('downloadPdf').addEventListener('click', function() {
+        document.getElementById('loader').style.display = 'block';
 
-          // Remove hidden rows
-          $(clonedTable).find('tr').each(function() {
-              if ($(this).css('display') === 'none') {
-                  $(this).remove();
-              }
-          });
+        const originalTable = document.getElementById('siteTable');
+        const clonedTable = originalTable.cloneNode(true);
 
-          // Build wrapper
-          const wrapper = document.createElement('div');
-          wrapper.classList.add('pdf-wrapper');
+        // Remove hidden rows
+        $(clonedTable).find('tr').each(function() {
+            if ($(this).css('display') === 'none') {
+                $(this).remove();
+            }
+        });
 
-          const now = new Date();
-          const formattedDateTime = now.toLocaleString('en-IN', {
-              day: '2-digit',
-              month: 'short',
-              year: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit',
-              hour12: true
-          });
+        // Build wrapper
+        const wrapper = document.createElement('div');
+        wrapper.classList.add('pdf-wrapper');
 
-          const heading = document.createElement('h3');
-          heading.innerText = `DGMS Site Overview Report\nGenerated on: ${formattedDateTime}`;
-          wrapper.appendChild(heading);
-          wrapper.appendChild(clonedTable);
+        const now = new Date();
+        const formattedDateTime = now.toLocaleString('en-IN', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+        });
 
-          document.body.appendChild(wrapper); // attach to DOM for rendering
+        const heading = document.createElement('h3');
+        heading.innerText = `DGMS Site Overview Report\nGenerated on: ${formattedDateTime}`;
+        wrapper.appendChild(heading);
+        wrapper.appendChild(clonedTable);
 
-          const opt = {
-              margin: [10, 10, 10, 10],
-              filename: 'DGMS_Site_Overview_' + now.toISOString().slice(0, 10) + '.pdf',
-              image: {
-                  type: 'jpeg',
-                  quality: 1
-              }, // highest quality
-              html2canvas: {
-                  scale: 4, // very high resolution
-                  useCORS: true,
-                  scrollX: 0,
-                  scrollY: 0
-              },
-              jsPDF: {
-                  unit: 'px',
-                  format: [1400, 1000], // wider than A3
-                  orientation: 'landscape'
-              }
-          };
+        document.body.appendChild(wrapper); // attach to DOM for rendering
 
-          // Delay helps rendering accuracy
-          setTimeout(() => {
-              html2pdf()
-                  .set(opt)
-                  .from(wrapper)
-                  .save()
-                  .then(() => {
-                      document.getElementById('loader').style.display = 'none';
-                      document.body.removeChild(wrapper);
-                  })
-                  .catch((error) => {
-                      document.getElementById('loader').style.display = 'none';
-                      alert('PDF generation failed: ' + error.message);
-                      document.body.removeChild(wrapper);
-                  });
-          }, 300);
-      });
+        const opt = {
+            margin: [10, 10, 10, 10],
+            filename: 'DGMS_Site_Overview_' + now.toISOString().slice(0, 10) + '.pdf',
+            image: {
+                type: 'jpeg',
+                quality: 1
+            }, // highest quality
+            html2canvas: {
+                scale: 4, // very high resolution
+                useCORS: true,
+                scrollX: 0,
+                scrollY: 0
+            },
+            jsPDF: {
+                unit: 'px',
+                format: [1400, 1000], // wider than A3
+                orientation: 'landscape'
+            }
+        };
+
+        // Delay helps rendering accuracy
+        setTimeout(() => {
+            html2pdf()
+                .set(opt)
+                .from(wrapper)
+                .save()
+                .then(() => {
+                    document.getElementById('loader').style.display = 'none';
+                    document.body.removeChild(wrapper);
+                })
+                .catch((error) => {
+                    document.getElementById('loader').style.display = 'none';
+                    alert('PDF generation failed: ' + error.message);
+                    document.body.removeChild(wrapper);
+                });
+        }, 300);
+    });
 
 
-      // Reset filters
-      document.getElementById('resetFilters').addEventListener('click', function() {
-          document.getElementById('bankSelect').value = '';
-          document.getElementById('locationSelect').value = '';
-          filterSites();
-      });
+    // Reset filters
+    document.getElementById('resetFilters').addEventListener('click', function() {
+        document.getElementById('bankSelect').value = '';
+        document.getElementById('locationSelect').value = '';
+        filterSites();
+    });
 
-      $(document).ready(function() {
-          $('#bankSelect, #locationSelect').change(filterSites);
+    $(document).ready(function() {
+        $('#bankSelect, #locationSelect').change(filterSites);
 
-          // Initialize status dots
-          updateStatusDots();
-      });
+        // Initialize status dots
+        updateStatusDots();
+    });
 
-      function filterSites() {
-          const bankValue = $('#bankSelect').val().toLowerCase();
-          const locationValue = $('#locationSelect').val().toLowerCase();
+    function filterSites() {
+        const bankValue = $('#bankSelect').val().toLowerCase();
+        const locationValue = $('#locationSelect').val().toLowerCase();
 
-          $('.site-row').each(function() {
-              const rowBank = $(this).data('bank').toString().toLowerCase();
-              const rowLocation = $(this).data('location').toString().toLowerCase();
+        $('.site-row').each(function() {
+            const rowBank = $(this).data('bank').toString().toLowerCase();
+            const rowLocation = $(this).data('location').toString().toLowerCase();
 
-              const bankMatch = bankValue === '' || rowBank.includes(bankValue);
-              const locationMatch = locationValue === '' || rowLocation.includes(locationValue);
+            const bankMatch = bankValue === '' || rowBank.includes(bankValue);
+            const locationMatch = locationValue === '' || rowLocation.includes(locationValue);
 
-              if (bankMatch && locationMatch) {
-                  $(this).show();
-              } else {
-                  $(this).hide();
-              }
-          });
-      }
+            if (bankMatch && locationMatch) {
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+        });
+    }
 
-      function updateStatusDots() {
-          let siteIds = [];
+    function updateStatusDots() {
+        let siteIds = [];
 
-          $('.site-row').each(function() {
-              siteIds.push($(this).data('site-id'));
+        $('.site-row').each(function() {
+            siteIds.push($(this).data('site-id'));
 
-              $(this).find('.gateway-dot, .controller-dot')
-                  .removeClass('ONLINE OFFLINE')
-                  .addClass('loading');
+            $(this).find('.gateway-dot, .controller-dot')
+                .removeClass('ONLINE OFFLINE')
+                .addClass('loading');
 
-              // Don't change the controller status text
-              // Don't show "Loading..."
+            // Don't change the controller status text
+            // Don't show "Loading..."
 
-              $(this).find('.site-name-link')
-                  .css('color', '#6c757d');
-          });
+            $(this).find('.site-name-link')
+                .css('color', '#6c757d');
+        });
 
-          if (siteIds.length > 0) {
-              $.ajax({
-                  url: '{{ route("admin.site.statuses") }}',
-                  method: 'POST',
-                  data: {
-                      site_ids: siteIds,
-                      _token: '{{ csrf_token() }}'
-                  },
-                  success: function(data) {
-                      $.each(data, function(siteId, statuses) {
-                          let row = $('.site-row[data-site-id="' + siteId + '"]');
+        if (siteIds.length > 0) {
+            $.ajax({
+                url: '{{ route("admin.site.statuses") }}',
+                method: 'POST',
+                data: {
+                    site_ids: siteIds,
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(data) {
+                    $.each(data, function(siteId, statuses) {
+                        let row = $('.site-row[data-site-id="' + siteId + '"]');
 
-                          let dgStatus = (statuses.dg_status || '').replace(/['"]+/g, '');
-                          let ctrlStatus = (statuses.controller_status || '').replace(/['"]+/g, '');
+                        let dgStatus = (statuses.dg_status || '').replace(/['"]+/g, '');
+                        let ctrlStatus = (statuses.controller_status || '').replace(/['"]+/g, '');
 
-                          // Update dot status
-                          row.find('.gateway-dot')
-                              .removeClass('loading ONLINE OFFLINE')
-                              .addClass(dgStatus);
+                        // Update dot status
+                        row.find('.gateway-dot')
+                            .removeClass('loading ONLINE OFFLINE')
+                            .addClass(dgStatus);
 
-                          row.find('.controller-dot')
-                              .removeClass('loading ONLINE OFFLINE')
-                              .addClass(ctrlStatus);
+                        row.find('.controller-dot')
+                            .removeClass('loading ONLINE OFFLINE')
+                            .addClass(ctrlStatus);
 
-                          // Update site name color
-                          let color = (ctrlStatus === 'ONLINE') ? 'green' : 'red';
-                          row.find('.site-name-link').css('color', color);
+                        // Update site name color
+                        let color = (ctrlStatus === 'ONLINE') ? 'green' : 'red';
+                        row.find('.site-name-link').css('color', color);
 
-                          // Show "—" only if DG is OFFLINE
-                          if (dgStatus === 'OFFLINE') {
-                              row.find('.controller-status-text').html(
-                                  // '<strong style="font-size: 1.3rem; font-weight: bold;">—</strong>'
-                              );
-                          }
-                          // Else: do nothing, leave the ON/OFF text from Blade
-                      });
-                  },
-                  error: function() {
-                      $('.gateway-dot, .controller-dot')
-                          .removeClass('loading ONLINE')
-                          .addClass('OFFLINE');
+                        // Show "—" only if DG is OFFLINE
+                        if (dgStatus === 'OFFLINE') {
+                            row.find('.controller-status-text').html(
+                                // '<strong style="font-size: 1.3rem; font-weight: bold;">—</strong>'
+                            );
+                        }
+                        // Else: do nothing, leave the ON/OFF text from Blade
+                    });
+                },
+                error: function() {
+                    $('.gateway-dot, .controller-dot')
+                        .removeClass('loading ONLINE')
+                        .addClass('OFFLINE');
 
-                      $('.controller-status-text').html(
-                          // '<strong style="font-size: 1.3rem; font-weight: bold;">—</strong>'
-                      );
+                    $('.controller-status-text').html(
+                        // '<strong style="font-size: 1.3rem; font-weight: bold;">—</strong>'
+                    );
 
-                      $('.site-name-link').css('color', 'red');
-                  }
-              });
-          }
-      }
+                    $('.site-name-link').css('color', 'red');
+                }
+            });
+        }
+    }
+
+    $('#rechargeForm').on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+            url: $(this).attr('action'),
+            method: 'POST',
+            data: $(this).serialize(),
+            success: function(response) {
+                alert('Recharge settings saved successfully!');
+            },
+            error: function(err) {
+                alert('Error saving data!');
+            }
+        });
+    });
     </script>
 </body>
 
