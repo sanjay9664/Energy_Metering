@@ -26,7 +26,7 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('sync:frontend-data')->everyFiveMinutes();
         $schedule->command('sync:mongodb')->everyFiveMinutes();
-        $schedule->command('report:send-daily')->dailyAt('19:00');
+        $schedule->command('charge:deduct-daily')->dailyAt('00:05');
     }
 
     /**
