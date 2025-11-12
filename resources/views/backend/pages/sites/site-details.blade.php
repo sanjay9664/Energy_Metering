@@ -151,7 +151,7 @@
                                                     $status='abnormal' ; $bgColor='red' ; } @endphp <div
                                                     class="status-box" style="padding:10px; font-size:14px;">
                                                     <p><strong>Grid_Balance</strong></p>
-                                                    <span class="status-box">waiting ...</span>
+                                                    <span class="status-box">{{ $rechargeSetting->m_recharge_amount }}</span>
 
                 </div>
                 </td>
@@ -565,7 +565,7 @@
             @endphp
             <div class="status-box" style="padding:10px; font-size:14px;">
                 <p><strong>Grid_Balance</strong></p>
-                <span class="status-box">waiting ...</span>
+                <span class="status-box">{{ $rechargeSetting->m_recharge_amount }}</span>
             </div>
         </td>
 

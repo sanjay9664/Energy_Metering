@@ -190,6 +190,10 @@ class SiteController extends Controller
                     'md' => $request->input('readOn_md'),
                     'add' => $request->input('readOn_add'),
                 ],
+            'connect' => [
+                    'md' => $request->input('connect_md'),
+                    'add' => $request->input('connect_add'),
+                ],
             'electric_parameters' => [
                 'voltage_l_l' => [
                     'a' => [
@@ -445,6 +449,10 @@ class SiteController extends Controller
                     'md' => $request->input('readOn_md'),
                     'add' => $request->input('readOn_add'),
                 ],
+            'connect' => [
+                    'md' => $request->input('connect_md'),
+                    'add' => $request->input('connect_add'),
+                ],
             'electric_parameters' => [
                 'voltage_l_l' => [
                     'a' => [
@@ -641,6 +649,8 @@ class SiteController extends Controller
 
         $role = $request->query('role');
 
+        $rechargeSetting = RechargeSetting::where('m_site_id', $siteData->id)->firstOrFail();
+       
         if ($role == 'superadmin') {
             return view('backend.pages.sites.superadmin-site-details', [
                 'siteData' => $siteData,
@@ -657,6 +667,7 @@ class SiteController extends Controller
                 'sitejsonData' => $sitejsonData,
                 'eventData' => $events,
                 'latestCreatedAt' => $latestCreatedAtFormatted,
+                'rechargeSetting' => $rechargeSetting,
             ]);
         }
 
@@ -846,10 +857,12 @@ class SiteController extends Controller
                 $site->updatedAt = $updatedAt;
             }
 
+            $rechargeSetting = RechargeSetting::whereIn('m_site_id', $siteData->pluck('id'))->get()->keyBy('m_site_id');
+
             $sitejsonData = json_decode($siteData->first()->data ?? '{}', true);
             // return $eventData;
 
-            return view('backend.pages.sites.admin-sites', compact('siteData', 'sitejsonData', 'eventData', 'latestCreatedAt'));
+            return view('backend.pages.sites.admin-sites', compact('siteData', 'sitejsonData', 'eventData', 'latestCreatedAt', 'rechargeSetting'));
         }
     }
 
@@ -1105,6 +1118,7 @@ class SiteController extends Controller
 
     public function startProcess(Request $request)
     {
+        // dd($request->all());
         $data = $request->only(['argValue', 'moduleId', 'cmdField', 'cmdArg', 'actionType']);
         $action = $data['actionType'] ?? 'unknown';
 
@@ -1130,7 +1144,7 @@ class SiteController extends Controller
         }
     }
 
-   public function storeRechargeSettings(Request $request)
+    public function storeRechargeSettings(Request $request)
     {
         try {
             $validated = $request->validate([
@@ -1163,5 +1177,4 @@ class SiteController extends Controller
                 ->withInput();
         }
     }
-
 }

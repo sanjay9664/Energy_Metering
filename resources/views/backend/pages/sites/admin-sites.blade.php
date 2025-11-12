@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>DG SET MONITORING SYSTEM</title>
     <link rel="stylesheet" href="{{url('backend/assets/css/admin.css')}}">
     <link rel="stylesheet" href="{{url('backend/assets/css/admin-all-min.css')}}">
@@ -350,7 +351,7 @@
                                     // dd($addValue);
                                 ?>
                                 <td>{{ $addkwhValue }}</td>
-                                <td>{{ $formattedUpdatedAt }}</td>
+                                <td>{{ $rechargeSetting[$site->id]->m_recharge_amount ?? '' }}</td>
 
 
                                 <td class="status-cell">
@@ -362,15 +363,18 @@
                                 </td>
 
                                 <td class="setting-col text-center" style="cursor:pointer;">
+                                    @php
+                                        $setting = $rechargeSetting[$site->id] ?? null;
+                                    @endphp
                                     <!-- Modal trigger ko alag span mein rakho -->
-                                    <span data-bs-toggle="modal" data-bs-target="#settingsModal1">
+                                    <span data-bs-toggle="modal" data-bs-target="#settingsModal{{ $site->id }}">
                                         <i class="fa-solid fa-gear me-2 text-primary"></i>
                                         Recharge
                                     </span>
 
                                     <!-- Modal with normal backdrop -->
-                                    <div class="modal fade" id="settingsModal1" tabindex="-1"
-                                        aria-labelledby="settingsModalLabel1" aria-hidden="true">
+                                    <div class="modal fade" id="settingsModal{{ $site->id }}" tabindex="-1"
+                                        aria-labelledby="settingsModalLabel{{ $site->id }}" aria-hidden="true">
                                         <div class="modal-dialog modal-md modal-dialog-centered">
                                             <div class="modal-content rounded-4 shadow-lg border-0 overflow-hidden">
 
@@ -378,7 +382,7 @@
                                                 <div class="modal-header bg-gradient bg-primary text-white py-3">
                                                     <div class="d-flex align-items-center">
                                                         <i class="fa-solid fa-bolt me-2 fs-5"></i>
-                                                        <h5 class="modal-title mb-0 fw-bold" id="settingsModalLabel1">
+                                                        <h5 class="modal-title mb-0 fw-bold" id="settingsModalLabel{{ $site->id }}">
                                                             Recharge & Load Settings</h5>
                                                     </div>
                                                     <button type="button" class="btn-close btn-close-white shadow-none"
@@ -392,8 +396,7 @@
                                                         @csrf
 
                                                         <!-- Hidden Site ID -->
-                                                        <input type="hidden" name="m_site_id" id="m_site_id"
-                                                            value="{{ $site->id ?? '' }}">
+                                                        <input type="hidden" name="m_site_id" id="m_site_id" value="{{ $site->id ?? '' }}">
 
                                                         <!-- Recharge Section -->
                                                         <div class="card border-0 bg-light mb-4">
@@ -418,7 +421,9 @@
                                                                             </span>
                                                                             <input type="text" name="m_recharge_amount"
                                                                                 class="form-control border-primary"
-                                                                                placeholder="Enter amount">
+                                                                                value="{{ $rechargeSetting[$site->id]->m_recharge_amount ?? '' }}"
+                                                                                placeholder="Enter amount"
+                                                                                >
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -448,7 +453,8 @@
                                                                             </span>
                                                                             <input type="text" name="m_fixed_charge"
                                                                                 class="form-control border-success"
-                                                                                placeholder="Fixed Charge">
+                                                                                placeholder="Fixed Charge"
+                                                                                value="{{ $rechargeSetting[$site->id]->m_fixed_charge ?? '' }}">
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -465,7 +471,8 @@
                                                                             </span>
                                                                             <input type="text" name="m_unit_charge"
                                                                                 class="form-control border-success"
-                                                                                placeholder="Unit Charge">
+                                                                                placeholder="Unit Charge"
+                                                                                value="{{ $rechargeSetting[$site->id]->m_unit_charge ?? '' }}">
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -481,7 +488,8 @@
                                                                             </span>
                                                                             <input type="text" name="m_sanction_load"
                                                                                 class="form-control border-success"
-                                                                                placeholder="Sanction Load">
+                                                                                placeholder="Sanction Load"
+                                                                                value="{{ $rechargeSetting[$site->id]->m_sanction_load ?? '' }}">
                                                                             <span
                                                                                 class="input-group-text bg-success text-white border-success">kW</span>
                                                                         </div>
@@ -513,7 +521,8 @@
                                                                             </span>
                                                                             <input type="text" name="dg_fixed_charge"
                                                                                 class="form-control border-danger"
-                                                                                placeholder="Fixed Charge">
+                                                                                placeholder="Fixed Charge"
+                                                                                value="{{ $rechargeSetting[$site->id]->dg_fixed_charge ?? '' }}">
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -530,7 +539,8 @@
                                                                             </span>
                                                                             <input type="text" name="dg_unit_charge"
                                                                                 class="form-control border-danger"
-                                                                                placeholder="Unit Charge">
+                                                                                placeholder="Unit Charge"
+                                                                                value="{{ $rechargeSetting[$site->id]->dg_unit_charge ?? '' }}">
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -546,7 +556,8 @@
                                                                             </span>
                                                                             <input type="text" name="dg_sanction_load"
                                                                                 class="form-control border-danger"
-                                                                                placeholder="Sanction Load">
+                                                                                placeholder="Sanction Load"
+                                                                                value="{{ $rechargeSetting[$site->id]->dg_sanction_load ?? '' }}">
                                                                             <span
                                                                                 class="input-group-text bg-danger text-white border-danger">kW</span>
                                                                         </div>
@@ -555,35 +566,60 @@
                                                             </div>
                                                         </div>
 
+                                                        <?php
+                                                            $readOn = isset($sitejsonData['connect']) ? floatval($sitejsonData['connect']) : 0;
+                                                            $connectMd = $sitejsonData['connect']['md'] ?? null;
+                                                            $connectAdd = $sitejsonData['connect']['add'] ?? null;
+                                                            $disconnectBtnValue = 0;
+                                                     
+                                                            foreach ($eventData as $event) {
+                                                                $eventArray = $event instanceof \ArrayObject ? $event->getArrayCopy() : (array) $event;
+
+                                                                if ($connectMd && isset($eventArray['module_id']) && $eventArray['module_id'] == $connectMd) {
+                                                                    if ($connectAdd && array_key_exists($connectAdd, $eventArray)) {
+                                                                        $disconnectBtnValue = $eventArray[$connectAdd];
+                                                                    }
+                                                                    break;
+                                                                }
+                                                            }
+                                                        ?>
+                                             
                                                         <button type="button" id="disconnectBtn" class="btn btn-danger btn-sm px-3 me-2">
+                                                            <input type="hidden" name="argValue" value="1">
+                                                            <input type="hidden" name="cmdArg" value="1">
+                                                            <input type="hidden" name="moduleId" value="{{ $connectMd ?? '' }}">
+                                                            <input type="hidden" name="cmdField" value="{{ $connectAdd ?? '' }}">
                                                             <i class="fa-solid fa-power-off me-1"></i> Disconnect
                                                         </button>
 
-                                                        <button type="button" id="connectBtn" class="btn btn-success btn-sm px-3">
-                                                            <i class="fa-solid fa-link me-1"></i> Connect
+                                                        <button type="button" id="connectBtn" class="btn btn-success btn-sm px-3 me-2">
+                                                            <input type="hidden" name="argValue" value="1">
+                                                            <input type="hidden" name="cmdArg" value="0">
+                                                            <input type="hidden" name="moduleId" value="{{ $connectMd ?? '' }}">
+                                                            <input type="hidden" name="cmdField" value="{{ $connectAdd ?? '' }}">
+                                                            <i class="fa-solid fa-power-off me-1"></i> Connect
                                                         </button>
 
+
                                                          <!-- Modal Footer -->
-                                                <div class="modal-footer bg-light py-3">
-                                                    <button type="button" class="btn btn-outline-secondary btn-sm px-3"
-                                                        data-bs-dismiss="modal">
-                                                        <i class="fa-solid fa-xmark me-1"></i> Cancel
-                                                    </button>
-                                                    <div>
-
-                                                        <div class="text-end">
-                                                            <button type="submit" class="btn btn-primary btn-sm">
-                                                                <i class="fa-solid fa-save me-1"></i> Submit
+                                                        <div class="modal-footer bg-light py-3">
+                                                            <button type="button" class="btn btn-outline-secondary btn-sm px-3"
+                                                                data-bs-dismiss="modal">
+                                                                <i class="fa-solid fa-xmark me-1"></i> Cancel
                                                             </button>
-                                                        </div>
+                                                            <div>
 
-                                                    </div>
-                                                </div>
+                                                            <div class="text-end">
+                                                                <button type="submit" class="btn btn-primary btn-sm">
+                                                                    <i class="fa-solid fa-save me-1"></i> Submit
+                                                                </button>
+                                                            </div>
+
+                                                            </div>
+                                                        </div>
                                                     </form>
 
                                                 </div>
-
-                                               
 
                                             </div>
                                         </div>
@@ -601,6 +637,8 @@
     </div>
 
     <script src="{{url('backend/assets/js/admin-jquery-3.6.0.min.js')}}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -849,86 +887,107 @@
 
     $('#rechargeForm').on('submit', function(e) {
         e.preventDefault();
+
         $.ajax({
             url: $(this).attr('action'),
             method: 'POST',
             data: $(this).serialize(),
             success: function(response) {
-                alert('Recharge settings saved successfully!');
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: 'Recharge settings saved successfully!',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+
+                $('#settingsModal1').modal('hide');
             },
-            error: function(err) {
-                alert('Error saving data!');
+            error: function(xhr) {
+                let message = 'Error saving data!';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    message = xhr.responseJSON.message;
+                }
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: message,
+                    confirmButtonText: 'OK'
+                });
             }
         });
     });
     </script>
 
+    <script>
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+    </script>
+    <script>
+    $(document).on('click', '#connectBtn, #disconnectBtn', function(e) {
+        e.preventDefault();
 
-<!-- SweetAlert + jQuery (include once if not already in page) -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        // Detect which button was clicked
+        let isConnect = $(this).attr('id') === 'connectBtn';
+        let actionType = isConnect ? 'connect' : 'disconnect';
 
-<script>
-$(document).on('click', '#connectBtn, #disconnectBtn', function(e) {
-    e.preventDefault();
+        // Get values from the clicked button only
+        let argValue = $(this).find('input[name="argValue"]').val();
+        let moduleId = $(this).find('input[name="moduleId"]').val();
+        let cmdArg = $(this).find('input[name="cmdArg"]').val();
+        let cmdField = $(this).find('input[name="cmdField"]').val();
 
-    let isConnect = $(this).attr('id') === 'connectBtn';
-    let actionType = isConnect ? 'connect' : 'disconnect';
-    let argValue = isConnect ? 0 : 1;
+        Swal.fire({
+            title: `Are you sure you want to ${actionType.toUpperCase()}?`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Yes',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/admin/start-process',
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        argValue,
+                        moduleId,
+                        cmdField,
+                        cmdArg,
+                        actionType
+                    },
+                    beforeSend: function() {
+                        $('#connectBtn, #disconnectBtn').prop('disabled', true);
+                    },
+                    success: function(response) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: response.message
+                        });
 
-    // get pre-filled values
-    let moduleId = $('input[name="connect_md"]').val();
-    let cmdArg = $('input[name="connect_add"]').val();
-    let cmdField = 'connection';
-
-    Swal.fire({
-        title: `Are you sure you want to ${actionType.toUpperCase()}?`,
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: 'Yes',
-        cancelButtonText: 'Cancel'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                url: '/admin/start-process',
-                type: 'POST',
-                data: {
-                    argValue,
-                    moduleId,
-                    cmdField,
-                    cmdArg,
-                    actionType
-                },
-                beforeSend: function() {
-                    $('#connectBtn, #disconnectBtn').prop('disabled', true);
-                },
-                success: function(response) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: `${actionType.toUpperCase()} Successful!`,
-                        text: response.message
-                    });
-                    console.log('✅ Sent Data:', { argValue, moduleId, cmdField, cmdArg });
-                },
-                error: function(xhr) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Something went wrong. Please try again.'
-                    });
-                    console.error(xhr.responseText);
-                },
-                complete: function() {
-                    $('#connectBtn, #disconnectBtn').prop('disabled', false);
-                }
-            });
-        }
+                        console.log('✅ Sent Data:', { actionType, argValue, moduleId, cmdField, cmdArg });
+                    },
+                    error: function(xhr) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Something went wrong. Please try again.'
+                        });
+                        console.error(xhr.responseText);
+                    },
+                    complete: function() {
+                        $('#connectBtn, #disconnectBtn').prop('disabled', false);
+                    }
+                });
+            }
+        });
     });
-});
-</script>
+    </script>
 
-
-    
 </body>
 
 </html>
