@@ -110,7 +110,7 @@ class DeductDailyCharge extends Command
             " from ₹" . number_format($oldAmount, 2) .
             " → Remaining ₹" . number_format($recharge->m_recharge_amount, 2));
 
-        if ($recharge->m_recharge_amount <= -100) {
+        if ($recharge->m_recharge_amount <= 0) {
             $this->warn("⚠️ {$type}: Insufficient balance! Current balance is ₹" . number_format($recharge->m_recharge_amount, 2));
         }
     }
