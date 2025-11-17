@@ -150,7 +150,7 @@
             <div class="filter-controls">
                 <div class="filter-group">
                     <select class="form-select form-select-sm filter-select" id="bankSelect">
-                        <option value="" selected>Select Bank</option>
+                        <option value="" selected>Select Client_Name</option>
                         @php
                         $uniqueGenerators = collect($siteData)
                         ->map(fn($site) => json_decode($site->data)->generator)

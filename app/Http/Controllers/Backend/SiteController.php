@@ -1157,40 +1157,7 @@ class SiteController extends Controller
         }
     }
 
-    // public function storeRechargeSettings(Request $request)
-    // {
-    //     try {
-    //         $validated = $request->validate([
-    //             'm_site_id' => 'required|integer|exists:sites,id',
-    //             'm_recharge_amount' => 'nullable|numeric',
-    //             'm_fixed_charge' => 'nullable|numeric',
-    //             'm_unit_charge' => 'nullable|numeric',
-    //             'm_sanction_load' => 'nullable|numeric',
-    //             'dg_fixed_charge' => 'nullable|numeric',
-    //             'dg_unit_charge' => 'nullable|numeric',
-    //             'dg_sanction_load' => 'nullable|numeric',
-    //         ]);
-
-    //         RechargeSetting::updateOrCreate(
-    //             ['m_site_id' => $validated['m_site_id']],
-    //             $validated
-    //         );
-
-    //         return back()->with('success', 'Recharge settings saved successfully!');
-    //     } 
-    //     catch (\Illuminate\Validation\ValidationException $e) {
-    //         return back()
-    //             ->withErrors($e->validator)
-    //             ->withInput()
-    //             ->with('error', 'Please correct the highlighted errors.');
-    //     } 
-    //     catch (\Exception $e) {
-    //         return back()
-    //             ->with('error', 'An unexpected error occurred: ' . $e->getMessage())
-    //             ->withInput();
-    //     }
-    // }
-
+ 
 
 public function storeRechargeSettings(Request $request)
 {
@@ -1245,6 +1212,54 @@ public function storeRechargeSettings(Request $request)
             ->withInput();
     }
 }
+
+// public function storeRechargeSettings(Request $request)
+// {
+//     $request->validate([
+//         'site_id'           => 'required|integer',
+//         'm_recharge_amount' => 'nullable|numeric',
+//         'm_fixed_charge'    => 'nullable|numeric',
+//         'm_unit_charge'     => 'nullable|numeric',
+//         'm_sanction_load'   => 'nullable|numeric',
+//         'dg_fixed_charge'   => 'nullable|numeric',
+//         'dg_unit_charge'    => 'nullable|numeric',
+//         'dg_sanction_load'  => 'nullable|numeric',
+//     ]);
+
+//     $siteId = $request->site_id;
+
+//     // Check existing record
+//     $existing = DB::table('privious_total_kWh')
+//     ->where('m_site_id', $siteId)
+//     ->first();
+
+
+//     // Insert or Update
+//     $data = [
+//         'm_site_id'        => $siteId,
+//         'm_recharge_amount'=> $request->m_recharge_amount,
+//         'm_fixed_charge'   => $request->m_fixed_charge,
+//         'm_unit_charge'    => $request->m_unit_charge,
+//         'm_sanction_load'  => $request->m_sanction_load,
+//         'dg_fixed_charge'  => $request->dg_fixed_charge,
+//         'dg_unit_charge'   => $request->dg_unit_charge,
+//         'dg_sanction_load' => $request->dg_sanction_load,
+//         'updated_at'       => now()
+//     ];
+
+//     if ($existing) {
+//         // Update karo
+//         DB::table('privious_total_kWh')
+//             ->where('m_site_id', $siteId)
+//             ->update($data);
+//     } else {
+//         // Insert karo
+//         $data['created_at'] = now();
+//         DB::table('privious_total_kWh')->insert($data);
+//     }
+
+//     return back()->with('success', 'Recharge settings saved successfully!');
+// }
 
 
 

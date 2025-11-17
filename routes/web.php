@@ -95,4 +95,19 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
 
 
 
+// Route::get('/get-site-data/{siteId}', function($siteId) {
+//     $site = \App\Models\Site::find($siteId);
+//     if (!$site) {
+//         return response()->json(['success' => false]);
+//     }
+
+//     $recharge = \App\Models\RechargeSetting::where('m_site_id', $siteId)->first();
+    
+//     return response()->json([
+//         'success' => true,
+//         'balance' => cache()->get("site_balance_{$siteId}", $recharge->m_recharge_amount ?? 0),
+//         'kwh' => cache()->get("site_kwh_{$siteId}", 0)
+//     ]);
+// });
+
 })->middleware('auth:admin');
