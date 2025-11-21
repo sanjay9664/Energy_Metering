@@ -12,12 +12,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('running_hours', function (Blueprint $table) {
-            $table->id();
-            $table->string('running_hours_admin');
-            $table->string('increase_running_hours');
-            $table->timestamps();
-        });
+       if (!Schema::hasTable('running_hours')) {
+    Schema::create('running_hours', function (Blueprint $table) {
+        $table->id();
+        $table->string('running_hours_admin');
+        $table->string('increase_running_hours');
+        $table->timestamps();
+    });
+}
+
     }
     
 

@@ -94,20 +94,14 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
     Route::post('/trigger-connection-api', [SiteController::class, 'triggerConnectionApi'])->name('trigger.connection.api');
 
 
-
-// Route::get('/get-site-data/{siteId}', function($siteId) {
-//     $site = \App\Models\Site::find($siteId);
-//     if (!$site) {
-//         return response()->json(['success' => false]);
-//     }
-
-//     $recharge = \App\Models\RechargeSetting::where('m_site_id', $siteId)->first();
-    
-//     return response()->json([
-//         'success' => true,
-//         'balance' => cache()->get("site_balance_{$siteId}", $recharge->m_recharge_amount ?? 0),
-//         'kwh' => cache()->get("site_kwh_{$siteId}", 0)
-//     ]);
-// });
+    // Energy Consumption Routes
+    Route::get('/energy-consumption', [SiteController::class, 'energyConsumptionDashboard'])->name('energy.consumption');
+    Route::get('/energy-data', [SiteController::class, 'getEnergyData'])->name('energy.data');
+    Route::get('/energy-stats', [SiteController::class, 'getEnergyStats'])->name('energy.stats');
 
 })->middleware('auth:admin');
+
+
+
+
+
