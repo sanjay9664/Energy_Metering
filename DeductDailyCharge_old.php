@@ -12,103 +12,83 @@ class DeductDailyCharge extends Command
     protected $signature = 'charge:deduct-daily';
     protected $description = 'Deduct daily fixed charges from each site recharge amount';
 
-    // public function handle()
-    // {
-    //     $today = \Carbon\Carbon::now();
-    //     $daysInMonth = $today->daysInMonth;
-
-    //     $sites = \App\Models\Site::all();
-
-    //     foreach ($sites as $site) {
-    //         // Get total_kwh (already working)
-    //         $totalKwhValue = $this->getTotalKwhValue($site);
-
-    //         $this->info("Site ID {$site->id}: total_kwh = {$totalKwhValue}");
-
-    //         // Get recharge settings
-    //         $recharge = \App\Models\RechargeSetting::where('m_site_id', $site->id)->first();
-
-    //         if (!$recharge) {
-    //             $this->warn("⚠️ No recharge data found for site ID {$site->id}");
-    //             continue;
-    //         }
-
-    //         // Calculate monthly fixed & daily charges
-    //         $monthlyFixedCharge = floatval($recharge->m_fixed_charge) * floatval($recharge->m_sanction_load);
-    //         $dailyFixedCharge = $daysInMonth > 0 ? ($monthlyFixedCharge / $daysInMonth) : 0;
-
-    //         // Calculate energy (unit) charge based on total_kwh
-    //         $energyCharge = floatval($totalKwhValue) * floatval($recharge->m_unit_charge);
-
-    //         // Total daily deduction = fixed + energy charge
-    //         $totalDeduction = $dailyFixedCharge + $energyCharge;
-
-    //         // Deduct balance if enough funds
-    //         if ($recharge->m_recharge_amount >= $totalDeduction) {
-    //             $oldAmount = $recharge->m_recharge_amount;
-    //             $recharge->m_recharge_amount -= $totalDeduction;
-    //             $recharge->save();
-
-    //             $this->info("✅ Site ID {$site->id}: Deducted ₹" . number_format($totalDeduction, 2) .
-    //                 " (Fixed ₹" . number_format($dailyFixedCharge, 2) .
-    //                 " + Energy ₹" . number_format($energyCharge, 2) . ")" .
-    //                 " from ₹" . number_format($oldAmount, 2) .
-    //                 " → Remaining ₹" . number_format($recharge->m_recharge_amount, 2));
-    //         } else {
-    //             $this->warn("⚠️ Insufficient balance for Site ID {$site->id}");
-    //         }
-    //     }
-
-    //     $this->info('✅ Daily deduction & total_kwh-based charge completed successfully.');
-    // }
-
     public function handle()
     {
         $now = \Carbon\Carbon::now();
-        $hour = $now->format('H'); // current hour in 24-hour format
+        $hour = $now->format('H'); 
         $daysInMonth = $now->daysInMonth;
 
         $sites = \App\Models\Site::all();
 
         foreach ($sites as $site) {
+
             $totalKwhValue = $this->getTotalKwhValue($site);
             $this->info("🔹 Site ID {$site->id}: total_kwh = {$totalKwhValue}");
 
             $recharge = RechargeSetting::where('m_site_id', $site->id)->first();
-            // ✅ UPDATE THE kwh VALUE
-            $recharge->kwh = $totalKwhValue;
-            $recharge->save();
+            if (!$recharge) continue;
 
-            if (!$recharge) {
-                $this->warn("⚠️ No recharge data found for Site ID {$site->id}");
-                continue;
+            // -----------------------------------
+            // 1️⃣ INCREMENTAL KWH DEDUCTION
+            // -----------------------------------
+
+            $previousKwh = floatval($recharge->kwh ?? 0);
+            // $totalKwhValue = 4.49;
+
+            $increment = round($totalKwhValue - $previousKwh, 3);
+
+            if ($increment < 0) {
+                $increment = 0;
             }
 
-            // --- Daily fixed charge (once per day, at midnight) ---
-            if ($hour === 0) {
+            if ($increment > 0) {
+                $energyCharge = $increment * floatval($recharge->m_unit_charge);
+
+                $this->deductAmount($recharge, $energyCharge, "Incremental Energy ({$increment} units)");
+
+                \App\Models\DeductionHistory::create([
+                    'site_id'     => $site->id,
+                    'recharge_id' => $recharge->id,
+                    'type'        => 'Incremental Energy',
+                    'units'       => $increment,
+                    'amount'      => $energyCharge,
+                ]);
+            }
+
+            // Update DB with test reading
+            $recharge->kwh = $totalKwhValue;
+            $recharge->last_kwh_time = now();
+            $recharge->save();
+
+            // -----------------------------------
+            // 2️⃣ DAILY FIXED CHARGE AT MIDNIGHT
+            // -----------------------------------
+            if ($hour == 0) {
+
                 $monthlyFixedCharge = floatval($recharge->m_fixed_charge) * floatval($recharge->m_sanction_load);
-                $dailyFixedCharge = $daysInMonth > 0 ? ($monthlyFixedCharge / $daysInMonth) : 0;
+                $dailyFixedCharge = $monthlyFixedCharge / $daysInMonth;
 
                 if ($dailyFixedCharge > 0) {
                     $this->deductAmount($recharge, $dailyFixedCharge, 'Daily Fixed');
+
+                    \App\Models\DeductionHistory::create([
+                        'site_id'     => $site->id,
+                        'recharge_id' => $recharge->id,
+                        'type'        => 'Daily Fixed',
+                        'units'       => 0,
+                        'amount'      => $dailyFixedCharge,
+                    ]);
                 }
             }
 
-            // --- Hourly energy charge (every alternate hour) ---
-            if ($hour % 2 === 0) {
-                $energyCharge = floatval($totalKwhValue) * floatval($recharge->m_unit_charge);
-
-                if ($energyCharge > 0) {
-                    $this->deductAmount($recharge, $energyCharge, 'Hourly Energy');
-                }
-            }
-
-            // --- Send remote API based on balance ---
+            // -----------------------------------
+            // 3️⃣ REMOTE API (unchanged)
+            // -----------------------------------
             $cmdArg = ($recharge->m_recharge_amount <= 0) ? 1 : 0;
             $this->triggerRemoteApi($site, $cmdArg);
         }
 
-        $this->info('✅ Hourly energy & daily fixed deductions completed successfully.');
+        $this->info('✅ Incremental + daily fixed deduction completed.');
     }
 
     /**
@@ -121,16 +101,17 @@ class DeductDailyCharge extends Command
             return;
         }
 
-        if ($recharge->m_recharge_amount >= $deduction) {
-            $oldAmount = $recharge->m_recharge_amount;
-            $recharge->m_recharge_amount -= $deduction;
-            $recharge->save();
+        $oldAmount = $recharge->m_recharge_amount;
 
-            $this->info("✅ {$type}: Deducted ₹" . number_format($deduction, 2) .
-                " from ₹" . number_format($oldAmount, 2) .
-                " → Remaining ₹" . number_format($recharge->m_recharge_amount, 2));
-        } else {
-            $this->warn("⚠️ {$type}: Insufficient balance (₹{$recharge->m_recharge_amount})");
+        $recharge->m_recharge_amount -= $deduction;
+        $recharge->save();
+
+        $this->info("✅ {$type}: Deducted ₹" . number_format($deduction, 2) .
+            " from ₹" . number_format($oldAmount, 2) .
+            " → Remaining ₹" . number_format($recharge->m_recharge_amount, 2));
+
+        if ($recharge->m_recharge_amount <= 0) {
+            $this->warn("⚠️ {$type}: Insufficient balance! Current balance is ₹" . number_format($recharge->m_recharge_amount, 2));
         }
     }
 
