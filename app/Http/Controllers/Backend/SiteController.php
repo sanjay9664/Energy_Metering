@@ -1264,6 +1264,7 @@ class SiteController extends Controller
         }
     }
 
+
     // public function siteDetails($siteId)
     // {
     //     $siteData = Site::findOrFail($siteId);
@@ -1374,6 +1375,124 @@ class SiteController extends Controller
 
 
     public function energyConsumptionDashboard()
+
+
+
+
+   
+
+
+// public function siteDetails($siteId)
+// {
+//     $siteData = Site::findOrFail($siteId);
+//     $sitejsonData = json_decode($siteData->json_data, true);
+//     $events = Event::where('site_id', $siteId)->get();
+    
+//     // Get deduction history for this site
+//     $deductionHistory = DeductionHistory::where('site_id', $siteId)->get();
+    
+//     // Calculate statistics - FIXED: This line was missing
+//     $energyStats = $this->calculateEnergyStats($deductionHistory);
+    
+//     // Get latest record
+//     $latestRecord = $deductionHistory->sortByDesc('created_at')->first();
+//     $latestCreatedAtFormatted = $latestRecord ? $latestRecord->created_at->format('M d, Y H:i') : 'No data';
+    
+//     $rechargeSetting = RechargeSetting::where('site_id', $siteId)->first();
+
+//     // Check if user is admin (you might need to adjust this based on your auth system)
+//     $role = auth()->user()->role ?? 'user'; // Adjust based on your authentication
+
+//     if ($role == 'admin') {
+//         return view('backend.pages.sites.site-details', [
+//             'siteData' => $siteData,
+//             'sitejsonData' => $sitejsonData,
+//             'eventData' => $events,
+//             'latestCreatedAt' => $latestCreatedAtFormatted,
+//             'rechargeSetting' => $rechargeSetting,
+//             'deductionHistory' => $deductionHistory,
+//             'energyStats' => $energyStats, // Make sure this line is present
+//         ]);
+//     }
+
+//     // Add a return statement for non-admin users if needed
+//     return redirect()->back()->with('error', 'Access denied');
+// }
+
+// private function calculateEnergyStats($deductionHistory)
+// {
+//     if ($deductionHistory->isEmpty()) {
+//         return [
+//             'total_units' => 0,
+//             'total_amount' => 0,
+//             'avg_units' => 0,
+//             'avg_amount' => 0,
+//             'max_units' => 0,
+//             'max_amount' => 0,
+//             'current_units' => 0,
+//             'current_amount' => 0,
+//         ];
+//     }
+
+//     $totalUnits = $deductionHistory->sum('units');
+//     $totalAmount = $deductionHistory->sum('amount');
+//     $count = $deductionHistory->count();
+    
+//     $latestRecord = $deductionHistory->sortByDesc('created_at')->first();
+
+//     return [
+//         'total_units' => $totalUnits,
+//         'total_amount' => $totalAmount,
+//         'avg_units' => $count > 0 ? $totalUnits / $count : 0,
+//         'avg_amount' => $count > 0 ? $totalAmount / $count : 0,
+//         'max_units' => $deductionHistory->max('units'),
+//         'max_amount' => $deductionHistory->max('amount'),
+//         'current_units' => $latestRecord ? $latestRecord->units : 0,
+//         'current_amount' => $latestRecord ? $latestRecord->amount : 0,
+//     ];
+// }
+
+
+// public function getFilteredEnergyData(Request $request)
+// {
+//     $siteId = $request->input('site_id');
+//     $month = $request->input('month');
+//     $year = $request->input('year');
+//     $type = $request->input('type'); // daily/monthly
+    
+//     $query = DeductionHistory::where('site_id', $siteId);
+    
+//     if ($month !== null && $year !== null) {
+//         $query->whereYear('created_at', $year)
+//               ->whereMonth('created_at', $month + 1); // JavaScript months are 0-indexed
+//     }
+    
+//     if ($type === 'daily') {
+//         $data = $query->selectRaw('DATE(created_at) as date, SUM(units) as total_units, SUM(amount) as total_amount')
+//                      ->groupBy('date')
+//                      ->orderBy('date')
+//                      ->get();
+//     } else {
+//         $data = $query->selectRaw('YEAR(created_at) as year, MONTH(created_at) as month, SUM(units) as total_units, SUM(amount) as total_amount')
+//                      ->groupBy('year', 'month')
+//                      ->orderBy('year')
+//                      ->orderBy('month')
+//                      ->get();
+//     }
+    
+//     // Calculate stats for the filtered data
+//     $filteredStats = $this->calculateEnergyStats($query->get());
+    
+//     return response()->json([
+//         'success' => true,
+//         'data' => $data,
+//         'stats' => $filteredStats
+//     ]);
+// }
+
+
+ public function energyConsumptionDashboard()
+
     {
         $sites = Site::all();
         return view('backend.energy-dashboard', compact('sites'));
@@ -1506,5 +1625,8 @@ class SiteController extends Controller
             ], 500);
         }
     }
+
+
+    
 
 }

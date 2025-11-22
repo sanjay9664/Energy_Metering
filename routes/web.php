@@ -93,9 +93,18 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
     
     Route::post('/trigger-connection-api', [SiteController::class, 'triggerConnectionApi'])->name('trigger.connection.api');
 
+
     // Energy Consumption Routes
     Route::get('/energy-consumption', [SiteController::class, 'energyConsumptionDashboard'])->name('energy.consumption');
     Route::get('/energy-data', [SiteController::class, 'getEnergyData'])->name('energy.data');
     Route::get('/energy-stats', [SiteController::class, 'getEnergyStats'])->name('energy.stats');
 
+
+
 })->middleware('auth:admin');
+
+
+
+
+
+

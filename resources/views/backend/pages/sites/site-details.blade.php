@@ -17,6 +17,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <style>
+
 :root {
     --primary-color: #002E6E;
     --secondary-color: #28a745;
@@ -363,6 +364,347 @@ body {
 }
 </style>
 
+        :root {
+            --primary-color: #002E6E;
+            --secondary-color: #28a745;
+            --light-bg: #f8f9fa;
+            --card-bg: #ffffff;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            overflow-x: hidden;
+        }
+        
+        .status-box {
+            background: #f9f9f9;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+            
+            }
+        .container-fluid {
+            padding: 20px;
+            max-width: 100%;
+        }
+        
+        .consumption-section {
+            background-color: var(--light-bg);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            width: 100%;
+        }
+        
+        .graph-container {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            height: 400px;
+            position: relative;
+        }
+        
+        .stats-box {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            margin-bottom: 15px;
+            height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .stats-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+        
+        .stats-label {
+            font-size: 14px;
+            color: #6c757d;
+            font-weight: 500;
+        }
+        
+        .filter-section {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+        }
+        
+        .filter-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-btn:hover {
+            background-color: #001f4d;
+            transform: translateY(-2px);
+        }
+        
+        .download-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .download-btn:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+        }
+        
+        .nav-tabs {
+            border-bottom: 2px solid #dee2e6;
+        }
+        
+        .nav-tabs .nav-link {
+            color: var(--primary-color);
+            font-weight: 600;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px 8px 0 0;
+        }
+        
+        .nav-tabs .nav-link.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .loading-spinner {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        
+        .download-option {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .download-option:hover {
+            border-color: var(--primary-color);
+            background-color: rgba(0, 46, 110, 0.05);
+        }
+        
+        .download-option.active {
+            border-color: var(--primary-color);
+            background-color: rgba(0, 46, 110, 0.1);
+        }
+        
+        .download-icon {
+            font-size: 24px;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .success-alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            min-width: 300px;
+            animation: slideInRight 0.5s ease;
+        }
+        
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .chart-title {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .consumption-badge {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .card-header-custom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .metric-highlight {
+            display: flex;
+            justify-content: space-between;
+            background: rgba(0, 46, 110, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .metric-title {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+        
+        .metric-value-large {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        .metric-change {
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .up {
+            color: #28a745;
+        }
+        
+        .down {
+            color: #e74c3c;
+        }
+        
+        .kwh-display-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        .kwh-box {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            width: 48%;
+            height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .kwh-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+        
+        .kwh-label {
+            font-size: 14px;
+            color: #6c757d;
+            font-weight: 500;
+        }
+        
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .container-fluid {
+                padding: 10px;
+            }
+            
+            .consumption-section {
+                padding: 15px;
+            }
+            
+            .graph-container {
+                height: 300px;
+                padding: 15px;
+            }
+            
+            .stats-box, .kwh-box {
+                height: 100px;
+                padding: 15px;
+            }
+            
+            .stats-value, .kwh-value {
+                font-size: 24px;
+            }
+            
+            .metric-value-large {
+                font-size: 24px;
+            }
+            
+            .filter-section {
+                padding: 15px;
+            }
+            
+            .nav-tabs .nav-link {
+                padding: 10px 15px;
+                font-size: 14px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .graph-container {
+                height: 250px;
+            }
+            
+            .stats-box, .kwh-box {
+                height: 90px;
+                padding: 10px;
+            }
+            
+            .stats-value, .kwh-value {
+                font-size: 20px;
+            }
+            
+            .metric-value-large {
+                font-size: 20px;
+            }
+            
+            .metric-highlight {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .metric-highlight .text-end {
+                text-align: left !important;
+            }
+        }
+    </style>
+
+
 
 <body>
     <div class="header-container">
@@ -385,7 +727,11 @@ body {
                         <tbody>
                             <tr>
                                 <th class="asset" style="background: #002E6E;">
+
                                     <strong>Custom Name</strong> : {{ $sitejsonData->asset_name }}
+
+                                  <strong >Custom Name</strong> : {{ $sitejsonData->asset_name }}
+
                                 </th>
                                 <td data-label="site_name">
                                     <strong>Site_Name:</strong> {{ $sitejsonData->site_name }}
@@ -824,7 +1170,11 @@ body {
         </div>
     </div>
     <!-- *************************************************************start line ghraph ******************************************************************    -->
+
     <div class="container-fluid py-4">
+
+<div class="container-fluid py-4">
+
         <!-- Header -->
         <div class="row mb-4">
             <div class="col-md-6">
@@ -839,11 +1189,19 @@ body {
             </div>
         </div>
 
+
+
+        
+
         <!-- Consumption Dashboard -->
         <div class="consumption-section">
             <h4 class="mb-4">
                 <i class="fas fa-chart-line me-2"></i>Consumption Dashboard
             </h4>
+
+
+
+            
 
             <!-- Tabs -->
             <ul class="nav nav-tabs" id="consumptionTabs">
@@ -855,6 +1213,9 @@ body {
                 </li>
             </ul>
 
+
+  
+
             <div class="tab-content mt-4">
                 <!-- Daily Tab -->
                 <div class="tab-pane fade show active" id="daily">
@@ -864,10 +1225,18 @@ body {
                             <div class="graph-container mb-4">
                                 <div class="card-header-custom">
                                     <h5 class="chart-title">
+
                                         Unit Consumption
                                     </h5>
                                     <span class="consumption-badge" id="dailyUnitMonth">Aug 2025</span>
                                 </div>
+
+
+                                        Unit Consumption 
+                                    </h5>
+                                    <span class="consumption-badge" id="dailyUnitMonth">Aug 2025</span>
+                                </div>
+                                
 
                                 <!-- Unit Filter Section -->
                                 <div class="filter-section">
@@ -905,24 +1274,40 @@ body {
                                     </div>
                                 </div>
 
+
+
+                                
+
                                 <div class="metric-highlight">
                                     <div>
                                         <div class="metric-title">Current Usage</div>
                                         <div class="metric-value-large" id="dailyUnitCurrent">9.78</div>
                                         <div class="metric-change down">
+
                                             <i class="fas fa-arrow-down me-1"></i> <span
                                                 id="unitChangePercent">4.23%</span> from last month
+
+                                            <i class="fas fa-arrow-down me-1"></i> <span id="unitChangePercent">4.23%</span> from last month
+
                                         </div>
                                     </div>
                                     <div class="text-end">
                                         <div class="metric-title">Max Usage</div>
                                         <div class="metric-value-large" id="dailyUnitMax">15.00</div>
                                         <div class="metric-change up">
+
                                             <i class="fas fa-arrow-up me-1"></i> <span
                                                 id="unitMaxChangePercent">3.1%</span> from last month
                                         </div>
                                     </div>
                                 </div>
+
+
+                                            <i class="fas fa-arrow-up me-1"></i> <span id="unitMaxChangePercent">3.1%</span> from last month
+                                        </div>
+                                    </div>
+                                </div>
+                                
 
                                 <div class="loading-spinner" id="unitChartLoading">
                                     <div class="spinner-border text-primary" role="status">
@@ -932,6 +1317,9 @@ body {
                                 </div>
                                 <canvas id="dailyUnitChart"></canvas>
                             </div>
+
+
+                  
 
                             <div class="kwh-display-container">
                                 <div class="kwh-box">
@@ -945,15 +1333,27 @@ body {
                             </div>
                         </div>
 
+
+
+                        
+
                         <!-- Amount Consumption -->
                         <div class="col-md-6">
                             <div class="graph-container mb-4">
                                 <div class="card-header-custom">
                                     <h5 class="chart-title">
+
                                         Amount Consumption
                                     </h5>
                                     <span class="consumption-badge" id="dailyAmountMonth">Aug 2025</span>
                                 </div>
+
+
+                                        Amount Consumption 
+                                    </h5>
+                                    <span class="consumption-badge" id="dailyAmountMonth">Aug 2025</span>
+                                </div>
+                                
 
                                 <!-- Amount Filter Section -->
                                 <div class="filter-section">
@@ -991,24 +1391,40 @@ body {
                                     </div>
                                 </div>
 
+
+
+                                
+
                                 <div class="metric-highlight">
                                     <div>
                                         <div class="metric-title">Current Amount</div>
                                         <div class="metric-value-large" id="dailyAmountCurrent">57.16</div>
                                         <div class="metric-change down">
+
                                             <i class="fas fa-arrow-down me-1"></i> <span
                                                 id="amountChangePercent">14%</span> from last month
+
+                                            <i class="fas fa-arrow-down me-1"></i> <span id="amountChangePercent">14%</span> from last month
+
                                         </div>
                                     </div>
                                     <div class="text-end">
                                         <div class="metric-title">Max Amount</div>
                                         <div class="metric-value-large" id="dailyAmountMax">88.10</div>
                                         <div class="metric-change up">
+
                                             <i class="fas fa-arrow-up me-1"></i> <span
                                                 id="amountMaxChangePercent">2.7%</span> from last month
                                         </div>
                                     </div>
                                 </div>
+
+
+                                            <i class="fas fa-arrow-up me-1"></i> <span id="amountMaxChangePercent">2.7%</span> from last month
+                                        </div>
+                                    </div>
+                                </div>
+                                
 
                                 <div class="loading-spinner" id="amountChartLoading">
                                     <div class="spinner-border text-primary" role="status">
@@ -1018,6 +1434,9 @@ body {
                                 </div>
                                 <canvas id="dailyAmountChart"></canvas>
                             </div>
+
+
+
 
                             <div class="kwh-display-container">
                                 <div class="kwh-box">
@@ -1033,6 +1452,8 @@ body {
                     </div>
                 </div>
 
+
+
                 <!-- Monthly Tab -->
                 <div class="tab-pane fade" id="monthly">
                     <div class="row">
@@ -1041,10 +1462,18 @@ body {
                             <div class="graph-container mb-4">
                                 <div class="card-header-custom">
                                     <h5 class="chart-title">
+
                                         Unit Consumption
                                     </h5>
                                     <span class="consumption-badge" id="monthlyUnitYear">2025</span>
                                 </div>
+
+
+                                        Unit Consumption 
+                                    </h5>
+                                    <span class="consumption-badge" id="monthlyUnitYear">2025</span>
+                                </div>
+                                
 
                                 <!-- Monthly Unit Filter Section -->
                                 <div class="filter-section">
@@ -1080,19 +1509,31 @@ body {
                                         <div class="metric-title">Current Usage</div>
                                         <div class="metric-value-large" id="monthlyUnitCurrent">12.01</div>
                                         <div class="metric-change down">
+
                                             <i class="fas fa-arrow-down me-1"></i> <span
                                                 id="monthlyUnitChangePercent">4.08%</span> from last month
+
+                                            <i class="fas fa-arrow-down me-1"></i> <span id="monthlyUnitChangePercent">4.08%</span> from last month
+
                                         </div>
                                     </div>
                                     <div class="text-end">
                                         <div class="metric-title">Max Usage</div>
                                         <div class="metric-value-large" id="monthlyUnitMax">24.50</div>
                                         <div class="metric-change up">
+
                                             <i class="fas fa-arrow-up me-1"></i> <span
                                                 id="monthlyUnitMaxChangePercent">0.4%</span> from last month
                                         </div>
                                     </div>
                                 </div>
+
+
+                                            <i class="fas fa-arrow-up me-1"></i> <span id="monthlyUnitMaxChangePercent">0.4%</span> from last month
+                                        </div>
+                                    </div>
+                                </div>
+                                
 
                                 <div class="loading-spinner" id="monthlyUnitLoading">
                                     <div class="spinner-border text-primary" role="status">
@@ -1121,10 +1562,18 @@ body {
                             <div class="graph-container">
                                 <div class="card-header-custom">
                                     <h5 class="chart-title">
+
                                         Amount Consumption
                                     </h5>
                                     <span class="consumption-badge" id="monthlyAmountYear">2025</span>
                                 </div>
+
+
+                                        Amount Consumption 
+                                    </h5>
+                                    <span class="consumption-badge" id="monthlyAmountYear">2025</span>
+                                </div>
+                                
 
                                 <!-- Monthly Amount Filter Section -->
                                 <div class="filter-section">
@@ -1155,24 +1604,40 @@ body {
                                     </div>
                                 </div>
 
+
+
+                                
+
                                 <div class="metric-highlight">
                                     <div>
                                         <div class="metric-title">Current Amount</div>
                                         <div class="metric-value-large" id="monthlyAmountCurrent">75.68</div>
                                         <div class="metric-change down">
+
                                             <i class="fas fa-arrow-down me-1"></i> <span
                                                 id="monthlyAmountChangePercent">7%</span> from last month
+
+                                            <i class="fas fa-arrow-down me-1"></i> <span id="monthlyAmountChangePercent">7%</span> from last month
+
                                         </div>
                                     </div>
                                     <div class="text-end">
                                         <div class="metric-title">Max Amount</div>
                                         <div class="metric-value-large" id="monthlyAmountMax">154.34</div>
                                         <div class="metric-change up">
+
                                             <i class="fas fa-arrow-up me-1"></i> <span
                                                 id="monthlyAmountMaxChangePercent">4.3%</span> from last month
                                         </div>
                                     </div>
                                 </div>
+
+
+                                            <i class="fas fa-arrow-up me-1"></i> <span id="monthlyAmountMaxChangePercent">4.3%</span> from last month
+                                        </div>
+                                    </div>
+                                </div>
+                                
 
                                 <div class="loading-spinner" id="monthlyAmountLoading">
                                     <div class="spinner-border text-primary" role="status">
@@ -1182,6 +1647,10 @@ body {
                                 </div>
                                 <canvas id="monthlyAmountChart"></canvas>
                             </div>
+
+
+
+                            
 
                             <!-- Average and Max Amount Display -->
                             <div class="kwh-display-container">
@@ -1241,27 +1710,41 @@ body {
                         </div>
                     </div>
 
+
+
                     <div class="row mt-4">
                         <div class="col-md-12">
                             <label class="form-label fw-bold">Select Format</label>
                             <div class="d-flex gap-4">
                                 <div class="form-check">
+
                                     <input class="form-check-input" type="radio" name="downloadFormat" id="formatExcel"
                                         value="excel" checked>
+
+                                    <input class="form-check-input" type="radio" name="downloadFormat" id="formatExcel" value="excel" checked>
+
                                     <label class="form-check-label fw-bold" for="formatExcel">
                                         <i class="fas fa-file-excel text-success me-2"></i>Excel Format
                                     </label>
                                 </div>
                                 <div class="form-check">
+
                                     <input class="form-check-input" type="radio" name="downloadFormat" id="formatCSV"
                                         value="csv">
+
+                                    <input class="form-check-input" type="radio" name="downloadFormat" id="formatCSV" value="csv">
+
                                     <label class="form-check-label fw-bold" for="formatCSV">
                                         <i class="fas fa-file-csv text-primary me-2"></i>CSV Format
                                     </label>
                                 </div>
                                 <div class="form-check">
+
                                     <input class="form-check-input" type="radio" name="downloadFormat" id="formatPDF"
                                         value="pdf">
+
+                                    <input class="form-check-input" type="radio" name="downloadFormat" id="formatPDF" value="pdf">
+
                                     <label class="form-check-label fw-bold" for="formatPDF">
                                         <i class="fas fa-file-pdf text-danger me-2"></i>PDF Format
                                     </label>
@@ -1269,6 +1752,10 @@ body {
                             </div>
                         </div>
                     </div>
+
+
+
+                    
 
                     <div class="alert alert-info mt-3">
                         <i class="fas fa-lightbulb me-2"></i>
@@ -1858,7 +2345,11 @@ body {
 
 
 
+
     <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
         // Global variables
         let dailyUnitChart, dailyAmountChart, monthlyUnitChart, monthlyAmountChart;
@@ -2587,11 +3078,20 @@ body {
         }
     </script> -->
 
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
     // Global variables
     let dailyUnitChart, dailyAmountChart, monthlyUnitChart, monthlyAmountChart;
     let selectedDownloadType = 'daily';
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Global variables
+    let dailyUnitChart, dailyAmountChart, monthlyUnitChart, monthlyAmountChart;
+    let selectedDownloadType = 'daily';
+    
 
     // CSRF Token for AJAX requests
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -2606,6 +3106,10 @@ body {
 
     function initializeCharts() {
         console.log('📈 Initializing charts...');
+
+
+
+        
 
         // Daily Unit Chart
         const dailyUnitCtx = document.getElementById('dailyUnitChart').getContext('2d');
@@ -2655,6 +3159,10 @@ body {
                 }
             }
         });
+
+
+
+        
 
         // Daily Amount Chart
         const dailyAmountCtx = document.getElementById('dailyAmountChart').getContext('2d');
@@ -2795,6 +3303,7 @@ body {
     function setupEventListeners() {
         console.log('🔗 Setting up event listeners...');
 
+
         // Daily filter buttons
         document.getElementById('applyUnitFilter').addEventListener('click', updateDailyUnitChart);
         document.getElementById('applyAmountFilter').addEventListener('click', updateDailyAmountChart);
@@ -2802,6 +3311,16 @@ body {
         // Monthly filter buttons
         document.getElementById('applyMonthlyUnitFilter').addEventListener('click', updateMonthlyUnitChart);
         document.getElementById('applyMonthlyAmountFilter').addEventListener('click', updateMonthlyAmountChart);
+
+        
+        // Daily filter buttons
+        document.getElementById('applyUnitFilter').addEventListener('click', updateDailyUnitChart);
+        document.getElementById('applyAmountFilter').addEventListener('click', updateDailyAmountChart);
+        
+        // Monthly filter buttons
+        document.getElementById('applyMonthlyUnitFilter').addEventListener('click', updateMonthlyUnitChart);
+        document.getElementById('applyMonthlyAmountFilter').addEventListener('click', updateMonthlyAmountChart);
+        
 
         // Download modal options
         document.querySelectorAll('.download-option').forEach(option => {
@@ -2814,8 +3333,15 @@ body {
             });
         });
 
+
         // Download button
         document.getElementById('confirmDownload').addEventListener('click', downloadReport);
+
+
+        
+        // Download button
+        document.getElementById('confirmDownload').addEventListener('click', downloadReport);
+        
 
         console.log('✅ Event listeners setup completed');
     }
@@ -2824,20 +3350,35 @@ body {
     async function fetchRealData() {
         console.log('📊 Fetching real data from server...');
 
+
+
+        
+
         try {
             // Stats fetch karein
             const statsResponse = await fetch('/admin/energy-stats');
             const statsData = await statsResponse.json();
 
+
             if (statsData.success) {
                 updateStatsDisplay(statsData);
             }
+
+
+            
+            if (statsData.success) {
+                updateStatsDisplay(statsData);
+            }
+            
 
             // Initial charts data load karein
             updateDailyUnitChart();
             updateDailyAmountChart();
             updateMonthlyUnitChart();
             updateMonthlyAmountChart();
+
+
+            
 
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -2868,23 +3409,34 @@ body {
                 document.getElementById('unitChangePercent').textContent = `${Math.abs(unitChange)}%`;
                 const unitChangeElement = document.querySelector('#unitChangePercent').closest('.metric-change');
                 unitChangeElement.className = `metric-change ${unitChange >= 0 ? 'up' : 'down'}`;
+
                 unitChangeElement.querySelector('i').className = unitChange >= 0 ? 'fas fa-arrow-up me-1' :
                     'fas fa-arrow-down me-1';
             }
+
+
+                unitChangeElement.querySelector('i').className = unitChange >= 0 ? 'fas fa-arrow-up me-1' : 'fas fa-arrow-down me-1';
+            }
+            
 
             if (last && last.avg_amount > 0) {
                 const amountChange = ((current.avg_amount - last.avg_amount) / last.avg_amount * 100).toFixed(2);
                 document.getElementById('amountChangePercent').textContent = `${Math.abs(amountChange)}%`;
                 const amountChangeElement = document.querySelector('#amountChangePercent').closest('.metric-change');
                 amountChangeElement.className = `metric-change ${amountChange >= 0 ? 'up' : 'down'}`;
+
                 amountChangeElement.querySelector('i').className = amountChange >= 0 ? 'fas fa-arrow-up me-1' :
                     'fas fa-arrow-down me-1';
+
+                amountChangeElement.querySelector('i').className = amountChange >= 0 ? 'fas fa-arrow-up me-1' : 'fas fa-arrow-down me-1';
+
             }
         }
     }
 
     async function updateDailyUnitChart() {
         console.log('🔄 Updating daily unit chart with real data...');
+
 
         const month = parseInt(document.getElementById('unitMonthSelect').value);
         const year = parseInt(document.getElementById('unitYearSelect').value);
@@ -2898,10 +3450,25 @@ body {
         // Show loading
         document.getElementById('unitChartLoading').style.display = 'block';
 
+
+        
+        const month = parseInt(document.getElementById('unitMonthSelect').value);
+        const year = parseInt(document.getElementById('unitYearSelect').value);
+        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
+                          'July', 'August', 'September', 'October', 'November', 'December'];
+        
+        // Update display
+        document.getElementById('dailyUnitMonth').textContent = `${monthNames[month]} ${year}`;
+        
+        // Show loading
+        document.getElementById('unitChartLoading').style.display = 'block';
+        
+
         try {
             // Server se data fetch karein
             const response = await fetch(`/admin/energy-data?type=daily&month=${month + 1}&year=${year}`);
             const result = await response.json();
+
 
             if (result.success) {
                 const apiData = result.data;
@@ -2909,6 +3476,16 @@ body {
                 // Chart data prepare karein
                 const labels = [];
                 const data = [];
+
+
+            
+            if (result.success) {
+                const apiData = result.data;
+                
+                // Chart data prepare karein
+                const labels = [];
+                const data = [];
+                
 
                 // Puri month ke liye data prepare karein
                 const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -2955,6 +3532,7 @@ body {
     async function updateDailyAmountChart() {
         console.log('🔄 Updating daily amount chart with real data...');
 
+
         const month = parseInt(document.getElementById('amountMonthSelect').value);
         const year = parseInt(document.getElementById('amountYearSelect').value);
         const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
@@ -2967,10 +3545,25 @@ body {
         // Show loading
         document.getElementById('amountChartLoading').style.display = 'block';
 
+
+        
+        const month = parseInt(document.getElementById('amountMonthSelect').value);
+        const year = parseInt(document.getElementById('amountYearSelect').value);
+        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
+                          'July', 'August', 'September', 'October', 'November', 'December'];
+        
+        // Update display
+        document.getElementById('dailyAmountMonth').textContent = `${monthNames[month]} ${year}`;
+        
+        // Show loading
+        document.getElementById('amountChartLoading').style.display = 'block';
+        
+
         try {
             // Server se data fetch karein
             const response = await fetch(`/admin/energy-data?type=daily&month=${month + 1}&year=${year}`);
             const result = await response.json();
+
 
             if (result.success) {
                 const apiData = result.data;
@@ -2979,10 +3572,24 @@ body {
                 const labels = [];
                 const data = [];
 
+
+            
+            if (result.success) {
+                const apiData = result.data;
+                
+                // Chart data prepare karein
+                const labels = [];
+                const data = [];
+                
+
                 // Puri month ke liye data prepare karein
                 const daysInMonth = new Date(year, month + 1, 0).getDate();
                 for (let day = 1; day <= daysInMonth; day++) {
                     labels.push(`Day ${day}`);
+
+
+
+                    
 
                     // Corresponding data find karein
                     const dayData = apiData.find(item => item.day === day);
@@ -3024,6 +3631,7 @@ body {
     async function updateMonthlyUnitChart() {
         console.log('🔄 Updating monthly unit chart with real data...');
 
+
         const year = parseInt(document.getElementById('monthlyUnitYearSelect').value);
 
         // Update display
@@ -3032,10 +3640,22 @@ body {
         // Show loading
         document.getElementById('monthlyUnitLoading').style.display = 'block';
 
+
+        
+        const year = parseInt(document.getElementById('monthlyUnitYearSelect').value);
+        
+        // Update display
+        document.getElementById('monthlyUnitYear').textContent = year;
+        
+        // Show loading
+        document.getElementById('monthlyUnitLoading').style.display = 'block';
+        
+
         try {
             // Server se data fetch karein
             const response = await fetch(`/admin/energy-data?type=monthly&year=${year}`);
             const result = await response.json();
+
 
             if (result.success) {
                 const apiData = result.data;
@@ -3043,11 +3663,27 @@ body {
                 // Chart data prepare karein
                 const data = Array(12).fill(0);
 
+
+            
+            if (result.success) {
+                const apiData = result.data;
+                
+                // Chart data prepare karein
+                const data = Array(12).fill(0);
+                
+>
                 apiData.forEach(item => {
                     const monthIndex = item.month - 1;
                     data[monthIndex] = item.total_units;
                 });
 
+
+                // Update chart
+                monthlyUnitChart.data.datasets[0].data = data;
+                monthlyUnitChart.update();
+
+
+                
                 // Update chart
                 monthlyUnitChart.data.datasets[0].data = data;
                 monthlyUnitChart.update();
@@ -3082,6 +3718,7 @@ body {
     async function updateMonthlyAmountChart() {
         console.log('🔄 Updating monthly amount chart with real data...');
 
+
         const year = parseInt(document.getElementById('monthlyAmountYearSelect').value);
 
         // Update display
@@ -3090,10 +3727,21 @@ body {
         // Show loading
         document.getElementById('monthlyAmountLoading').style.display = 'block';
 
+
+        
+        const year = parseInt(document.getElementById('monthlyAmountYearSelect').value);
+        
+        // Update display
+        document.getElementById('monthlyAmountYear').textContent = year;
+        
+        // Show loading
+        document.getElementById('monthlyAmountLoading').style.display = 'block';
+
         try {
             // Server se data fetch karein
             const response = await fetch(`/admin/energy-data?type=monthly&year=${year}`);
             const result = await response.json();
+
 
             if (result.success) {
                 const apiData = result.data;
@@ -3101,14 +3749,30 @@ body {
                 // Chart data prepare karein
                 const data = Array(12).fill(0);
 
+            
+            if (result.success) {
+                const apiData = result.data;
+                
+                // Chart data prepare karein
+                const data = Array(12).fill(0);
+                
+
                 apiData.forEach(item => {
                     const monthIndex = item.month - 1;
                     data[monthIndex] = item.total_amount;
                 });
 
+
                 // Update chart
                 monthlyAmountChart.data.datasets[0].data = data;
                 monthlyAmountChart.update();
+
+
+                
+                // Update chart
+                monthlyAmountChart.data.datasets[0].data = data;
+                monthlyAmountChart.update();
+                
 
                 // Stats update karein
                 updateMonthlyAmountStats(data);
@@ -3130,6 +3794,10 @@ body {
             const amountAvg = (nonZeroData.reduce((a, b) => a + b, 0) / nonZeroData.length).toFixed(2);
             const amountMax = Math.max(...nonZeroData).toFixed(2);
 
+
+
+            
+
             document.getElementById('monthlyAmountCurrent').textContent = amountCurrent.toFixed(2);
             document.getElementById('monthlyAmountMax').textContent = amountMax;
             document.getElementById('monthlyAmountAvg').textContent = amountAvg;
@@ -3140,11 +3808,21 @@ body {
     function downloadReport() {
         console.log('💾 Downloading report...');
 
+
         const format = document.querySelector('input[name="downloadFormat"]:checked').value;
         const downloadTime = new Date().toLocaleString();
 
         // Simple download implementation
         showSuccessMessage('Report download feature will be implemented soon!');
+
+
+        
+        const format = document.querySelector('input[name="downloadFormat"]:checked').value;
+        const downloadTime = new Date().toLocaleString();
+        
+        // Simple download implementation
+        showSuccessMessage('Report download feature will be implemented soon!');
+        
 
         // Close modal
         bootstrap.Modal.getInstance(document.getElementById('downloadModal')).hide();
@@ -3165,6 +3843,11 @@ body {
         `;
 
         document.body.appendChild(alertDiv);
+
+
+        
+        document.body.appendChild(alertDiv);
+        
 
         // Auto remove after 5 seconds
         setTimeout(() => {
@@ -3188,7 +3871,13 @@ body {
             </div>
         `;
 
+
         document.body.appendChild(alertDiv);
+
+
+        
+        document.body.appendChild(alertDiv);
+        
 
         // Auto remove after 5 seconds
         setTimeout(() => {
@@ -3197,8 +3886,21 @@ body {
             }
         }, 5000);
     }
+
     </script>
+
+</script>
+
+<!-- this is energy merter  -->
+
 
 </body>
 
 </html>
+
+
+
+
+
+
+<!-- // 676 -->
