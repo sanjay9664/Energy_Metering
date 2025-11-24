@@ -72,6 +72,73 @@
     page-break-inside: avoid;
     page-break-after: auto;
 }
+
+
+/* toggle  */
+  .toggle-btn-container {
+            display: flex;
+            width: 200px;
+            height: 40px;
+            border-radius: 20px;
+            background-color: #e9ecef;
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .toggle-option {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            z-index: 1;
+            transition: color 0.3s;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            width: 50%;
+            height: 100%;
+            background-color: #198754;
+            border-radius: 20px;
+            transition: transform 0.3s ease;
+        }
+        
+        .toggle-slider.manual {
+            transform: translateX(0);
+        }
+        
+        .toggle-slider.auto {
+            transform: translateX(100%);
+        }
+        
+        .toggle-option.active {
+            color: white;
+        }
+        
+        .toggle-option:not(.active) {
+            color: #6c757d;
+        }
+        
+        .buttons-container {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        @media (max-width: 576px) {
+            .buttons-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .toggle-btn-container {
+                width: 100%;
+            }
+        }
 </style>
 
 
@@ -626,22 +693,39 @@
                                                         <input type="hidden" name="cmdField" value="{{ $connectAdd ?? '' }}">
                                                         <i class="fa-solid fa-power-off me-1"></i> Connect
                                                     </button> -->
+                                                    
+                                                    <!-- toggle -->
+                                           <div class="container mt-5">
+        <div class="buttons-container">
+            <!-- Toggle Button -->
+            <div class="toggle-btn-container" id="toggleBtn">
+                <div class="toggle-slider manual"></div>
+                <div class="toggle-option active" data-value="manual">Manual</div>
+                <div class="toggle-option" data-value="auto">Auto</div>
+            </div>
+            
+            <!-- Connect Button -->
+            <button type="button" class="btn btn-success btn-sm connectBtn" data-site-id="1">
+                <input type="hidden" name="moduleId" value="connectModule">
+                <input type="hidden" name="cmdField" value="connectCommand">
+                <input type="hidden" name="cmdArg" value="0">
+                <input type="hidden" name="argValue" value="1">
+                Connect
+            </button>
 
-                                                    <button type="button" class="btn btn-success btn-sm connectBtn" data-site-id="{{ $site->id }}">
-                                                    <input type="hidden" name="moduleId" value="{{ $connectMd }}">
-                                                    <input type="hidden" name="cmdField" value="{{ $connectAdd }}">
-                                                    <input type="hidden" name="cmdArg" value="0">
-                                                    <input type="hidden" name="argValue" value="1">
-                                                    Connect
-                                                </button>
-
-                                                <button type="button" class="btn btn-danger btn-sm disconnectBtn" data-site-id="{{ $site->id }}">
-                                                    <input type="hidden" name="moduleId" value="{{ $connectMd }}">
-                                                    <input type="hidden" name="cmdField" value="{{ $connectAdd }}">
-                                                    <input type="hidden" name="cmdArg" value="1">
-                                                    <input type="hidden" name="argValue" value="1">
-                                                    Disconnect
-                                                </button>
+            <!-- Disconnect Button -->
+            <button type="button" class="btn btn-danger btn-sm disconnectBtn" data-site-id="1">
+                <input type="hidden" name="moduleId" value="connectModule">
+                <input type="hidden" name="cmdField" value="connectCommand">
+                <input type="hidden" name="cmdArg" value="1">
+                <input type="hidden" name="argValue" value="1">
+                Disconnect
+            </button>
+        </div>
+        
+        <!-- Hidden field for toggle value -->
+        <input type="hidden" name="argValue" id="modeValue" value="manual">
+    </div>
 
 
 
@@ -1390,6 +1474,36 @@ document.addEventListener("DOMContentLoaded", function() {
 
 });
 </script>
+
+
+ <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleBtn = document.getElementById('toggleBtn');
+            const modeValue = document.getElementById('modeValue');
+            const toggleSlider = document.querySelector('.toggle-slider');
+            const toggleOptions = document.querySelectorAll('.toggle-option');
+            
+            toggleBtn.addEventListener('click', function() {
+                const isManual = toggleSlider.classList.contains('manual');
+                
+                if (isManual) {
+                    toggleSlider.classList.remove('manual');
+                    toggleSlider.classList.add('auto');
+                    toggleOptions[0].classList.remove('active');
+                    toggleOptions[1].classList.add('active');
+                    modeValue.value = 'auto';
+                } else {
+                    toggleSlider.classList.remove('auto');
+                    toggleSlider.classList.add('manual');
+                    toggleOptions[1].classList.remove('active');
+                    toggleOptions[0].classList.add('active');
+                    modeValue.value = 'manual';
+                }
+                
+                console.log('Mode changed to:', modeValue.value);
+            });
+        });
+    </script>
 
 
 </body>
