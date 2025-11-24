@@ -12,10 +12,88 @@ class DeductDailyCharge extends Command
     protected $signature = 'charge:deduct-daily';
     protected $description = 'Deduct daily fixed charges from each site recharge amount';
 
+    // public function handle()
+    // {
+    //     $now = \Carbon\Carbon::now();
+    //     $hour = $now->format('H'); 
+    //     $daysInMonth = $now->daysInMonth;
+
+    //     $sites = \App\Models\Site::all();
+
+    //     foreach ($sites as $site) {
+
+    //         $totalKwhValue = $this->getTotalKwhValue($site);
+    //         $this->info("🔹 Site ID {$site->id}: total_kwh = {$totalKwhValue}");
+
+    //         $recharge = RechargeSetting::where('m_site_id', $site->id)->first();
+    //         if (!$recharge) continue;
+
+    //         // -----------------------------------
+    //         // 1️⃣ INCREMENTAL KWH DEDUCTION
+    //         // -----------------------------------
+
+    //         $previousKwh = floatval($recharge->kwh ?? 0);
+    //         // $totalKwhValue = 4.49;
+
+    //         $increment = round($totalKwhValue - $previousKwh, 3);
+
+    //         if ($increment < 0) {
+    //             $increment = 0;
+    //         }
+
+    //         if ($increment > 0) {
+    //             $energyCharge = $increment * floatval($recharge->m_unit_charge);
+
+    //             $this->deductAmount($recharge, $energyCharge, "Incremental Energy ({$increment} units)");
+
+    //             \App\Models\DeductionHistory::create([
+    //                 'site_id'     => $site->id,
+    //                 'recharge_id' => $recharge->id,
+    //                 'type'        => 'Incremental Energy',
+    //                 'units'       => $increment,
+    //                 'amount'      => $energyCharge,
+    //             ]);
+    //         }
+
+    //         // Update DB with test reading
+    //         $recharge->kwh = $totalKwhValue;
+    //         $recharge->last_kwh_time = now();
+    //         $recharge->save();
+
+    //         // -----------------------------------
+    //         // 2️⃣ DAILY FIXED CHARGE AT MIDNIGHT
+    //         // -----------------------------------
+    //         if ($hour == 0) {
+
+    //             $monthlyFixedCharge = floatval($recharge->m_fixed_charge) * floatval($recharge->m_sanction_load);
+    //             $dailyFixedCharge = $monthlyFixedCharge / $daysInMonth;
+
+    //             if ($dailyFixedCharge > 0) {
+    //                 $this->deductAmount($recharge, $dailyFixedCharge, 'Daily Fixed');
+
+    //                 \App\Models\DeductionHistory::create([
+    //                     'site_id'     => $site->id,
+    //                     'recharge_id' => $recharge->id,
+    //                     'type'        => 'Daily Fixed',
+    //                     'units'       => 0,
+    //                     'amount'      => $dailyFixedCharge,
+    //                 ]);
+    //             }
+    //         }
+
+    //         // -----------------------------------
+    //         // 3️⃣ REMOTE API (unchanged)
+    //         // -----------------------------------
+    //         $cmdArg = ($recharge->m_recharge_amount <= 0) ? 1 : 0;
+    //         $this->triggerRemoteApi($site, $cmdArg);
+    //     }
+
+    //     $this->info('✅ Incremental + daily fixed deduction completed.');
+    // }
     public function handle()
     {
         $now = \Carbon\Carbon::now();
-        $hour = $now->format('H'); 
+        $hour = $now->format('H');
         $daysInMonth = $now->daysInMonth;
 
         $sites = \App\Models\Site::all();
@@ -28,61 +106,63 @@ class DeductDailyCharge extends Command
             $recharge = RechargeSetting::where('m_site_id', $site->id)->first();
             if (!$recharge) continue;
 
-            // -----------------------------------
-            // 1️⃣ INCREMENTAL KWH DEDUCTION
-            // -----------------------------------
+            // ---------------------------
+            // Skip deductions if manual
+            // ---------------------------
+            $isManual = $recharge->status === 'manual';
 
-            $previousKwh = floatval($recharge->kwh ?? 0);
-            // $totalKwhValue = 4.49;
+            if (!$isManual) {
+                // -----------------------------------
+                // 1️⃣ INCREMENTAL KWH DEDUCTION
+                // -----------------------------------
+                $previousKwh = floatval($recharge->kwh ?? 0);
+                $increment = round($totalKwhValue - $previousKwh, 3);
 
-            $increment = round($totalKwhValue - $previousKwh, 3);
+                if ($increment < 0) { $increment = 0; }
+                if ($increment > 0) {
+                    $energyCharge = $increment * floatval($recharge->m_unit_charge);
 
-            if ($increment < 0) {
-                $increment = 0;
-            }
-
-            if ($increment > 0) {
-                $energyCharge = $increment * floatval($recharge->m_unit_charge);
-
-                $this->deductAmount($recharge, $energyCharge, "Incremental Energy ({$increment} units)");
-
-                \App\Models\DeductionHistory::create([
-                    'site_id'     => $site->id,
-                    'recharge_id' => $recharge->id,
-                    'type'        => 'Incremental Energy',
-                    'units'       => $increment,
-                    'amount'      => $energyCharge,
-                ]);
-            }
-
-            // Update DB with test reading
-            $recharge->kwh = $totalKwhValue;
-            $recharge->last_kwh_time = now();
-            $recharge->save();
-
-            // -----------------------------------
-            // 2️⃣ DAILY FIXED CHARGE AT MIDNIGHT
-            // -----------------------------------
-            if ($hour == 0) {
-
-                $monthlyFixedCharge = floatval($recharge->m_fixed_charge) * floatval($recharge->m_sanction_load);
-                $dailyFixedCharge = $monthlyFixedCharge / $daysInMonth;
-
-                if ($dailyFixedCharge > 0) {
-                    $this->deductAmount($recharge, $dailyFixedCharge, 'Daily Fixed');
+                    $this->deductAmount($recharge, $energyCharge, "Incremental Energy ({$increment} units)");
 
                     \App\Models\DeductionHistory::create([
-                        'site_id'     => $site->id,
+                        'site_id' => $site->id,
                         'recharge_id' => $recharge->id,
-                        'type'        => 'Daily Fixed',
-                        'units'       => 0,
-                        'amount'      => $dailyFixedCharge,
+                        'type' => 'Incremental Energy',
+                        'units' => $increment,
+                        'amount' => $energyCharge,
                     ]);
                 }
+
+                // Update kwh reading
+                $recharge->kwh = $totalKwhValue;
+                $recharge->last_kwh_time = now();
+                $recharge->save();
+
+                // -----------------------------------
+                // 2️⃣ DAILY FIXED CHARGE AT MIDNIGHT
+                // -----------------------------------
+                if ($hour == 0) {
+                    $monthlyFixedCharge = floatval($recharge->m_fixed_charge) * floatval($recharge->m_sanction_load);
+                    $dailyFixedCharge = $monthlyFixedCharge / $daysInMonth;
+
+                    if ($dailyFixedCharge > 0) {
+                        $this->deductAmount($recharge, $dailyFixedCharge, 'Daily Fixed');
+
+                        \App\Models\DeductionHistory::create([
+                            'site_id' => $site->id,
+                            'recharge_id' => $recharge->id,
+                            'type' => 'Daily Fixed',
+                            'units' => 0,
+                            'amount' => $dailyFixedCharge,
+                        ]);
+                    }
+                }
+            } else {
+                $this->info("ℹ️ Site ID {$site->id} is in MANUAL mode — skipping deductions.");
             }
 
             // -----------------------------------
-            // 3️⃣ REMOTE API (unchanged)
+            // 3️⃣ REMOTE API (always trigger)
             // -----------------------------------
             $cmdArg = ($recharge->m_recharge_amount <= 0) ? 1 : 0;
             $this->triggerRemoteApi($site, $cmdArg);

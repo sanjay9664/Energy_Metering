@@ -99,7 +99,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
     Route::get('/energy-data', [SiteController::class, 'getEnergyData'])->name('energy.data');
     Route::get('/energy-stats', [SiteController::class, 'getEnergyStats'])->name('energy.stats');
 
-
+    Route::post('/recharge-settings/update-status', [RechargeSettingsController::class, 'updateStatus']);
 
 })->middleware('auth:admin');
 
