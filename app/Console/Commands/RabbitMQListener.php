@@ -15,6 +15,7 @@ class RabbitMQListener extends Command
     {
         $host = 'app.sochiot.com';
         $port = 5672;
+        // $port = 15672
         $user = 'isab-qa-admin';
         $password = 'I0t3ch';
         $vhost = 'isab-qa'; // default, change if you have a custom vhost
