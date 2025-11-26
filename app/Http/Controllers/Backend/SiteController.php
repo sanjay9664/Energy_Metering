@@ -1385,8 +1385,8 @@ class SiteController extends Controller
     public function getEnergyData(Request $request)
     {
         try {
-            $siteId = $request->site_id ?? 1; // Default site ID, aap change kar sakte hain
-            $type = $request->type; // 'daily' or 'monthly'
+            $siteId = $request->site_id ?? 1;
+            $type = $request->type;
             $month = $request->month ?? Carbon::now()->month;
             $year = $request->year ?? Carbon::now()->year;
 

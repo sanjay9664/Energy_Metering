@@ -4031,145 +4031,206 @@
     // Updated Excel download with balance tracking
     async function downloadExcelReportWithBalance() {
         console.log('📊 Generating Excel report with balance tracking...');
-        
+
         try {
             // Prepare data for Excel
-            const excelData = reportData.map(item => ({
-                'Sr.No': item.srNo,
-                'Date': formatDate(item.date),
-                'Unit Consumed (kWh)': item.unitConsumed.toFixed(2),
-                'Amount (Rs.)': item.amount.toFixed(2),
-                'Balance (Rs.)': item.balance.toFixed(2),
-                'Recharge (Rs.)': item.recharge.toFixed(2),
-                'Remarks': item.recharge > 0 ? 'Auto Recharge' : 'Consumption'
-            }));
-            
+            const excelData = reportData.map((item, index) => {
+
+                const currentBalanceToday = currentBalance; // from your summary
+                const lastReportedBalance = reportData[reportData.length - 1].balance;
+
+                let newRecharge = 0;
+
+                // Apply recharge ONLY on last row (today)
+                if (index === reportData.length - 1) {
+                    newRecharge = currentBalanceToday - lastReportedBalance;
+                }
+
+                console.log(
+                    `Row ${item.srNo}: Today = ${currentBalanceToday}, Last Balance = ${lastReportedBalance}, Recharge = ${newRecharge}`
+                );
+
+                return {
+                    'Sr.No': item.srNo,
+                    'Date': formatDate(item.date),
+                    'Unit Consumed (kWh)': item.unitConsumed.toFixed(2),
+                    'Amount (Rs.)': item.amount.toFixed(2),
+                    'Balance (Rs.)': item.balance.toFixed(2),
+                    'Recharge (Rs.)': newRecharge.toFixed(2),
+                    'Remarks': newRecharge > 0 ? 'Auto Recharge' : 'Consumption'
+                };
+            });
+
             // Add summary section
             excelData.push(
-                {'Sr.No': '', 'Date': '', 'Unit Consumed (kWh)': '', 'Amount (Rs.)': '', 'Balance (Rs.)': '', 'Recharge (Rs.)': '', 'Remarks': ''},
-                {'Sr.No': '', 'Date': 'SUMMARY', 'Unit Consumed (kWh)': '', 'Amount (Rs.)': '', 'Balance (Rs.)': '', 'Recharge (Rs.)': '', 'Remarks': ''},
-                {'Sr.No': '', 'Date': 'Current Balance', 'Unit Consumed (kWh)': '', 'Amount (Rs.)': '', 'Balance (Rs.)': currentBalance.toFixed(2), 'Recharge (Rs.)': '', 'Remarks': ''},
-                {'Sr.No': '', 'Date': 'Total Consumption', 'Unit Consumed (kWh)': reportData.reduce((sum, item) => sum + item.unitConsumed, 0).toFixed(2), 'Amount (Rs.)': reportData.reduce((sum, item) => sum + item.amount, 0).toFixed(2), 'Balance (Rs.)': '', 'Recharge (Rs.)': '', 'Remarks': ''},
-                {'Sr.No': '', 'Date': 'Total Recharge', 'Unit Consumed (kWh)': '', 'Amount (Rs.)': '', 'Balance (Rs.)': '', 'Recharge (Rs.)': reportData.reduce((sum, item) => sum + item.recharge, 0).toFixed(2), 'Remarks': ''}
+                { 'Sr.No': '', 'Date': '', 'Unit Consumed (kWh)': '', 'Amount (Rs.)': '', 'Balance (Rs.)': '', 'Recharge (Rs.)': '', 'Remarks': '' },
+                { 'Sr.No': '', 'Date': 'SUMMARY', 'Unit Consumed (kWh)': '', 'Amount (Rs.)': '', 'Balance (Rs.)': '', 'Recharge (Rs.)': '', 'Remarks': '' },
+                { 'Sr.No': '', 'Date': 'Current Balance', 'Unit Consumed (kWh)': '', 'Amount (Rs.)': '', 'Balance (Rs.)': currentBalance.toFixed(2), 'Recharge (Rs.)': '', 'Remarks': '' },
+                { 'Sr.No': '', 'Date': 'Total Consumption', 'Unit Consumed (kWh)': reportData.reduce((sum, item) => sum + item.unitConsumed, 0).toFixed(2), 'Amount (Rs.)': reportData.reduce((sum, item) => sum + item.amount, 0).toFixed(2), 'Balance (Rs.)': '', 'Recharge (Rs.)': '', 'Remarks': '' },
+                { 'Sr.No': '', 'Date': 'Total Recharge', 'Unit Consumed (kWh)': '', 'Amount (Rs.)': '', 'Balance (Rs.)': '', 'Recharge (Rs.)': reportData.reduce((sum, item) => sum + item.recharge, 0).toFixed(2), 'Remarks': '' }
             );
-            
-            // Create workbook and worksheet
+
+            // Create workbook
             const wb = XLSX.utils.book_new();
             const ws = XLSX.utils.json_to_sheet(excelData);
-            
-            // Add worksheet to workbook
+
             XLSX.utils.book_append_sheet(wb, ws, 'Energy Report');
-            
-            // Generate file name
+
             const fileName = `Energy_Report_${selectedDownloadType}_${new Date().toISOString().split('T')[0]}.xlsx`;
-            
-            // Download file
+
             XLSX.writeFile(wb, fileName);
+
             console.log('✅ Excel file downloaded successfully');
-            
+
         } catch (error) {
             console.error('Error generating Excel:', error);
             throw new Error('Failed to generate Excel file: ' + error.message);
         }
     }
 
-    // Updated CSV download with balance tracking
+    // Updated CSV download with balance tracking + recharge difference logic
     async function downloadCSVReportWithBalance() {
-        console.log('📊 Generating CSV report with balance tracking...');
-        
+        console.log('📊 Generating CSV with correct recharge logic...');
+
         try {
-            // Prepare CSV headers and data
-            const headers = ['Sr.No', 'Date', 'Unit Consumed (kWh)', 'Amount (Rs.)', 'Balance (Rs.)', 'Recharge (Rs.)', 'Remarks'];
+            let previousBalance = null;
+
+            // STEP 1 — Create processed report with NEW recharge logic
+            const processedReport = reportData.map((item, index) => {
+                let recharge = 0;
+
+                if (previousBalance !== null) {
+                    // Recharge happens ONLY when balance increases
+                    if (item.balance > previousBalance) {
+                        recharge = item.balance - previousBalance;
+                    }
+                }
+
+                previousBalance = item.balance;
+
+                return {
+                    ...item,
+                    recharge: recharge,
+                    remarks: recharge > 0 ? "Recharge" : "Consumption"
+                };
+            });
+
+            // STEP 2 — CSV Headers
+            const headers = [
+                'Sr.No',
+                'Date',
+                'Unit Consumed (kWh)',
+                'Amount (Rs.)',
+                'Balance (Rs.)',
+                'Recharge (Rs.)',
+                'Remarks'
+            ];
+
+            // STEP 3 — Build CSV rows
             const csvRows = [
                 headers.join(','),
-                ...reportData.map(item => [
-                    item.srNo,
-                    `"${formatDate(item.date)}"`,
-                    item.unitConsumed.toFixed(2),
-                    item.amount.toFixed(2),
-                    item.balance.toFixed(2),
-                    item.recharge.toFixed(2),
-                    `"${item.recharge > 0 ? 'Auto Recharge' : 'Consumption'}"`
+                ...processedReport.map(row => [
+                    row.srNo,
+                    `"${formatDate(row.date)}"`,
+                    row.unitConsumed.toFixed(2),
+                    row.amount.toFixed(2),
+                    row.balance.toFixed(2),
+                    row.recharge.toFixed(2),
+                    `"${row.remarks}"`
                 ].join(','))
             ];
-            
-            // Add summary section
+
+            // STEP 4 — Summary Row
             csvRows.push(
                 ',,,,,,',
-                ',"SUMMARY",,,,,',
-                `,"Current Balance",,,,${currentBalance.toFixed(2)},`,
-                `,"Total Consumption",${reportData.reduce((sum, item) => sum + item.unitConsumed, 0).toFixed(2)},${reportData.reduce((sum, item) => sum + item.amount, 0).toFixed(2)},,,`,
-                `,"Total Recharge",,,,,${reportData.reduce((sum, item) => sum + item.recharge, 0).toFixed(2)},`
+                `"SUMMARY",,,,,,`,
+                `"Current Balance",,,,${currentBalance.toFixed(2)},`,
+                `"Total Consumption",${processedReport.reduce((s,i)=>s+i.unitConsumed,0).toFixed(2)},${processedReport.reduce((s,i)=>s+i.amount,0).toFixed(2)},,,`,
+                `"Total Recharge",,,,,${processedReport.reduce((s,i)=>s+i.recharge,0).toFixed(2)},`
             );
-            
+
+            // STEP 5 — Convert to Blob
             const csvContent = csvRows.join('\n');
-            
-            // Create and download file
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
+
             const link = document.createElement('a');
-            
-            const fileName = `Energy_Report_${selectedDownloadType}_${new Date().toISOString().split('T')[0]}.csv`;
-            link.setAttribute('href', url);
-            link.setAttribute('download', fileName);
-            link.style.visibility = 'hidden';
-            
+            link.href = URL.createObjectURL(blob);
+            link.download = `Energy_Report_${selectedDownloadType}_${new Date().toISOString().split('T')[0]}.csv`;
+
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            
-            // Clean up
-            setTimeout(() => URL.revokeObjectURL(url), 100);
-            console.log('✅ CSV file downloaded successfully');
-            
+
+            console.log("✅ CSV downloaded with correct recharge values");
+
         } catch (error) {
-            console.error('Error generating CSV:', error);
-            throw new Error('Failed to generate CSV file: ' + error.message);
+            console.error("CSV Generation Error:", error);
         }
     }
 
-    // PDF download function - UPDATED with BALANCE TRACKING
+    // PDF download function - UPDATED with correct RECHARGE LOGIC
     async function downloadPDFReportWithBalance() {
-        console.log('📊 Generating PDF report with balance tracking...');
-        
+        console.log('📄 Generating PDF report with balance tracking...');
+
         try {
-            // Check if jsPDF is available with proper error handling
             if (typeof jspdf === 'undefined' && typeof window.jspdf === 'undefined') {
                 console.error('PDF library not loaded');
-                // Fallback to CSV if PDF library not available
                 await downloadCSVReportWithBalance();
                 return;
             }
-            
-            // Use the correct jsPDF reference
+
             const jsPDF = window.jspdf.jsPDF;
             const doc = new jsPDF();
-            
-            // Add title
+
+            // Title
             doc.setFontSize(16);
             doc.setTextColor(0, 46, 110);
             doc.text(`Energy Consumption Report`, 105, 15, { align: 'center' });
-            
-            // Add report type and date
+
+            // Subtitle
             doc.setFontSize(10);
             doc.setTextColor(100, 100, 100);
-            doc.text(`${selectedDownloadType.charAt(0).toUpperCase() + selectedDownloadType.slice(1)} Report - Generated on: ${new Date().toLocaleString()}`, 105, 22, { align: 'center' });
-            
-            // Add CURRENT balance info
-            doc.text(`Current Balance: Rs. ${currentBalance.toFixed(2)} | Recharge Amount: Rs. ${rechargeSettings.m_sanction_load} | Unit Rate: Rs. ${rechargeSettings.unit_rate}/kWh`, 105, 28, { align: 'center' });
-            
-            // Prepare table data
-            const tableData = reportData.map(item => [
-                item.srNo.toString(),
-                formatDate(item.date),
-                item.unitConsumed.toFixed(2) + ' kWh',
-                'Rs. ' + item.amount.toFixed(2),
-                'Rs. ' + item.balance.toFixed(2),
-                'Rs. ' + item.recharge.toFixed(2),
-                item.recharge > 0 ? 'Auto Recharge' : 'Consumption'
-            ]);
-            
-            // Add table using autoTable - with proper error handling
+            doc.text(
+                `${selectedDownloadType.charAt(0).toUpperCase() + selectedDownloadType.slice(1)} Report - Generated on: ${new Date().toLocaleString()}`,
+                105, 22, { align: 'center' }
+            );
+
+            // Current balance info
+            doc.text(
+                `Current Balance: Rs. ${currentBalance.toFixed(2)} | Recharge Amount: Rs. ${rechargeSettings?.m_sanction_load || 0} | Unit Rate: Rs. ${rechargeSettings?.unit_rate}/kWh`,
+                105, 28, { align: 'center' }
+            );
+
+            // --------------------------
+            // 🔥 Recharge Calculation Logic
+            // --------------------------
+            const currentBalanceToday = currentBalance;
+            const lastReportedBalance = reportData[reportData.length - 1].balance;
+
+            // Prepare PDF table data with correct recharge logic
+            const tableData = reportData.map((item, index) => {
+
+                let newRecharge = 0;
+
+                // Apply recharge ONLY on last report row (today)
+                if (index === reportData.length - 1) {
+                    newRecharge = currentBalanceToday - lastReportedBalance;
+                }
+
+                return [
+                    item.srNo.toString(),
+                    formatDate(item.date),
+                    item.unitConsumed.toFixed(2) + ' kWh',
+                    'Rs. ' + item.amount.toFixed(2),
+                    'Rs. ' + item.balance.toFixed(2),
+                    'Rs. ' + newRecharge.toFixed(2),
+                    newRecharge > 0 ? 'Auto Recharge' : 'Consumption'
+                ];
+            });
+
+            // --------------------------
+            // PDF Table Rendering
+            // --------------------------
             if (typeof doc.autoTable !== 'undefined') {
                 doc.autoTable({
                     startY: 35,
@@ -4186,37 +4247,29 @@
                     },
                     margin: { top: 35 }
                 });
-                
-                // Add current balance summary
+
+                // Summary
                 const finalY = doc.lastAutoTable.finalY + 10;
                 doc.setFontSize(10);
                 doc.setTextColor(0, 46, 110);
                 doc.text(`Current Available Balance: Rs. ${currentBalance.toFixed(2)}`, 105, finalY, { align: 'center' });
-                
-                // Add consumption summary
-                doc.text(`Total Consumption: ${reportData.reduce((sum, item) => sum + item.unitConsumed, 0).toFixed(2)} kWh | Total Amount: Rs. ${reportData.reduce((sum, item) => sum + item.amount, 0).toFixed(2)}`, 105, finalY + 6, { align: 'center' });
-            } else {
-                // Simple table if autoTable not available
-                let yPosition = 35;
-                tableData.forEach(row => {
-                    if (yPosition < 280) {
-                        doc.text(row.join(' | '), 10, yPosition);
-                        yPosition += 10;
-                    }
-                });
+
+                doc.text(
+                    `Total Consumption: ${reportData.reduce((sum, item) => sum + item.unitConsumed, 0).toFixed(2)} kWh | Total Amount: Rs. ${reportData.reduce((sum, item) => sum + item.amount, 0).toFixed(2)}`,
+                    105, finalY + 6, { align: 'center' }
+                );
             }
-            
-            // Generate file name and save
+
+            // Save PDF
             const fileName = `Energy_Report_${selectedDownloadType}_${new Date().toISOString().split('T')[0]}.pdf`;
             doc.save(fileName);
-            console.log('✅ PDF file downloaded successfully');
-            
+
+            console.log('✅ PDF downloaded successfully');
+
         } catch (error) {
             console.error('Error generating PDF:', error);
-            // Try CSV as fallback
             try {
                 await downloadCSVReportWithBalance();
-                console.log('PDF failed, CSV download successful as fallback');
             } catch (fallbackError) {
                 throw new Error('Failed to generate PDF and CSV fallback: ' + error.message);
             }
