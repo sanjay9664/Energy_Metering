@@ -95,11 +95,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
     Route::get('/energy-stats', [SiteController::class, 'getEnergyStats'])->name('energy.stats');
     Route::post('/recharge-settings/update-status', [RechargeSettingsController::class, 'updateStatus']);
     
-    Route::post('/admin/download-report', [SiteController::class, 'downloadReport'])->name('download.report');
+    // Route::post('/download-report', [SiteController::class, 'downloadReport'])->name('download.report');
     Route::get('/admin/energy-data', [SiteController::class, 'getEnergyConsumptionData'])->name('energy.data');
-    Route::get('/admin/energy-dashboard-stats', [SiteController::class, 'getEnergyDashboardStats'])->name('energy.dashboard.stats');
-
-     
 
 })->middleware('auth:admin');
 
