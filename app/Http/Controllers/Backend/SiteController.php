@@ -1511,8 +1511,9 @@ class SiteController extends Controller
             // assign previous amount for next row
             $previousAmount = $todayAmount;
         }
+        $fileName = 'Recharge_Report_' . ucfirst($reportType) . '_' . now()->format('d-m-Y') . '.xlsx';
 
-        return Excel::download(new EnergyReportExport($data), 'Report.xlsx');
+        return Excel::download(new EnergyReportExport($data), $fileName);
     }
 
     private function getRechargeData($reportType, $filters)
@@ -1521,9 +1522,10 @@ class SiteController extends Controller
             ->join('recharge_settings', 'recharges.recharge_id', '=', 'recharge_settings.id')
             ->select(
                 'recharges.id',
-                'recharge_settings.created_at as setting_created_at',
+                'recharges.created_at as setting_created_at',
                 'recharge_settings.kwh',
                 'recharge_settings.m_recharge_amount',
+                'recharge_settings.m_unit_charge',
                 'recharges.recharge_amount'
             );
 

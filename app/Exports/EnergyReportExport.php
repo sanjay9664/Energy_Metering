@@ -26,8 +26,8 @@ class EnergyReportExport implements FromCollection, WithHeadings, WithMapping
             'Sr No',
             'Date',
             'kWh',
-            'Today m_recharge_amount',
-            'Amount Cut',
+            'Unit Consumed (kW Amount (Rs.)',
+            'Current Balance',
             'Recharge Amount'
         ];
     }
@@ -36,12 +36,15 @@ class EnergyReportExport implements FromCollection, WithHeadings, WithMapping
     {
         static $i = 1;
 
+        // calculate unit consumed amount
+        $unitAmount = $row->kwh * $row->m_unit_charge;
+
         return [
             $i++,
             \Carbon\Carbon::parse($row->setting_created_at)->format('d-m-Y'),
             $row->kwh,
+            number_format($unitAmount, 2),
             $row->m_recharge_amount,
-            number_format($row->amount_cut, 2),
             $row->recharge_amount
         ];
     }
