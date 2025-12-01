@@ -1338,6 +1338,8 @@ class SiteController extends Controller
 
 
 
+
+    // *********************************************************************************calculate report send data******************
     public function energyConsumptionDashboard()
     {
         $sites = Site::all();
@@ -1594,7 +1596,7 @@ class SiteController extends Controller
     }
 
     // Your existing private methods...
-    private function downloadExcelReport($reportType, $filters)
+ private function downloadExcelReport($reportType, $filters)
     {
         $data = $this->getReportData($reportType, $filters);
     $summary = $this->getSummaryData($data);

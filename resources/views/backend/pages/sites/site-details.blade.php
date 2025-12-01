@@ -4955,7 +4955,8 @@
         document.getElementById('monthlyUnitLoading').style.display = 'block';
 
         try {
-            // Server se data fetch karein
+            // Server se data fetch karein 
+            // sanjay
             const response = await fetch(`/admin/energy-data?type=monthly&year=${year}`);
             const result = await response.json();
 
@@ -5059,99 +5060,7 @@
         }
     }
 
-    // ✅ UPDATED: Download Report Function with AJAX call to controller
-// async function downloadReport() {
-    //     console.log('💾 Downloading report with AJAX...');
-
-    //     const format = document.querySelector('input[name="downloadFormat"]:checked').value;
-        
-    //     try {
-    //         // Show loading state
-    //         const downloadBtn = document.getElementById('confirmDownload');
-    //         const originalText = downloadBtn.innerHTML;
-    //         downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Generating...';
-    //         downloadBtn.disabled = true;
-
-    //         // Get current filter values
-    //         const filters = getCurrentFilters();
-            
-    //         console.log('Sending request to server:', {
-    //             type: format,
-    //             report_type: selectedDownloadType,
-    //             ...filters
-    //         });
-
-    //         // Make API request to server - AJAX call to controller
-    //         const response = await fetch('/admin/download-report', {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //                 'X-CSRF-TOKEN': csrfToken,
-    //                 'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/pdf'
-    //             },
-    //             body: JSON.stringify({
-    //                 type: format,
-    //                 report_type: selectedDownloadType,
-    //                 ...filters
-    //             })
-    //         });
-
-    //         if (response.ok) {
-    //             // Get the blob data
-    //             const blob = await response.blob();
-                
-    //             // Create download link
-    //             const url = window.URL.createObjectURL(blob);
-    //             const a = document.createElement('a');
-    //             a.style.display = 'none';
-    //             a.href = url;
-                
-    //             // Get filename from response headers
-    //             const contentDisposition = response.headers.get('content-disposition');
-    //             let filename = `Energy_Report_${selectedDownloadType}_${new Date().toISOString().split('T')[0]}.${format}`;
-                
-    //             if (contentDisposition) {
-    //                 const filenameMatch = contentDisposition.match(/filename="(.+)"/);
-    //                 if (filenameMatch) {
-    //                     filename = filenameMatch[1];
-    //                 }
-    //             }
-                
-    //             a.download = filename;
-    //             document.body.appendChild(a);
-    //             a.click();
-                
-    //             // Clean up
-    //             window.URL.revokeObjectURL(url);
-    //             document.body.removeChild(a);
-
-    //             showSuccessMessage(`Report downloaded successfully as ${format.toUpperCase()}!`);
-    //         } else {
-    //             // Handle server errors
-    //             const errorData = await response.json();
-    //             throw new Error(errorData.message || 'Failed to generate report');
-    //         }
-            
-    //     } catch (error) {
-    //         console.error('Error downloading report:', error);
-    //         showErrorMessage('Error generating report: ' + error.message);
-    //     } finally {
-    //         // Restore button state
-    //         const downloadBtn = document.getElementById('confirmDownload');
-    //         if (downloadBtn) {
-    //             downloadBtn.innerHTML = '<i class="fas fa-download me-1"></i> Generate & Download';
-    //             downloadBtn.disabled = false;
-    //         }
-            
-    //         // Close modal
-    //         const modal = bootstrap.Modal.getInstance(document.getElementById('downloadModal'));
-    //         if (modal) modal.hide();
-    //     }
-    // }
-
-    // JS code mein yeh fix karein
-
-    // ✅ UPDATED: Real Data Processing with Balance Tracking
+   
 async function getRealTimeDataWithBalance() {
     console.log('🔄 Fetching real-time data with balance tracking...');
     
@@ -5160,7 +5069,7 @@ async function getRealTimeDataWithBalance() {
         const month = filters.month || new Date().getMonth() + 1;
         const year = filters.year || new Date().getFullYear();
         
-        // Fetch real data from server
+        // Fetch real data from server sanjay
         const response = await fetch(`/admin/energy-data?type=daily&month=${month}&year=${year}`);
         
         if (response.ok) {
@@ -5363,95 +5272,7 @@ function generateSampleDataWithBalance() {
     return sampleData;
 }
 
-//  async function downloadReport() {
-//     console.log('💾 Downloading report with AJAX...');
 
-//     const format = document.querySelector('input[name="downloadFormat"]:checked').value;
-    
-//     try {
-//         // Show loading state
-//         const downloadBtn = document.getElementById('confirmDownload');
-//         downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Generating...';
-//         downloadBtn.disabled = true;
-
-//         // Get current filter values
-//         const filters = getCurrentFilters();
-        
-//         console.log('Sending request to server:', {
-//             type: format,
-//             report_type: selectedDownloadType,
-//             ...filters
-//         });
-
-//         // ✅ CORRECTED: Use the right URL - /admin/admin/download-report
-//         const formData = new FormData();
-//         formData.append('type', format);
-//         formData.append('report_type', selectedDownloadType);
-//         formData.append('month', filters.month || '');
-//         formData.append('year', filters.year || '');
-//         formData.append('_token', csrfToken);
-
-//         // ✅ CORRECTED URL: /admin/admin/download-report
-//         const response = await fetch('/admin/admin/download-report', {
-//             method: 'POST',
-//             headers: {
-//                 'X-Requested-With': 'XMLHttpRequest',
-//                 'X-CSRF-TOKEN': csrfToken
-//             },
-//             body: formData
-//         });
-
-//         console.log('Response status:', response.status);
-
-//         if (response.ok) {
-//             const blob = await response.blob();
-//             const url = window.URL.createObjectURL(blob);
-//             const a = document.createElement('a');
-//             a.style.display = 'none';
-//             a.href = url;
-            
-//             const contentDisposition = response.headers.get('content-disposition');
-//             let filename = `Energy_Report_${selectedDownloadType}_${new Date().toISOString().split('T')[0]}.${format}`;
-            
-//             if (contentDisposition) {
-//                 const filenameMatch = contentDisposition.match(/filename="(.+)"/);
-//                 if (filenameMatch) filename = filenameMatch[1];
-//             }
-            
-//             a.download = filename;
-//             document.body.appendChild(a);
-//             a.click();
-//             window.URL.revokeObjectURL(url);
-//             document.body.removeChild(a);
-
-//             showSuccessMessage(`Report downloaded successfully as ${format.toUpperCase()}!`);
-//         } else {
-//             if (response.status === 404) {
-//                 throw new Error('Download service not found. Route: /admin/admin/download-report');
-//             } else if (response.status === 500) {
-//                 const errorData = await response.json();
-//                 throw new Error(errorData.message || 'Server error occurred.');
-//             } else {
-//                 throw new Error(`HTTP error! status: ${response.status}`);
-//             }
-//         }
-        
-//     } catch (error) {
-//         console.error('Error downloading report:', error);
-//         showErrorMessage('Error generating report: ' + error.message);
-//     } finally {
-//         const downloadBtn = document.getElementById('confirmDownload');
-//         if (downloadBtn) {
-//             downloadBtn.innerHTML = '<i class="fas fa-download me-1"></i> Generate & Download';
-//             downloadBtn.disabled = false;
-//         }
-        
-//         const modal = bootstrap.Modal.getInstance(document.getElementById('downloadModal'));
-//         if (modal) modal.hide();
-//     }
-// }
-
-    // ✅ ADD: Helper function to get current filters
     function getCurrentFilters() {
         const filters = {};
         
