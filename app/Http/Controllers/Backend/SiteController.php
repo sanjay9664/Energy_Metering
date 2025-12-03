@@ -91,6 +91,7 @@ class SiteController extends Controller
 
         $additionalData = [
             'site_name' => $request->input('site_name'),
+            'meter_type' => $request->input('meter_type'),
             'asset_name' => $request->input('asset_name'),
             'group' => $request->input('group'),
             'generator' => $request->input('generator'),
@@ -259,33 +260,33 @@ class SiteController extends Controller
                 ],
             ],
             'alarm_status' => [
-                'coolant_temperature_status' => [
-                    'md' =>  $request->input('coolant_temperature_md_status'),
-                    'add' => $request->input('coolant_temperature_add_status'),
+                'recharge' => [
+                    'md' =>  $request->input('recharge_md'),
+                    'add' => $request->input('recharge_add'),
                 ],
-                'fuel_level_status' => [
-                    'md' =>  $request->input('fuel_level_md_status'),
-                    'add' => $request->input('fuel_level_add_status'),
+                 'fixed_charge_mains' => [
+                    'md' =>  $request->input('fixed_charge_md_mains'),
+                    'add' => $request->input('fixed_charge_add_mains'),
                 ],
-                'emergency_stop_status' => [
-                    'md' =>  $request->input('emergency_stop_md_status'),
-                    'add' => $request->input('emergency_stop_add_status'),
+                'unit_charge_mains' => [
+                    'md' =>  $request->input('unit_charge_md_mains'),
+                    'add' => $request->input('unit_charge_add_mains'),
                 ],
-                'high_coolant_temperature_status' => [
+                'sanction_load_mains' => [
                     'md' => $request->input('high_coolant_temperature_md_status'),
                     'add' => $request->input('high_coolant_temperature_add_status'),
                 ],
-                'under_speed_status' => [
-                    'md' => $request->input('under_speed_md_status'),
-                    'add' => $request->input('under_speed_add_status'),
+                'fixed_charge_dg' => [
+                    'md' => $request->input('fixed_charge_md_dg'),
+                    'add' => $request->input('fixed_charge_add_dg'),
                 ],
-                'fail_to_start_status' => [
-                    'md' => $request->input('fail_to_start_md_status'),
-                    'add' => $request->input('fail_to_start_add_status'),
+                'unit_charge_dg' => [
+                    'md' => $request->input('unit_charge_md_dg'),
+                    'add' => $request->input('unit_charge_add_dg'),
                 ],
-                'loss_of_speed_sensing_status' => [
-                    'md' => $request->input('loss_of_speed_sensing_md_status'),
-                    'add' => $request->input('loss_of_speed_sensing_add_status'),
+                'sanction_load_dg' => [
+                    'md' => $request->input('sanction_load_md_dg'),
+                    'add' => $request->input('sanction_load_add_dg'),
                 ],
                 'oil_pressure_status' => [
                     'md' => $request->input('oil_pressure_md_status'),
@@ -357,6 +358,7 @@ class SiteController extends Controller
 
         $additionalData = [
             'site_name' => $request->input('site_name'),
+            'meter_type' => $request->input('meter_type'),
             'asset_name' => $request->input('asset_name'),
             'group' => $request->input('group'),
             'generator' => $request->input('generator'),
@@ -525,33 +527,33 @@ class SiteController extends Controller
                 ],
             ],
             'alarm_status' => [
-                'coolant_temperature_status' => [
-                    'md' =>  $request->input('coolant_temperature_md_status'),
-                    'add' => $request->input('coolant_temperature_add_status'),
+                'recharge' => [
+                    'md' =>  $request->input('recharge_md'),
+                    'add' => $request->input('recharge_add'),
                 ],
-                'fuel_level_status' => [
-                    'md' =>  $request->input('fuel_level_md_status'),
-                    'add' => $request->input('fuel_level_add_status'),
+                'fixed_charge_mains' => [
+                    'md' =>  $request->input('fixed_charge_md_mains'),
+                    'add' => $request->input('fixed_charge_add_mains'),
                 ],
-                'emergency_stop_status' => [
-                    'md' =>  $request->input('emergency_stop_md_status'),
-                    'add' => $request->input('emergency_stop_add_status'),
+                'unit_charge_mains' => [
+                    'md' =>  $request->input('unit_charge_md_mains'),
+                    'add' => $request->input('unit_charge_add_mains'),
                 ],
-                'high_coolant_temperature_status' => [
-                    'md' => $request->input('high_coolant_temperature_md_status'),
-                    'add' => $request->input('high_coolant_temperature_add_status'),
+                'sanction_load_mains' => [
+                    'md' => $request->input('sanction_load_md_mains'),
+                    'add' => $request->input('sanction_load_add_mains'),
                 ],
-                'under_speed_status' => [
-                    'md' => $request->input('under_speed_md_status'),
-                    'add' => $request->input('under_speed_add_status'),
+                'fixed_charge_dg' => [
+                    'md' => $request->input('fixed_charge_md_dg'),
+                    'add' => $request->input('fixed_charge_add_dg'),
                 ],
-                'fail_to_start_status' => [
-                    'md' => $request->input('fail_to_start_md_status'),
-                    'add' => $request->input('fail_to_start_add_status'),
+                'unit_charge_dg' => [
+                    'md' => $request->input('unit_charge_md_dg'),
+                    'add' => $request->input('unit_charge_add_dg'),
                 ],
-                'loss_of_speed_sensing_status' => [
-                    'md' => $request->input('loss_of_speed_sensing_md_status'),
-                    'add' => $request->input('loss_of_speed_sensing_add_status'),
+                'sanction_load_dg' => [
+                    'md' => $request->input('sanction_load_md_dg'),
+                    'add' => $request->input('sanction_load_add_dg'),
                 ],
                 'oil_pressure_status' => [
                     'md' => $request->input('oil_pressure_md_status'),
@@ -812,8 +814,8 @@ class SiteController extends Controller
             $userEmail = $user->email;
 
             $siteData = $user->hasRole('superadmin')
-                ? Site::select(['id', 'site_name', 'slug', 'email', 'data', 'device_id', 'clusterID'])->get()
-                : Site::where('email', $userEmail)->select(['id', 'site_name', 'slug', 'email', 'data', 'device_id', 'clusterID'])->get();
+                ? Site::select(['id', 'site_name', 'slug', 'email', 'data', 'device_id', 'clusterID','alternate_device_id'])->get()
+                : Site::where('email', $userEmail)->select(['id', 'site_name', 'slug', 'email', 'data', 'device_id', 'clusterID','alternate_device_id'])->get();
 
             $mdValues = $this->extractMdFields(
                 $siteData->pluck('data')->map(fn($data) => json_decode($data, true))->toArray()
@@ -1468,6 +1470,9 @@ class SiteController extends Controller
             ], 500);
         }
     }
+
+
+    // ************************excel **********************
 
     public function downloadReport(Request $request)
     {

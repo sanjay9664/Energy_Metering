@@ -122,7 +122,40 @@
                                 <label for="name">Alternative Device ID</label>
                                 <input type="text" class="form-control" id="alternate_device_id" name="alternate_device_id">
                                </div>
+
+                               <!-- <div class="form-group col-md-2 col-sm-6">
+                                    <label for="meter_type">Meter Type</label>
+                                    <select class="form-control" id="meter_type" name="meter_type">
+                                        <option value="">Select Meter Type</option>
+                                        <option value="Multi_Function_Meter">Multi Function Meter</option>
+                                        <option value="Prepaid_Meter">Prepaid Meter</option>
+                                    </select>
+                                </div> -->
+
+                                <div class="form-group col-md-2 col-sm-6">
+                                    <label for="meter_type">Meter Type</label>
+                                    <select class="form-control @error('meter_type') is-invalid @enderror" 
+                                            id="meter_type" 
+                                            name="meter_type">
+                                        <option value="">Select Meter Type</option>
+                                        <option value="Multi_Function_Meter" 
+                                            {{ old('meter_type') == 'Multi_Function_Meter' ? 'selected' : '' }}>
+                                            Multi Function Meter
+                                        </option>
+                                        <option value="Prepaid_Meter"
+                                            {{ old('meter_type') == 'Prepaid_Meter' ? 'selected' : '' }}>
+                                            Prepaid Meter
+                                        </option>
+                                    </select>
+                                    @error('meter_type')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+
                             </div>
+                            
 
                             <div class="form-row">
                                 <div class="container mt-2 ml-5 d-flex">
@@ -161,7 +194,7 @@
                                                 <!-- Serial Number -->
                                                 <div class="d-flex justify-content-between align-items-center mb-2"
                                                     style="font-size: 12px; margin-top: 10px;">
-                                                    <span>S/N:</span>
+                                                    <span>Meter_No:</span>
                                                     <input type="text" name="serial_number" class="form-control ms-2"
                                                         style="width: 70%;">
                                                 </div>
@@ -335,7 +368,7 @@
                                     </div>
 
                                     <div class="col-md-3">
-                                        <div class="card" style="width: 100%; height: 905px;">
+                                        <div class="card" style="width: 100%; height: 1345px;">
                                             <div class="card-header text-center bg-secondary text-white">
                                                 ENGINE PARAMETERS
                                             </div>
@@ -847,95 +880,97 @@
                                                         <div class="d-flex align-items-center justify-content-start">
                                                             <span class="me-2 rounded-circle"
                                                                 style="width: 10px; height: 10px; background-color: green; animation: blink 1.5s infinite;"></span>
-                                                            <span>Coolant Temperature</span>
+                                                            <span class="fs-6 fw-medium text-primary">Recharge</span>
                                                         </div>
                                                         <div class="d-flex">
                                                             <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                                name="coolant_temperature_md_status" placeholder="MD">
+                                                                name="recharge_md" placeholder="MD">
                                                             <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                                name="coolant_temperature_add_status" placeholder="ADD">
+                                                                name="recharge_add" placeholder="ADD">
                                                         </div>
 
-                                                        <!-- Fuel Level -->
+
+                                             
+                                                        <!-- Mains Details -->
                                                         <div class="d-flex align-items-center justify-content-start">
                                                             <span class="me-2 rounded-circle"
                                                                 style="width: 10px; height: 10px; background-color: red; animation: blink 1.5s infinite;"></span>
-                                                            <span>Fuel Level</span>
+                                                            <span class="fs-6 fw-medium text-primary">Fixed_Charge_Mains</span>
                                                         </div>
 
 
 
                                                         <div class="d-flex">
                                                             <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                                name="fuel_level_md_status" placeholder="MD">
+                                                                name="fixed_charge_md_mains" placeholder="MD">
                                                             <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                                name="fuel_level_add_status" placeholder="ADD">
+                                                                name="fixed_charge_add_mains" placeholder="ADD">
                                                         </div>
 
-                                                        <!-- Emergency Stop -->
+                                                        <!-- Unit Charge Mains -->
                                                         <div class="d-flex align-items-center justify-content-start">
                                                             <span class="me-2 rounded-circle"
                                                                 style="width: 10px; height: 10px; background-color: green; animation: blink 1.5s infinite;"></span>
-                                                            <span>Emergency stop</span>
+                                                            <span class="fs-6 fw-medium text-primary">Unit_Charge_Mains</span>
                                                         </div>
                                                         <div class="d-flex">
                                                             <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                                name="emergency_stop_md_status" placeholder="MD">
+                                                                name="unit_charge_md_mains" placeholder="MD">
                                                             <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                                name="emergency_stop_add_status" placeholder="ADD">
+                                                                name="unit_charge_add_mains" placeholder="ADD">
                                                         </div>
 
-                                                        <!-- High Coolant Temperature -->
+                                                        <!-- Sanction Load Mains -->
                                                         <div class="d-flex align-items-center justify-content-start">
                                                             <span class="me-2 rounded-circle"
                                                                 style="width: 10px; height: 10px; background-color: red; animation: blink 1.5s infinite;"></span>
-                                                            <span>High coolant temperature</span>
+                                                            <span class="fs-6 fw-medium text-primary">Sanction_Load_Mains</span>
                                                         </div>
                                                         <div class="d-flex">
                                                             <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                                name="high_coolant_temperature_md_status" placeholder="MD">
+                                                                name="sanction_load_md_mains" placeholder="MD">
                                                             <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                                name="high_coolant_temperature_add_status"
+                                                                name="sanction_load_add_mains"
                                                                 placeholder="ADD">
                                                         </div>
 
-                                                        <!-- Under Speed -->
+                                                        <!-- Fixed_Charge_DG -->
                                                         <div class="d-flex align-items-center justify-content-start">
                                                             <span class="me-2 rounded-circle"
                                                                 style="width: 10px; height: 10px; background-color: green; animation: blink 1.5s infinite;"></span>
-                                                            <span>Under speed</span>
+                                                            <span class="fs-6 fw-medium text-primary">Fixed_Charge_DG</span>
                                                         </div>
                                                         <div class="d-flex">
                                                             <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                                name="under_speed_md_status" placeholder="MD">
+                                                                name="fixed_charge_md_dg" placeholder="MD">
                                                             <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                                name="under_speed_add_status" placeholder="ADD">
+                                                                name="fixed_charge_add_dg" placeholder="ADD">
                                                         </div>
 
-                                                        <!-- Fail to Start -->
+                                                        <!-- Unit_Charge_DG -->
                                                         <div class="d-flex align-items-center justify-content-start">
                                                             <span class="me-2 rounded-circle"
                                                                 style="width: 10px; height: 10px; background-color: red; animation: blink 1.5s infinite;"></span>
-                                                            <span>Fail to start</span>
+                                                            <span class="fs-6 fw-medium text-primary">Unit_Charge_DG</span>
                                                         </div>
                                                         <div class="d-flex">
                                                             <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                                name="fail_to_start_md_status" placeholder="MD">
+                                                                name="unit_charge_md_dg" placeholder="MD">
                                                             <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                                name="fail_to_start_add_status" placeholder="ADD">
+                                                                name="unit_charge_add_dg" placeholder="ADD">
                                                         </div>
 
-                                                        <!-- Loss of Speed Sensing -->
+                                                        <!-- Sanction_Load_DG -->
                                                         <div class="d-flex align-items-center justify-content-start">
                                                             <span class="me-2 rounded-circle"
                                                                 style="width: 10px; height: 10px; background-color: green; animation: blink 1.5s infinite;"></span>
-                                                            <span>Loss of speed sensing</span>
+                                                            <span class="fs-6 fw-medium text-primary">Sanction_Load_DG</span>
                                                         </div>
                                                         <div class="d-flex">
                                                             <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                                name="loss_of_speed_sensing_md_status" placeholder="MD">
+                                                                name="sanction_load_md_dg" placeholder="MD">
                                                             <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                                name="loss_of_speed_sensing_add_status" placeholder="ADD">
+                                                                name="sanction_load_add_dg" placeholder="ADD">
                                                         </div>
                                                     </div>
                                                     <!-- Right Column -->

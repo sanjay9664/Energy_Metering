@@ -101,18 +101,45 @@ input {
                                     MD="{{ old('clusterID') }}">
                             </div>
                              
-                              <!-- <div class="form-group col-md-4 col-sm-12">
-                                <label for="name">Device ID</label>
-                                <input type="text" class="form-control" id="device_id" name="device_id"
-                                    value="{{ $site->device_id }}" placeholder="Enter Device Id" required autofocus
-                                    MD="{{ old('device_id') }}">
-                            </div> -->
+                            
                              <div class="form-group col-md-4 col-sm-12">
                                 <label for="name">Alternative Device ID</label>
                                 <input type="text" class="form-control" id="alternate_device_id" name="alternate_device_id"
                                     value="{{ $site->alternate_device_id }}" placeholder="Enter Device Id" required autofocus
                                     MD="{{ old('alternate_device_id') }}">
                             </div>
+
+                            <!-- <div class="form-group col-md-2 col-sm-6 me-4">
+                                <label for="meter_type">Meter Type</label>
+                                <select class="form-control" id="meter_type" name="meter_type">
+                                    <option value="">Select Meter Type</option>
+                                    <option value="Multi_Function_Meter">Multi Function Meter</option>
+                                    <option value="Prepaid_Meter">Prepaid Meter</option>
+                                </select>
+                            </div> -->
+
+                            <div class="form-group col-md-2 col-sm-6">
+                                <label for="meter_type">Meter Type</label>
+                                <select class="form-control @error('meter_type') is-invalid @enderror" 
+                                        id="meter_type" 
+                                        name="meter_type">
+                                    <option value="">Select Meter Type</option>
+                                    <option value="Multi_Function_Meter" 
+                                        {{ old('meter_type') == 'Multi_Function_Meter' ? 'selected' : '' }}>
+                                        Multi Function Meter
+                                    </option>
+                                    <option value="Prepaid_Meter"
+                                        {{ old('meter_type') == 'Prepaid_Meter' ? 'selected' : '' }}>
+                                        Prepaid Meter                                       
+                                    </option>
+                                </select>
+                                @error('meter_type')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+
                         </div>
 
                         <div class="form-row">
@@ -156,7 +183,7 @@ input {
                                             <!-- Serial Number -->
                                             <div class="d-flex justify-content-between align-items-center mb-2"
                                                 style="font-size: 12px; margin-top: 10px;">
-                                                <span>S/N:</span>
+                                                <span>Meter_No:</span>
                                                 <input type="text" name="serial_number" class="form-control ms-2"
                                                     value="{{ old('serial_number', $siteData['serial_number'] ?? '') }}"
                                                     style="width: 70%;">
@@ -918,16 +945,17 @@ input {
                                                     <div class="d-flex align-items-center justify-content-start">
                                                         <span class="me-2 rounded-circle"
                                                             style="width: 10px; height: 10px; background-color: green; animation: blink 1.5s infinite;"></span>
-                                                        <span>Coolant Temperature</span>
+                                                        <span class="fs-6 fw-medium text-primary">Recharge</span>
+
                                                     </div>
                                                     <div class="d-flex">
                                                         <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                            name="coolant_temperature_md_status"
-                                                            value="{{ old('alarm_status', $siteData['alarm_status']['coolant_temperature_status']['md'] ?? '') }}"
+                                                            name="recharge_md"
+                                                            value="{{ old('alarm_status', $siteData['alarm_status']['recharge']['md'] ?? '') }}"
                                                             placeholder="MD">
                                                         <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                            name="coolant_temperature_add_status"
-                                                            value="{{ old('alarm_status', $siteData['alarm_status']['coolant_temperature_status']['add'] ?? '') }}"
+                                                            name="recharge_add"
+                                                            value="{{ old('alarm_status', $siteData['alarm_status']['recharge']['add'] ?? '') }}"
                                                             placeholder="ADD">
                                                     </div>
 
@@ -935,101 +963,104 @@ input {
                                                     <div class="d-flex align-items-center justify-content-start">
                                                         <span class="me-2 rounded-circle"
                                                             style="width: 10px; height: 10px; background-color: red; animation: blink 1.5s infinite;"></span>
-                                                        <span>Fuel Level</span>
+                                                        <span class="fs-6 fw-medium text-primary">Fixed_Charge_Mains</span>
                                                     </div>
                                                     <div class="d-flex">
                                                         <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                            name="fuel_level_md_status"
-                                                            value="{{ old('alarm_status', $siteData['alarm_status']['fuel_level_status']['md'] ?? '') }}"
+                                                            name="fixed_charge_md_mains"
+                                                            value="{{ old('alarm_status', $siteData['alarm_status']['fixed_charge_mains']['md'] ?? '') }}"
                                                             placeholder="MD">
                                                         <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                            name="fuel_level_add_status"
-                                                            value="{{ old('alarm_status', $siteData['alarm_status']['fuel_level_status']['add'] ?? '') }}"
+                                                            name="fixed_charge_add_mains"
+                                                            value="{{ old('alarm_status', $siteData['alarm_status']['fixed_charge_mains']['add'] ?? '') }}"
                                                             placeholder="ADD">
                                                     </div>
 
-                                                    <!-- Emergency Stop -->
+                                                    <!-- Unit Charge Mains -->
                                                     <div class="d-flex align-items-center justify-content-start">
                                                         <span class="me-2 rounded-circle"
                                                             style="width: 10px; height: 10px; background-color: green; animation: blink 1.5s infinite;"></span>
-                                                        <span>Emergency stop</span>
+                                                        
+                                                        <span class="fs-6 fw-medium text-primary">Unit_Charge_Mains</span>
                                                     </div>
                                                     <div class="d-flex">
                                                         <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                            name="emergency_stop_md_status"
-                                                            value="{{ old('alarm_status', $siteData['alarm_status']['emergency_stop_status']['md'] ?? '') }}"
+                                                            name="unit_charge_md_mains"
+                                                            value="{{ old('alarm_status', $siteData['alarm_status']['unit_charge_mains']['md'] ?? '') }}"
                                                             placeholder="MD">
                                                         <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                            name="emergency_stop_add_status"
-                                                            value="{{ old('alarm_status', $siteData['alarm_status']['emergency_stop_status']['add'] ?? '') }}"
+                                                            name="unit_charge_add_mains"
+                                                            value="{{ old('alarm_status', $siteData['alarm_status']['unit_charge_mains']['add'] ?? '') }}"
                                                             placeholder="ADD">
                                                     </div>
 
-                                                    <!-- High Coolant Temperature -->
+                                                    <!-- Sanction Load Mains -->
                                                     <div class="d-flex align-items-center justify-content-start">
                                                         <span class="me-2 rounded-circle"
                                                             style="width: 10px; height: 10px; background-color: red; animation: blink 1.5s infinite;"></span>
-                                                        <span>High coolant temperature</span>
+                                                       
+                                                        <span class="fs-6 fw-medium text-primary">Sanction_Load_Mains</span>
                                                     </div>
                                                     <div class="d-flex">
                                                         <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                            name="high_coolant_temperature_md_status"
-                                                            value="{{ old('alarm_status', $siteData['alarm_status']['high_coolant_temperature_status']['md'] ?? '') }}"
+                                                            name="sanction_load_md_mains"
+                                                            value="{{ old('alarm_status', $siteData['alarm_status']['sanction_load_mains']['md'] ?? '') }}"
                                                             placeholder="MD">
                                                         <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                            name="high_coolant_temperature_add_status"
-                                                            value="{{ old('alarm_status', $siteData['alarm_status']['high_coolant_temperature_status']['add'] ?? '') }}"
+                                                            name="sanction_load_add_mains"
+                                                            value="{{ old('alarm_status', $siteData['alarm_status']['sanction_load_mains']['add'] ?? '') }}"
                                                             placeholder="ADD">
                                                     </div>
 
-                                                    <!-- Under Speed -->
+                                                    <!-- Fixed_Charge_DG -->
                                                     <div class="d-flex align-items-center justify-content-start">
                                                         <span class="me-2 rounded-circle"
                                                             style="width: 10px; height: 10px; background-color: green; animation: blink 1.5s infinite;"></span>
-                                                        <span>Under speed</span>
+                                                        <span class="fs-6 fw-medium text-primary">Fixed_Charge_DG</span>
                                                     </div>
                                                     <div class="d-flex">
                                                         <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                            name="under_speed_md_status"
-                                                            value="{{ old('alarm_status', $siteData['alarm_status']['under_speed_status']['md'] ?? '') }}"
+                                                            name="fixed_charge_md_dg"
+                                                            value="{{ old('alarm_status', $siteData['alarm_status']['fixed_charge_dg']['md'] ?? '') }}"
                                                             placeholder="MD">
                                                         <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                            name="under_speed_add_status"
-                                                            value="{{ old('alarm_status', $siteData['alarm_status']['under_speed_status']['add'] ?? '') }}"
+                                                            name="fixed_charge_add_dg"
+                                                            value="{{ old('alarm_status', $siteData['alarm_status']['fixed_charge_dg']['add'] ?? '') }}"
                                                             placeholder="ADD">
                                                     </div>
 
-                                                    <!-- Fail to Start -->
+                                                    <!-- Unit_Charge_DG -->
                                                     <div class="d-flex align-items-center justify-content-start">
                                                         <span class="me-2 rounded-circle"
                                                             style="width: 10px; height: 10px; background-color: red; animation: blink 1.5s infinite;"></span>
-                                                        <span>Fail to start</span>
+                                                        
+                                                        <span class="fs-6 fw-medium text-primary">Unit_Charge_DG</span>
                                                     </div>
                                                     <div class="d-flex">
                                                         <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                            name="fail_to_start_md_status"
-                                                            value="{{ old('alarm_status', $siteData['alarm_status']['fail_to_start_status']['md'] ?? '') }}"
+                                                            name="unit_charge_md_dg"
+                                                            value="{{ old('alarm_status', $siteData['alarm_status']['unit_charge_dg']['md'] ?? '') }}"
                                                             placeholder="MD">
                                                         <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                            name="fail_to_start_add_status"
-                                                            value="{{ old('alarm_status', $siteData['alarm_status']['fail_to_start_status']['add'] ?? '') }}"
+                                                            name="unit_charge_add_dg"
+                                                            value="{{ old('alarm_status', $siteData['alarm_status']['unit_charge_dg']['add'] ?? '') }}"
                                                             placeholder="ADD">
                                                     </div>
 
-                                                    <!-- Loss of Speed Sensing -->
+                                                    <!-- Sanction_Load_DG -->
                                                     <div class="d-flex align-items-center justify-content-start">
                                                         <span class="me-2 rounded-circle"
                                                             style="width: 10px; height: 10px; background-color: green; animation: blink 1.5s infinite;"></span>
-                                                        <span>Loss of speed sensing</span>
+                                                        <span class="fs-6 fw-medium text-primary">Sanction_Load_DG</span>
                                                     </div>
                                                     <div class="d-flex">
                                                         <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                            name="loss_of_speed_sensing_md_status"
-                                                            value="{{ old('alarm_status', $siteData['alarm_status']['loss_of_speed_sensing_status']['md'] ?? '') }}"
+                                                            name="sanction_load_md_dg"
+                                                            value="{{ old('alarm_status', $siteData['alarm_status']['sanction_load_dg']['md'] ?? '') }}"
                                                             placeholder="MD">
                                                         <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                            name="loss_of_speed_sensing_add_status"
-                                                            value="{{ old('alarm_status', $siteData['alarm_status']['loss_of_speed_sensing_status']['add'] ?? '') }}"
+                                                            name="sanction_load_add_dg"
+                                                            value="{{ old('alarm_status', $siteData['alarm_status']['sanction_load_dg']['add'] ?? '') }}"
                                                             placeholder="ADD">
                                                     </div>
                                                 </div>
