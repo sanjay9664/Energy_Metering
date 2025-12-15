@@ -54,7 +54,7 @@ class LoginController extends Controller
      * @return void
      */
     
-
+//this is login function
     public function login(Request $request)
     {
         $request->validate([
@@ -80,7 +80,7 @@ class LoginController extends Controller
         return back();
     }
 
-
+//this is logout function
     /**
      * logout admin guard
      *
@@ -100,7 +100,7 @@ class LoginController extends Controller
     
         return redirect()->route('admin.login');
     }     
-
+//this is apilogin function
     public function Apilogin(Request $request)
     {
         $request->validate([
@@ -145,7 +145,7 @@ class LoginController extends Controller
             'message' => '❌ Invalid credentials (email or password incorrect)',
         ], 401);
     }
-
+//this is apilogout function
     public function Apilogout(Request $request)
     {
         $request->user()->tokens()->delete();
