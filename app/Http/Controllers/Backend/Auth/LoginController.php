@@ -135,14 +135,14 @@ class LoginController extends Controller
 
         if (count($matchedDevices) > 0) {
             return response()->json([
-                'message' => '✅ Login successful',
+                'message' => 'Login successful',
                 'devices' => $matchedDevices,
                 'token'   => Str::random(60),
             ]);
         }
 
         return response()->json([
-            'message' => '❌ Invalid credentials (email or password incorrect)',
+            'message' => 'Invalid credentials (email or password incorrect)',
         ], 401);
     }
 
@@ -154,11 +154,6 @@ class LoginController extends Controller
             'message' => 'Logged out'
         ]);
     }
-
-}
-
-
-
 
 public function mobileLogin(Request $request)
 {
@@ -184,6 +179,7 @@ public function mobileLogin(Request $request)
         'clusterID'=> $site->clusterID
     ]);
 }
+
 
 
 
