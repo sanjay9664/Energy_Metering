@@ -155,6 +155,10 @@ class LoginController extends Controller
         ]);
     }
 
+}
+
+
+
 
     public function mobileLogin(Request $request)
 {
@@ -184,5 +188,5 @@ class LoginController extends Controller
 
 
 
-
 }
+
