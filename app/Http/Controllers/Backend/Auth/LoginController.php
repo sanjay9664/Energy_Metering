@@ -54,7 +54,7 @@ class LoginController extends Controller
      * @return void
      */
     
-//this is login function
+
     public function login(Request $request)
     {
         $request->validate([
@@ -80,7 +80,7 @@ class LoginController extends Controller
         return back();
     }
 
-//this is logout function
+
     /**
      * logout admin guard
      *
@@ -100,7 +100,7 @@ class LoginController extends Controller
     
         return redirect()->route('admin.login');
     }     
-//this is apilogin function
+
     public function Apilogin(Request $request)
     {
         $request->validate([
@@ -145,7 +145,7 @@ class LoginController extends Controller
             'message' => '❌ Invalid credentials (email or password incorrect)',
         ], 401);
     }
-//this is apilogout function
+
     public function Apilogout(Request $request)
     {
         $request->user()->tokens()->delete();
@@ -154,4 +154,33 @@ class LoginController extends Controller
             'message' => 'Logged out'
         ]);
     }
+
+public function mobileLogin(Request $request)
+{
+    $site = DB::table('sites')
+        ->where('user_email', trim($request->userid))
+        ->where('user_password', trim($request->password))
+        ->first();
+
+    if (!$site) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Invalid userid or password'
+        ], 401);
+    }
+
+    return response()->json([
+        'status'    => true,
+        'message'   => 'Login successful',
+        'site_id'   => $site->id,
+        'site_name'=> $site->site_name,
+        'slug'      => $site->slug,
+        'device_id'=> $site->device_id,
+        'clusterID'=> $site->clusterID
+    ]);
+}
+
+
+
+
 }
