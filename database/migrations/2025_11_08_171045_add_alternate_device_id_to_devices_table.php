@@ -9,17 +9,21 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-   public function up(): void
-    {
+  public function up()
+{
+    if (!Schema::hasColumn('sites', 'alternate_device_id')) {
         Schema::table('sites', function (Blueprint $table) {
             $table->string('alternate_device_id')->nullable()->after('device_id');
         });
     }
+}
 
-    public function down(): void
-    {
+public function down()
+{
+    if (Schema::hasColumn('sites', 'alternate_device_id')) {
         Schema::table('sites', function (Blueprint $table) {
             $table->dropColumn('alternate_device_id');
         });
     }
+}
 };
