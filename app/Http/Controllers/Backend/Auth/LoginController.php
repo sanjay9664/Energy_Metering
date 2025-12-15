@@ -155,6 +155,11 @@ class LoginController extends Controller
         ]);
     }
 
+}
+
+
+
+
 public function mobileLogin(Request $request)
 {
     $site = DB::table('sites')
@@ -184,3 +189,4 @@ public function mobileLogin(Request $request)
 
 
 }
+
