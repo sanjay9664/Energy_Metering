@@ -155,6 +155,3 @@ class LoginController extends Controller
         ]);
     }
 }
-
-
-//rajesh
