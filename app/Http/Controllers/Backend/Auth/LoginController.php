@@ -154,7 +154,39 @@ class LoginController extends Controller
             'message' => 'Logged out'
         ]);
     }
+
 }
 
 
-//rajesh
+
+
+public function mobileLogin(Request $request)
+{
+    $site = DB::table('sites')
+        ->where('user_email', trim($request->userid))
+        ->where('user_password', trim($request->password))
+        ->first();
+
+    if (!$site) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Invalid userid or password'
+        ], 401);
+    }
+
+    return response()->json([
+        'status'    => true,
+        'message'   => 'Login successful',
+        'site_id'   => $site->id,
+        'site_name'=> $site->site_name,
+        'slug'      => $site->slug,
+        'device_id'=> $site->device_id,
+        'clusterID'=> $site->clusterID
+    ]);
+}
+
+
+
+
+}
+
