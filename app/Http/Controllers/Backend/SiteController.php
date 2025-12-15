@@ -86,6 +86,8 @@ class SiteController extends Controller
         $site->email = $request->email;
         $site->device_id = $request->device_id;
         $site->alternate_device_id = $request->alternate_device_id;
+        $site->user_email = $request->user_email;
+        $site->user_password = Hash::make($request->user_password);
         $site->clusterID = $request->clusterID;
         $site->increase_running_hours_status = $request->has('increase_running_hours_status') ? 1 : 0;
 
@@ -353,6 +355,8 @@ class SiteController extends Controller
         $site->email = $request->email;
         $site->device_id = $request->device_id;
         $site->alternate_device_id = $request->alternate_device_id;
+        $site->user_email = $request->user_email;
+        $site->user_password = Hash::make($request->user_password);
         $site->clusterID = $request->clusterID;
         $site->increase_running_hours_status = $request->input('increase_running_hours_status', 0);
 
@@ -814,8 +818,8 @@ class SiteController extends Controller
             $userEmail = $user->email;
 
             $siteData = $user->hasRole('superadmin')
-                ? Site::select(['id', 'site_name', 'slug', 'email', 'data', 'device_id', 'clusterID','alternate_device_id'])->get()
-                : Site::where('email', $userEmail)->select(['id', 'site_name', 'slug', 'email', 'data', 'device_id', 'clusterID','alternate_device_id'])->get();
+                ? Site::select(['id', 'site_name', 'slug', 'email', 'data', 'device_id', 'clusterID','alternate_device_id','user_email','user_password'])->get()
+                : Site::where('email', $userEmail)->select(['id', 'site_name', 'slug', 'email', 'data', 'device_id', 'clusterID','alternate_device_id','user_email','user_password'])->get();
 
             $mdValues = $this->extractMdFields(
                 $siteData->pluck('data')->map(fn($data) => json_decode($data, true))->toArray()

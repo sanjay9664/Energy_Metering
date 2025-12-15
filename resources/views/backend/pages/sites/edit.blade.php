@@ -34,6 +34,12 @@ input {
     width: 50%;
 
 }
+
+.basic{
+    margin-top: -8px;
+    width: 112%;
+    margin-left: -15px;
+}
 </style>
 @endsection
 
@@ -73,6 +79,7 @@ input {
                         @csrf
                         <div class="form-row">
                             <div class="form-group col-md-4 col-sm-12">
+                                
                                 <label for="name">Site Name</label>
                                 <input type="text" class="form-control" id="site_name" name="site_name"
                                     placeholder="Enter Name" value="{{ $site->site_name }}" required autofocus>
@@ -109,14 +116,7 @@ input {
                                     MD="{{ old('alternate_device_id') }}">
                             </div>
 
-                            <!-- <div class="form-group col-md-2 col-sm-6 me-4">
-                                <label for="meter_type">Meter Type</label>
-                                <select class="form-control" id="meter_type" name="meter_type">
-                                    <option value="">Select Meter Type</option>
-                                    <option value="Multi_Function_Meter">Multi Function Meter</option>
-                                    <option value="Prepaid_Meter">Prepaid Meter</option>
-                                </select>
-                            </div> -->
+                            
 
                             <div class="form-group col-md-2 col-sm-6">
                                 <label for="meter_type">Meter Type</label>
@@ -140,15 +140,34 @@ input {
                                 @enderror
                             </div>
 
+
+                            <div class="form-group col-md-2 col-sm-6">
+                                <label for="name">User_Email</label>
+                                <input type="text" class="form-control" id="user_email" name="user_email"
+                                    value="{{ $site->user_email }}" placeholder="user_email" required autofocus
+                                    MD="{{ old('user_email') }}">
+                            </div>
+
+                            <div class="form-group col-md-2 col-sm-6">
+                                <label for="name">User_Password</label>
+                                <input type="text" class="form-control" id="user_password" name="user_password"
+                                    value="{{ $site->user_password }}" placeholder="user_password" required autofocus
+                                    MD="{{ old('user_password') }}">
+                            </div>
+
                         </div>
+
 
                         <div class="form-row">
                             <div class="container mt-2 ml-5 d-flex">
                                 <div class="col-md-3">
                                     <div class="card shadow-lg g-5"
-                                        style="width: 100%; height: 1600px; overflow: hidden;">
+                                        style="width: 100%; height: 1650px; overflow: hidden;">
                                         <div class="card-header bg-light text-start text-center">
                                             <!-- site Name -->
+                                             <div class="card-header text-center bg-secondary text-white fs-6 basic">
+                                            Basic Information
+                                        </div>
                                             <div class="d-flex justify-content-between align-items-center mb-2"
                                                 style="font-size: 12px; margin-top: 10px;">
                                                 <span>site name:</span>
@@ -931,7 +950,7 @@ input {
                                     </div>
                                 </div>
 
-                                <div class="col-md-3">
+                                <div class="col-md-3 mx-4">
                                     <div class="card shadow-sm fw-bold"
                                         style="height: 915px; width: 100%; font-size: 10px;">
                                         <div class="card-header text-center bg-secondary text-white fs-6">
