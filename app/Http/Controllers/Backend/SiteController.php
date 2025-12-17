@@ -1560,7 +1560,82 @@ class SiteController extends Controller
 
 
 
-    // testing api react native 
-    
+  //Api for application
+public function mobileSiteDetails($slug)
+{
+    $site = Site::where('slug', $slug)->first();
+
+    if (!$site) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Site not found'
+        ], 404);
+    }
+
+    $siteJson = json_decode($site->data, true);
+
+    // Extract md values (module_id)
+    $mdValues = $this->extractMdFields($siteJson);
+    $moduleId = collect($mdValues)->filter()->first();
+
+    // MongoDB fields
+    $client = new MongoClient('mongodb://isaqaadmin:password@44.240.110.54:27017/isa_qa');
+    $collection = $client->isa_qa->device_events;
+
+    $event = null;
+    if ($moduleId) {
+        $event = $collection->findOne(
+            ['module_id' => (int) $moduleId],
+            ['sort' => ['createdAt' => -1]]
+        );
+    }
+
+    // Defaults
+    $gridBalance = null;
+    $gridUnit = null;
+    $dgUnit = null;
+    $supplyStatus = null;
+    $updatedAt = null;
+
+    if ($event) {
+        $gridBalance  = $event['grid_Balance'] ?? null;
+        $gridUnit     = $event['grid_unit'] ?? null;
+        $dgUnit       = $event['dg_unit'] ?? null;
+        $supplyStatus = $event['supply_status'] ?? null;
+
+        if (isset($event['createdAt'])) {
+            $updatedAt = $event['createdAt']
+                ->toDateTime()
+                ->setTimezone(new \DateTimeZone('Asia/Kolkata'))
+                ->format('d-m-Y H:i:s');
+        }
+    }
+
+    return response()->json([
+        'success' => true,
+
+        // from local db
+        'asset_information' => [
+            'custom_name'   => $siteJson['asset_name'] ?? null,
+            'site_name'     => $site->site_name,
+            'location'      => $siteJson['group'] ?? null,
+            'meter_name'    => $siteJson['generator'] ?? null,
+            'meter_number'  => $siteJson['serial_number'] ?? null,
+            'controller'    => $siteJson['asset_name'] ?? null,
+            'grid_kw'       => 5.0,   // added after knowing where it comming from
+            'dg_kw'         => 50.0   // will change after the finding where it is comming
+        ],
+
+        //live events from mongodb
+        'live_data' => [
+            'grid_balance'     => $gridBalance,
+            'grid_unit'        => $gridUnit,
+            'dg_unit'          => $dgUnit,
+            'connection_status'=> 'DISCONNECTED', // can be dynamic later
+            'supply_status'    => $supplyStatus,
+            'updated_at'       => $updatedAt
+        ]
+    ]);
+}
 
 }

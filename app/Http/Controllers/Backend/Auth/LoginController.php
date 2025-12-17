@@ -182,6 +182,4 @@ public function mobileLogin(Request $request)
 
 
 
-
-
 }
