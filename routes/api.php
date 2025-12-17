@@ -35,3 +35,4 @@ Route::middleware('auth:sanctum')->group(function () {
 
 });
 Route::post('/mobile-login', [LoginController::class, 'mobileLogin']);
+Route::get('/mobile/site/{slug}', [SiteController::class, 'mobileSiteDetails']);
