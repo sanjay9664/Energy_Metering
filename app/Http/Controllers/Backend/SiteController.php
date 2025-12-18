@@ -1229,74 +1229,195 @@ class SiteController extends Controller
     //     }
     // }
 
-    public function storeRechargeSettings(Request $request)
-    {
-        try {
-            $validated = $request->validate([
-                'm_site_id' => 'required|integer|exists:sites,id',
-                'm_recharge_amount' => 'nullable|numeric',
-                'm_fixed_charge' => 'nullable|numeric',
-                'm_unit_charge' => 'nullable|numeric',
-                'm_sanction_load' => 'nullable|numeric',
-                'dg_fixed_charge' => 'nullable|numeric',
-                'dg_unit_charge' => 'nullable|numeric',
-                'dg_sanction_load' => 'nullable|numeric',
-                'kwh' => 'nullable|numeric',
-            ]);
+    // public function storeRechargeSettings(Request $request)
+    // {
+    //     try {
+    //         $validated = $request->validate([
+    //             'm_site_id' => 'required|integer|exists:sites,id',
+    //             'm_recharge_amount' => 'nullable|numeric',
+    //             'm_fixed_charge' => 'nullable|numeric',
+    //             'm_unit_charge' => 'nullable|numeric',
+    //             'm_sanction_load' => 'nullable|numeric',
+    //             'dg_fixed_charge' => 'nullable|numeric',
+    //             'dg_unit_charge' => 'nullable|numeric',
+    //             'dg_sanction_load' => 'nullable|numeric',
+    //             'kwh' => 'nullable|numeric',
+    //         ]);
 
-            $siteId = $validated['m_site_id'];
-            $deltaAmount = $validated['m_recharge_amount'] ?? 0;
+    //         $siteId = $validated['m_site_id'];
+    //         $deltaAmount = $validated['m_recharge_amount'] ?? 0;
 
-            // Fetch existing recharge setting
-            $existing = RechargeSetting::where('m_site_id', $siteId)->first();
+    //         // Fetch existing recharge setting
+    //         $existing = RechargeSetting::where('m_site_id', $siteId)->first();
 
-            if ($existing) {
-                $oldAmount = $existing->m_recharge_amount ?? 0;
-                $updatedAmount = $oldAmount + $deltaAmount;
+    //         if ($existing) {
+    //             $oldAmount = $existing->m_recharge_amount ?? 0;
+    //             $updatedAmount = $oldAmount + $deltaAmount;
 
-                $existing->update([
-                    'm_recharge_amount' => $updatedAmount,
-                    'm_fixed_charge' => $validated['m_fixed_charge'] ?? $existing->m_fixed_charge,
-                    'm_unit_charge' => $validated['m_unit_charge'] ?? $existing->m_unit_charge,
-                    'm_sanction_load' => $validated['m_sanction_load'] ?? $existing->m_sanction_load,
-                    'dg_fixed_charge' => $validated['dg_fixed_charge'] ?? $existing->dg_fixed_charge,
-                    'dg_unit_charge' => $validated['dg_unit_charge'] ?? $existing->dg_unit_charge,
-                    'dg_sanction_load' => $validated['dg_sanction_load'] ?? $existing->dg_sanction_load,
-                    'kwh' => $validated['kwh'] ?? $existing->kwh,
-                ]);
-            } else {
-                // Create new setting
-                RechargeSetting::create($validated);
+    //             $existing->update([
+    //                 'm_recharge_amount' => $updatedAmount,
+    //                 'm_fixed_charge' => $validated['m_fixed_charge'] ?? $existing->m_fixed_charge,
+    //                 'm_unit_charge' => $validated['m_unit_charge'] ?? $existing->m_unit_charge,
+    //                 'm_sanction_load' => $validated['m_sanction_load'] ?? $existing->m_sanction_load,
+    //                 'dg_fixed_charge' => $validated['dg_fixed_charge'] ?? $existing->dg_fixed_charge,
+    //                 'dg_unit_charge' => $validated['dg_unit_charge'] ?? $existing->dg_unit_charge,
+    //                 'dg_sanction_load' => $validated['dg_sanction_load'] ?? $existing->dg_sanction_load,
+    //                 'kwh' => $validated['kwh'] ?? $existing->kwh,
+    //             ]);
+    //         } else {
+    //             // Create new setting
+    //             RechargeSetting::create($validated);
+    //         }
+
+    //         /**
+    //          * ----------------------------------------
+    //          * INSERT INTO "recharges" TABLE
+    //          * ----------------------------------------
+    //          */
+    //         Recharge::create([
+    //             'site_id' => $siteId,
+    //             'recharge_id' => 1,
+    //             'recharge_amount' => $deltaAmount,
+    //         ]);
+
+    //         return back()->with('success', 'Recharge updated & recharge entry added!');
+    //     }
+
+    //     catch (\Illuminate\Validation\ValidationException $e) {
+    //         return back()
+    //             ->withErrors($e->validator)
+    //             ->withInput()
+    //             ->with('error', 'Please correct the errors.');
+    //     }
+
+    //     catch (\Exception $e) {
+    //         return back()
+    //             ->with('error', 'Unexpected error: ' . $e->getMessage())
+    //             ->withInput();
+    //     }
+    // }
+public function storeRechargeSettings(Request $request)
+{
+    // Start database transaction
+    DB::beginTransaction();
+    
+    try {
+        $validated = $request->validate([
+            'm_site_id' => 'required|integer|exists:sites,id',
+            'm_recharge_amount' => 'nullable|numeric',
+            'm_fixed_charge' => 'nullable|numeric',
+            'm_unit_charge' => 'nullable|numeric',
+            'm_sanction_load' => 'nullable|numeric',
+            'dg_fixed_charge' => 'nullable|numeric',
+            'dg_unit_charge' => 'nullable|numeric',
+            'dg_sanction_load' => 'nullable|numeric',
+            'kwh' => 'nullable|numeric',
+        ]);
+
+        $siteId = $validated['m_site_id'];
+        $deltaAmount = $validated['m_recharge_amount'] ?? 0;
+        $kwhValue = $validated['kwh'] ?? null;
+
+        // Debug log
+        \Log::info('Storing Recharge Settings', [
+            'site_id' => $siteId,
+            'kwh_input' => $kwhValue,
+            'delta_amount' => $deltaAmount
+        ]);
+
+        // Get existing record or create new
+        $rechargeSetting = RechargeSetting::where('m_site_id', $siteId)->first();
+
+        if ($rechargeSetting) {
+            // Calculate new amount
+            $currentAmount = $rechargeSetting->m_recharge_amount ?? 0;
+            $newAmount = $currentAmount + $deltaAmount;
+            
+            // Prepare update data
+            $updateData = [
+                'm_recharge_amount' => $newAmount,
+                'm_fixed_charge' => $validated['m_fixed_charge'] ?? $rechargeSetting->m_fixed_charge,
+                'm_unit_charge' => $validated['m_unit_charge'] ?? $rechargeSetting->m_unit_charge,
+                'm_sanction_load' => $validated['m_sanction_load'] ?? $rechargeSetting->m_sanction_load,
+                'dg_fixed_charge' => $validated['dg_fixed_charge'] ?? $rechargeSetting->dg_fixed_charge,
+                'dg_unit_charge' => $validated['dg_unit_charge'] ?? $rechargeSetting->dg_unit_charge,
+                'dg_sanction_load' => $validated['dg_sanction_load'] ?? $rechargeSetting->dg_sanction_load,
+            ];
+            
+            // Update KWH only if provided
+            if (!is_null($kwhValue)) {
+                $updateData['kwh'] = $kwhValue;
             }
-
-            /**
-             * ----------------------------------------
-             * INSERT INTO "recharges" TABLE
-             * ----------------------------------------
-             */
-            Recharge::create([
-                'site_id' => $siteId,
-                'recharge_id' => 1,
-                'recharge_amount' => $deltaAmount,
+            
+            // Update the record
+            $rechargeSetting->update($updateData);
+            
+            \Log::info('Updated existing record', [
+                'old_amount' => $currentAmount,
+                'new_amount' => $newAmount,
+                'kwh' => $kwhValue
             ]);
-
-            return back()->with('success', 'Recharge updated & recharge entry added!');
+        } else {
+            // Create new record
+            $rechargeSetting = RechargeSetting::create([
+                'm_site_id' => $siteId,
+                'm_recharge_amount' => $deltaAmount,
+                'kwh' => $kwhValue,
+                'm_fixed_charge' => $validated['m_fixed_charge'] ?? null,
+                'm_unit_charge' => $validated['m_unit_charge'] ?? null,
+                'm_sanction_load' => $validated['m_sanction_load'] ?? null,
+                'dg_fixed_charge' => $validated['dg_fixed_charge'] ?? null,
+                'dg_unit_charge' => $validated['dg_unit_charge'] ?? null,
+                'dg_sanction_load' => $validated['dg_sanction_load'] ?? null,
+            ]);
+            
+            \Log::info('Created new record', [
+                'amount' => $deltaAmount,
+                'kwh' => $kwhValue
+            ]);
         }
 
-        catch (\Illuminate\Validation\ValidationException $e) {
-            return back()
-                ->withErrors($e->validator)
-                ->withInput()
-                ->with('error', 'Please correct the errors.');
-        }
+        // Add to recharge history table
+        $maxRechargeId = Recharge::where('site_id', $siteId)->max('recharge_id') ?? 0;
+        $newRechargeId = $maxRechargeId + 1;
+        
+        Recharge::create([
+            'site_id' => $siteId,
+            'recharge_id' => $newRechargeId,
+            'recharge_amount' => $deltaAmount,
+            'kwh' => $kwhValue,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
 
-        catch (\Exception $e) {
-            return back()
-                ->with('error', 'Unexpected error: ' . $e->getMessage())
-                ->withInput();
-        }
+        \Log::info('Created recharge history entry', [
+            'recharge_id' => $newRechargeId,
+            'amount' => $deltaAmount
+        ]);
+
+        // Commit transaction
+        DB::commit();
+
+        // Clear cache and session to force fresh data
+        \Cache::forget('recharge_settings_' . $siteId);
+        session()->forget('recharge_data_' . $siteId);
+
+        return redirect()->back()
+            ->with('success', 'Recharge settings saved successfully!')
+            ->with('refresh_page', true); // Add flag for page refresh
+
+    } catch (\Exception $e) {
+        // Rollback transaction on error
+        DB::rollBack();
+        
+        \Log::error('Error in storeRechargeSettings: ' . $e->getMessage());
+        \Log::error('Stack trace: ' . $e->getTraceAsString());
+        
+        return redirect()->back()
+            ->with('error', 'Error: ' . $e->getMessage())
+            ->withInput();
     }
-
+}
     public function triggerConnectionApi(Request $request)
     {
         $request->validate([
