@@ -200,12 +200,26 @@ input {
                                                     style="width: 70%;">
                                             </div>
                                             <!-- Serial Number -->
-                                            <div class="d-flex justify-content-between align-items-center mb-2"
+                                            <!-- <div class="d-flex justify-content-between align-items-center mb-2"
                                                 style="font-size: 12px; margin-top: 10px;">
                                                 <span>Meter_No:</span>
                                                 <input type="text" name="serial_number" class="form-control ms-2"
                                                     value="{{ old('serial_number', $siteData['serial_number'] ?? '') }}"
                                                     style="width: 70%;">
+                                            </div> -->
+                                            <!-- Serial Number -->
+                                            <div class="card mb-1 shadow-lg border-0">
+                                                <div class="card-body text-center">
+                                                    <div class="fw-bold text-secondary">Meter_Number</div>
+                                                </div>
+                                                <div class="d-flex p-3">
+                                                    <input type="text" name="meter_number_md" class="form-control ms-2"
+                                                        value="{{ old('meter_number', $siteData['meter_number']['md'] ?? '') }}"
+                                                        style="width: 50%;" placeholder="MD">
+                                                    <input type="text" name="meter_number_add" class="form-control ms-2"
+                                                        value="{{ old('meter_number', $siteData['meter_number']['add'] ?? '') }}"
+                                                        style="width: 50%;" placeholder="ADD">
+                                                </div>
                                             </div>
                                             <!-- Model -->
                                             <div class="d-flex justify-content-between align-items-center mb-2"
@@ -484,20 +498,7 @@ input {
                                                                         placeholder="ADD">
                                                                 </div>
 
-                                                                <!-- Second row (2 inputs) -->
-                                                            <div class="w-100"></div> <!-- Forces new line -->
-                                                                <!-- <div class="col-auto">
-                                                                    <input type="text" name="coolant_temperature_low"
-                                                                        class="form-control" style="width: 80px;"
-                                                                        value="{{ old('parameters', $siteData['parameters']['coolant_temperature']['low'] ?? '') }}"
-                                                                        placeholder="LOW">
-                                                                </div>
-                                                                <div class="col-auto">
-                                                                    <input type="text" name="coolant_temperature_high"
-                                                                        class="form-control" style="width: 80px;"
-                                                                        value="{{ old('parameters', $siteData['parameters']['coolant_temperature']['high'] ?? '') }}"
-                                                                        placeholder="HIGH">
-                                                                </div> -->
+                                                               
                                                             </div>
                                                         </div>
 
@@ -505,40 +506,28 @@ input {
                                                     <hr />
                                                 <div class="col text-center fw-bold  p-2 shadow-lg border-0">
                                                      GRID UNIT
-                                                   <div class="text-center py-1">
-                                                            <i class="fas fa-tachometer-alt mb-2 text-success" style="font-size: 1rem;"></i>
+                                                                         <div class="text-center py-1">
+                                                            <i class="fas fa-thermometer-half mb-2 text-primary"
+                                                                style="font-size: 2rem;"></i>
 
                                                             <div class="row g-2 justify-content-center">
                                                                 <!-- First row (2 inputs) -->
                                                                 <div class="col-auto">
-                                                                    <input type="text" name="oil_temperature_md"
+                                                                    <input type="text" name="grid_unit_md"
                                                                         class="form-control" style="width: 80px;"
-                                                                        value="{{ old('parameters', $siteData['parameters']['oil_temperature']['md'] ?? '') }}"
+                                                                        value="{{ old('parameters', $siteData['parameters']['grid_unit']['md'] ?? '') }}"
                                                                         placeholder="MD">
                                                                 </div>
                                                                 <div class="col-auto">
-                                                                    <input type="text" name="oil_temperature_add"
+                                                                    <input type="text" name="grid_unit_add"
                                                                         class="form-control" style="width: 80px;"
-                                                                        value="{{ old('parameters', $siteData['parameters']['oil_temperature']['add'] ?? '') }}"
+                                                                        value="{{ old('parameters', $siteData['parameters']['grid_unit']['add'] ?? '') }}"
                                                                         placeholder="ADD">
                                                                 </div>
 
-                                                                <!-- Second row (2 inputs) -->
-                                                                <div class="w-100"></div> <!-- new line -->
-                                                                <!-- <div class="col-auto">
-                                                                    <input type="text" name="oil_temperature_low"
-                                                                        class="form-control" style="width: 80px;"
-                                                                        value="{{ old('parameters', $siteData['parameters']['oil_temperature']['low'] ?? '') }}"
-                                                                        placeholder="LOW">
-                                                                </div>
-                                                                <div class="col-auto">
-                                                                    <input type="text" name="oil_temperature_high"
-                                                                        class="form-control" style="width: 80px;"
-                                                                        value="{{ old('parameters', $siteData['parameters']['oil_temperature']['high'] ?? '') }}"
-                                                                        placeholder="HIGH">
-                                                                </div> -->
+                                                               
                                                             </div>
-                                                    </div>
+                                                        </div>
                                                 </div>
                                                 <hr />
                                                 <div class="col text-center fw-bold  p-2 shadow-lg border-0">
@@ -952,7 +941,7 @@ input {
 
                                 <div class="col-md-3 mx-4">
                                     <div class="card shadow-sm fw-bold"
-                                        style="height: 915px; width: 100%; font-size: 10px;">
+                                        style="height: 1225px; width: 100%; font-size: 10px;">
                                         <div class="card-header text-center bg-secondary text-white fs-6">
                                             ALARM STATUS
                                         </div>
@@ -1018,19 +1007,53 @@ input {
                                                         <span class="me-2 rounded-circle"
                                                             style="width: 10px; height: 10px; background-color: red; animation: blink 1.5s infinite;"></span>
                                                        
-                                                        <span class="fs-6 fw-medium text-primary">Sanction_Load_Mains</span>
+                                                        <span class="fs-6 fw-medium text-primary">Sanction_Load_Mains_R</span>
                                                     </div>
                                                     <div class="d-flex">
                                                         <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                            name="sanction_load_md_mains"
-                                                            value="{{ old('alarm_status', $siteData['alarm_status']['sanction_load_mains']['md'] ?? '') }}"
+                                                            name="sanction_load_md_mains_r"
+                                                            value="{{ old('alarm_status', $siteData['alarm_status']['sanction_load_mains_r']['md'] ?? '') }}"
                                                             placeholder="MD">
                                                         <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                            name="sanction_load_add_mains"
-                                                            value="{{ old('alarm_status', $siteData['alarm_status']['sanction_load_mains']['add'] ?? '') }}"
+                                                            name="sanction_load_add_mains_r"
+                                                            value="{{ old('alarm_status', $siteData['alarm_status']['sanction_load_mains_r']['add'] ?? '') }}"
                                                             placeholder="ADD">
                                                     </div>
 
+                                                    <!-- Sanction Load Mains_Y -->
+                                                     <div class="d-flex align-items-center justify-content-start">
+                                                        <span class="me-2 rounded-circle"
+                                                            style="width: 10px; height: 10px; background-color: red; animation: blink 1.5s infinite;"></span>
+                                                       
+                                                        <span class="fs-6 fw-medium text-primary">Sanction_Load_Mains_Y</span>
+                                                    </div>
+                                                    <div class="d-flex">
+                                                        <input type="text" class="form-control ms-2" style="width: 50%;"
+                                                            name="sanction_load_md_mains_y"
+                                                            value="{{ old('alarm_status', $siteData['alarm_status']['sanction_load_mains_y']['md'] ?? '') }}"
+                                                            placeholder="MD">
+                                                        <input type="text" class="form-control ms-2" style="width: 50%;"
+                                                            name="sanction_load_add_mains_y"
+                                                            value="{{ old('alarm_status', $siteData['alarm_status']['sanction_load_mains_y']['add'] ?? '') }}"
+                                                            placeholder="ADD">
+                                                    </div>
+                                                    <!-- Sanction Load Mains_Y -->
+                                                     <div class="d-flex align-items-center justify-content-start">
+                                                        <span class="me-2 rounded-circle"
+                                                            style="width: 10px; height: 10px; background-color: red; animation: blink 1.5s infinite;"></span>
+                                                       
+                                                        <span class="fs-6 fw-medium text-primary">Sanction_Load_Mains_B</span>
+                                                    </div>
+                                                    <div class="d-flex">
+                                                        <input type="text" class="form-control ms-2" style="width: 50%;"
+                                                            name="sanction_load_md_mains_b"
+                                                            value="{{ old('alarm_status', $siteData['alarm_status']['sanction_load_mains_b']['md'] ?? '') }}"
+                                                            placeholder="MD">
+                                                        <input type="text" class="form-control ms-2" style="width: 50%;"
+                                                            name="sanction_load_add_mains_b"
+                                                            value="{{ old('alarm_status', $siteData['alarm_status']['sanction_load_mains_b']['add'] ?? '') }}"
+                                                            placeholder="ADD">
+                                                    </div>
                                                     <!-- Fixed_Charge_DG -->
                                                     <div class="d-flex align-items-center justify-content-start">
                                                         <span class="me-2 rounded-circle"
@@ -1066,23 +1089,72 @@ input {
                                                             placeholder="ADD">
                                                     </div>
 
-                                                    <!-- Sanction_Load_DG -->
+                                                    <!-- Sanction_Load_DG_R -->
                                                     <div class="d-flex align-items-center justify-content-start">
                                                         <span class="me-2 rounded-circle"
                                                             style="width: 10px; height: 10px; background-color: green; animation: blink 1.5s infinite;"></span>
-                                                        <span class="fs-6 fw-medium text-primary">Sanction_Load_DG</span>
+                                                        <span class="fs-6 fw-medium text-primary">Sanction_Load_DG_R</span>
                                                     </div>
                                                     <div class="d-flex">
                                                         <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                            name="sanction_load_md_dg"
-                                                            value="{{ old('alarm_status', $siteData['alarm_status']['sanction_load_dg']['md'] ?? '') }}"
+                                                            name="sanction_load_md_dg_r"
+                                                            value="{{ old('alarm_status', $siteData['alarm_status']['sanction_load_dg_r']['md'] ?? '') }}"
                                                             placeholder="MD">
                                                         <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                            name="sanction_load_add_dg"
-                                                            value="{{ old('alarm_status', $siteData['alarm_status']['sanction_load_dg']['add'] ?? '') }}"
+                                                            name="sanction_load_add_dg_r"
+                                                            value="{{ old('alarm_status', $siteData['alarm_status']['sanction_load_dg_r']['add'] ?? '') }}"
                                                             placeholder="ADD">
                                                     </div>
                                                 </div>
+
+                                                <!-- Sanction_Load_DG_Y -->
+                                                 <div class="d-flex align-items-center justify-content-start mb-1">
+                                                            <span class="me-3 rounded-circle"
+                                                                style="width: 10px; height: 10px; background-color: green; animation: blink 1.5s infinite;">
+                                                            </span>
+                                                            <span class="fs-6 fw-medium text-primary">Sanction_Load_DG_Y</span>
+                                                        </div>
+
+                                                        <div class="d-flex align-items-center ms-3">
+                                                            <input
+                                                                type="text"
+                                                                name="sanction_load_md_dg_y"
+                                                                value="{{ old('alarm_status', $siteData['alarm_status']['sanction_load_dg_y']['md'] ?? '') }}"
+                                                                placeholder="MD"
+                                                                class="form-control form-control-sm mini-input me-2">
+
+                                                            <input
+                                                                type="text"
+                                                                name="sanction_load_add_dg_y"
+                                                                value="{{ old('alarm_status', $siteData['alarm_status']['sanction_load_dg_y']['add'] ?? '') }}"
+                                                                placeholder="ADD"
+                                                                class="form-control form-control-sm mini-input">
+                                                        </div>
+
+                                                <!-- Sanction_Load_DG_B -->
+                                                <div class="d-flex align-items-center justify-content-start mb-1">
+                                                                    <span class="me-2 rounded-circle"
+                                                                        style="width: 8px; height: 8px; background-color: green; animation: blink 1.5s infinite;">
+                                                                    </span>
+                                                                    <span class="fs-6 fw-medium text-primary">Sanction_Load_DG_B</span>
+                                                                </div>
+
+                                                                <div class="d-flex align-items-center ms-3">
+                                                                    <input
+                                                                        type="text"
+                                                                        name="sanction_load_md_dg_b"
+                                                                        value="{{ old('alarm_status', $siteData['alarm_status']['sanction_load_dg_b']['md'] ?? '') }}"
+                                                                        placeholder="MD"
+                                                                        class="form-control form-control-sm mini-input me-2">
+
+                                                                    <input
+                                                                        type="text"
+                                                                        name="sanction_load_add_dg_b"
+                                                                        value="{{ old('alarm_status', $siteData['alarm_status']['sanction_load_dg_b']['add'] ?? '') }}"
+                                                                        placeholder="ADD"
+                                                                        class="form-control form-control-sm mini-input">
+                                                                </div>
+
                                                 <!-- Right Column -->
                                                 <div class="col-xs-6 d-flex flex-column justify-content-around">
                                                     <!-- Oil Pressure -->

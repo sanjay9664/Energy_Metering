@@ -117,6 +117,10 @@ class SiteController extends Controller
                 'md' => $request->input('power_factor_md'),
                 'add' => $request->input('power_factor_add'),
             ],
+            'meter_number' => [
+                'md' => $request->input('meter_number_md'),
+                'add' => $request->input('meter_number_add'),
+            ],
             'total_kwh' => [
                 'md' => $request->input('total_kwh_md'),
                 'add' => $request->input('total_kwh_add'),
@@ -153,7 +157,7 @@ class SiteController extends Controller
                     'low' => $request->input('coolant_temperature_low'),
                     'high' => $request->input('coolant_temperature_high')
                 ],
-                'grid_Balance' => [
+                'grid_balance' => [
                     'md' => $request->input('grid_balance_md'),
                     'add' => $request->input('grid_balance_add'),
                 ],
@@ -164,8 +168,12 @@ class SiteController extends Controller
                 'oil_temperature' => [
                     'md' => $request->input('oil_temperature_md'),
                     'add' => $request->input('oil_temperature_add'),
-                    'low' => $request->input('oil_temperature_low'),
-                    'high' => $request->input('oil_temperature_high')
+                    // 'low' => $request->input('oil_temperature_low'),
+                    // 'high' => $request->input('oil_temperature_high')
+                ],
+                'grid_unit' => [
+                    'md' => $request->input('grid_unit_md'),
+                    'add' => $request->input('grid_unit_add'),
                 ],
                 'oil_pressure' => [
                     'md' => $request->input('oil_pressure_md'),
@@ -274,9 +282,17 @@ class SiteController extends Controller
                     'md' =>  $request->input('unit_charge_md_mains'),
                     'add' => $request->input('unit_charge_add_mains'),
                 ],
-                'sanction_load_mains' => [
-                    'md' => $request->input('high_coolant_temperature_md_status'),
-                    'add' => $request->input('high_coolant_temperature_add_status'),
+                'sanction_load_mains_r' => [
+                    'md' => $request->input('sanction_load_mains_r'),
+                    'add' => $request->input('sanction_load_mains_r'),
+                ],
+                'sanction_load_mains_y' => [
+                    'md' => $request->input('sanction_load_md_mains_y'),
+                    'add' => $request->input('sanction_load_add_mains_y'),
+                ],
+                'sanction_load_mains_b' => [
+                    'md' => $request->input('sanction_load_md_mains_b'),
+                    'add' => $request->input('sanction_load_add_mains_b'),
                 ],
                 'fixed_charge_dg' => [
                     'md' => $request->input('fixed_charge_md_dg'),
@@ -286,9 +302,17 @@ class SiteController extends Controller
                     'md' => $request->input('unit_charge_md_dg'),
                     'add' => $request->input('unit_charge_add_dg'),
                 ],
-                'sanction_load_dg' => [
-                    'md' => $request->input('sanction_load_md_dg'),
-                    'add' => $request->input('sanction_load_add_dg'),
+                'sanction_load_dg_r' => [
+                    'md' => $request->input('sanction_load_md_dg_r'),
+                    'add' => $request->input('sanction_load_add_dg_r'),
+                ],
+                'sanction_load_dg_y' => [
+                    'md' => $request->input('sanction_load_md_dg_y'),
+                    'add' => $request->input('sanction_load_add_dg_y'),
+                ],
+                'sanction_load_dg_b' => [
+                    'md' => $request->input('sanction_load_md_dg_b'),
+                    'add' => $request->input('sanction_load_add_dg_b'),
                 ],
                 'oil_pressure_status' => [
                     'md' => $request->input('oil_pressure_md_status'),
@@ -386,6 +410,10 @@ class SiteController extends Controller
                 'md' => $request->input('power_factor_md'),
                 'add' => $request->input('power_factor_add'),
             ],
+            'meter_number' => [
+                'md' => $request->input('meter_number_md'),
+                'add' => $request->input('meter_number_add'),
+            ],
             'total_kwh' => [
                 'md' => $request->input('total_kwh_md'),
                 'add' => $request->input('total_kwh_add'),
@@ -422,7 +450,7 @@ class SiteController extends Controller
                     'low' => $request->input('coolant_temperature_low'),
                     'high' => $request->input('coolant_temperature_high')
                 ],
-                'grid_Balance' => [
+                'grid_balance' => [
                     'md' => $request->input('grid_balance_md'),
                     'add' => $request->input('grid_balance_add'),
                 ],
@@ -433,8 +461,12 @@ class SiteController extends Controller
                 'oil_temperature' => [
                     'md' => $request->input('oil_temperature_md'),
                     'add' => $request->input('oil_temperature_add'),
-                    'low' => $request->input('oil_temperature_low'),
-                    'high' => $request->input('oil_temperature_high')
+                    // 'low' => $request->input('oil_temperature_low'),
+                    // 'high' => $request->input('oil_temperature_high')
+                ],
+                'grid_unit' => [
+                    'md' => $request->input('grid_unit_md'),
+                    'add' => $request->input('grid_unit_add'),
                 ],
                 'oil_pressure' => [
                     'md' => $request->input('oil_pressure_md'),
@@ -543,9 +575,17 @@ class SiteController extends Controller
                     'md' =>  $request->input('unit_charge_md_mains'),
                     'add' => $request->input('unit_charge_add_mains'),
                 ],
-                'sanction_load_mains' => [
-                    'md' => $request->input('sanction_load_md_mains'),
-                    'add' => $request->input('sanction_load_add_mains'),
+                'sanction_load_mains_r' => [
+                    'md' => $request->input('sanction_load_md_mains_r'),
+                    'add' => $request->input('sanction_load_add_mains_r'),
+                ],
+                'sanction_load_mains_y' => [
+                    'md' => $request->input('sanction_load_md_mains_y'),
+                    'add' => $request->input('sanction_load_add_mains_y'),
+                ],
+                'sanction_load_mains_b' => [
+                    'md' => $request->input('sanction_load_md_mains_b'),
+                    'add' => $request->input('sanction_load_add_mains_b'),
                 ],
                 'fixed_charge_dg' => [
                     'md' => $request->input('fixed_charge_md_dg'),
@@ -555,9 +595,17 @@ class SiteController extends Controller
                     'md' => $request->input('unit_charge_md_dg'),
                     'add' => $request->input('unit_charge_add_dg'),
                 ],
-                'sanction_load_dg' => [
-                    'md' => $request->input('sanction_load_md_dg'),
-                    'add' => $request->input('sanction_load_add_dg'),
+                'sanction_load_dg_r' => [
+                    'md' => $request->input('sanction_load_md_dg_r'),
+                    'add' => $request->input('sanction_load_add_dg_r'),
+                ],
+                'sanction_load_dg_y' => [
+                    'md' => $request->input('sanction_load_md_dg_y'),
+                    'add' => $request->input('sanction_load_add_dg_y'),
+                ],
+                'sanction_load_dg_b' => [
+                    'md' => $request->input('sanction_load_md_dg_b'),
+                    'add' => $request->input('sanction_load_add_dg_b'),
                 ],
                 'oil_pressure_status' => [
                     'md' => $request->input('oil_pressure_md_status'),
@@ -1296,21 +1344,145 @@ class SiteController extends Controller
     //             ->withInput();
     //     }
     // }
+// public function storeRechargeSettings(Request $request)
+// {
+//     // Start database transaction
+//     DB::beginTransaction();
+    
+//     try {
+//         $validated = $request->validate([
+//             'm_site_id' => 'required|integer|exists:sites,id',
+//             'm_recharge_amount' => 'nullable|numeric',
+//             'm_fixed_charge' => 'nullable|numeric',
+//             'm_unit_charge' => 'nullable|numeric',
+//             'm_sanction_load' => 'nullable|numeric',
+//             'dg_fixed_charge' => 'nullable|numeric',
+//             'dg_unit_charge' => 'nullable|numeric',
+//             'dg_sanction_load' => 'nullable|numeric',
+//             'kwh' => 'nullable|numeric',
+//         ]);
+
+//         $siteId = $validated['m_site_id'];
+//         $deltaAmount = $validated['m_recharge_amount'] ?? 0;
+//         $kwhValue = $validated['kwh'] ?? null;
+
+//         // Debug log
+//         \Log::info('Storing Recharge Settings', [
+//             'site_id' => $siteId,
+//             'kwh_input' => $kwhValue,
+//             'delta_amount' => $deltaAmount
+//         ]);
+
+//         // Get existing record or create new
+//         $rechargeSetting = RechargeSetting::where('m_site_id', $siteId)->first();
+
+//         if ($rechargeSetting) {
+//             // Calculate new amount
+//             $currentAmount = $rechargeSetting->m_recharge_amount ?? 0;
+//             $newAmount = $currentAmount + $deltaAmount;
+            
+//             // Prepare update data
+//             $updateData = [
+//                 'm_recharge_amount' => $newAmount,
+//                 'm_fixed_charge' => $validated['m_fixed_charge'] ?? $rechargeSetting->m_fixed_charge,
+//                 'm_unit_charge' => $validated['m_unit_charge'] ?? $rechargeSetting->m_unit_charge,
+//                 'm_sanction_load' => $validated['m_sanction_load'] ?? $rechargeSetting->m_sanction_load,
+//                 'dg_fixed_charge' => $validated['dg_fixed_charge'] ?? $rechargeSetting->dg_fixed_charge,
+//                 'dg_unit_charge' => $validated['dg_unit_charge'] ?? $rechargeSetting->dg_unit_charge,
+//                 'dg_sanction_load' => $validated['dg_sanction_load'] ?? $rechargeSetting->dg_sanction_load,
+//             ];
+            
+//             // Update KWH only if provided
+//             if (!is_null($kwhValue)) {
+//                 $updateData['kwh'] = $kwhValue;
+//             }
+            
+//             // Update the record
+//             $rechargeSetting->update($updateData);
+            
+//             \Log::info('Updated existing record', [
+//                 'old_amount' => $currentAmount,
+//                 'new_amount' => $newAmount,
+//                 'kwh' => $kwhValue
+//             ]);
+//         } else {
+//             // Create new record
+//             $rechargeSetting = RechargeSetting::create([
+//                 'm_site_id' => $siteId,
+//                 'm_recharge_amount' => $deltaAmount,
+//                 'kwh' => $kwhValue,
+//                 'm_fixed_charge' => $validated['m_fixed_charge'] ?? null,
+//                 'm_unit_charge' => $validated['m_unit_charge'] ?? null,
+//                 'm_sanction_load' => $validated['m_sanction_load'] ?? null,
+//                 'dg_fixed_charge' => $validated['dg_fixed_charge'] ?? null,
+//                 'dg_unit_charge' => $validated['dg_unit_charge'] ?? null,
+//                 'dg_sanction_load' => $validated['dg_sanction_load'] ?? null,
+//             ]);
+            
+//             \Log::info('Created new record', [
+//                 'amount' => $deltaAmount,
+//                 'kwh' => $kwhValue
+//             ]);
+//         }
+
+//         // Add to recharge history table
+//         $maxRechargeId = Recharge::where('site_id', $siteId)->max('recharge_id') ?? 0;
+//         $newRechargeId = $maxRechargeId + 1;
+        
+//         Recharge::create([
+//             'site_id' => $siteId,
+//             'recharge_id' => $newRechargeId,
+//             'recharge_amount' => $deltaAmount,
+//             'kwh' => $kwhValue,
+//             'created_at' => now(),
+//             'updated_at' => now(),
+//         ]);
+
+//         \Log::info('Created recharge history entry', [
+//             'recharge_id' => $newRechargeId,
+//             'amount' => $deltaAmount
+//         ]);
+
+//         // Commit transaction
+//         DB::commit();
+
+//         // Clear cache and session to force fresh data
+//         \Cache::forget('recharge_settings_' . $siteId);
+//         session()->forget('recharge_data_' . $siteId);
+
+//         return redirect()->back()
+//             ->with('success', 'Recharge settings saved successfully!')
+//             ->with('refresh_page', true); // Add flag for page refresh
+
+//     } catch (\Exception $e) {
+//         // Rollback transaction on error
+//         DB::rollBack();
+        
+//         \Log::error('Error in storeRechargeSettings: ' . $e->getMessage());
+//         \Log::error('Stack trace: ' . $e->getTraceAsString());
+        
+//         return redirect()->back()
+//             ->with('error', 'Error: ' . $e->getMessage())
+//             ->withInput();
+//     }
+// }
 public function storeRechargeSettings(Request $request)
 {
-    // Start database transaction
     DB::beginTransaction();
-    
     try {
         $validated = $request->validate([
             'm_site_id' => 'required|integer|exists:sites,id',
             'm_recharge_amount' => 'nullable|numeric',
             'm_fixed_charge' => 'nullable|numeric',
             'm_unit_charge' => 'nullable|numeric',
-            'm_sanction_load' => 'nullable|numeric',
+            'm_sanction_load_r' => 'nullable|numeric',
+            'm_sanction_load_y' => 'nullable|numeric',
+            'm_sanction_load_b' => 'nullable|numeric',
             'dg_fixed_charge' => 'nullable|numeric',
             'dg_unit_charge' => 'nullable|numeric',
-            'dg_sanction_load' => 'nullable|numeric',
+            'dg_sanction_load_r' => 'nullable|numeric',
+            'dg_sanction_load_y' => 'nullable|numeric',
+            'dg_sanction_load_b' => 'nullable|numeric',
             'kwh' => 'nullable|numeric',
         ]);
 
@@ -1318,106 +1490,57 @@ public function storeRechargeSettings(Request $request)
         $deltaAmount = $validated['m_recharge_amount'] ?? 0;
         $kwhValue = $validated['kwh'] ?? null;
 
-        // Debug log
-        \Log::info('Storing Recharge Settings', [
-            'site_id' => $siteId,
-            'kwh_input' => $kwhValue,
-            'delta_amount' => $deltaAmount
-        ]);
-
-        // Get existing record or create new
         $rechargeSetting = RechargeSetting::where('m_site_id', $siteId)->first();
 
-        if ($rechargeSetting) {
-            // Calculate new amount
-            $currentAmount = $rechargeSetting->m_recharge_amount ?? 0;
-            $newAmount = $currentAmount + $deltaAmount;
-            
-            // Prepare update data
-            $updateData = [
-                'm_recharge_amount' => $newAmount,
-                'm_fixed_charge' => $validated['m_fixed_charge'] ?? $rechargeSetting->m_fixed_charge,
-                'm_unit_charge' => $validated['m_unit_charge'] ?? $rechargeSetting->m_unit_charge,
-                'm_sanction_load' => $validated['m_sanction_load'] ?? $rechargeSetting->m_sanction_load,
-                'dg_fixed_charge' => $validated['dg_fixed_charge'] ?? $rechargeSetting->dg_fixed_charge,
-                'dg_unit_charge' => $validated['dg_unit_charge'] ?? $rechargeSetting->dg_unit_charge,
-                'dg_sanction_load' => $validated['dg_sanction_load'] ?? $rechargeSetting->dg_sanction_load,
-            ];
-            
-            // Update KWH only if provided
-            if (!is_null($kwhValue)) {
-                $updateData['kwh'] = $kwhValue;
-            }
-            
-            // Update the record
-            $rechargeSetting->update($updateData);
-            
-            \Log::info('Updated existing record', [
-                'old_amount' => $currentAmount,
-                'new_amount' => $newAmount,
-                'kwh' => $kwhValue
-            ]);
-        } else {
-            // Create new record
-            $rechargeSetting = RechargeSetting::create([
-                'm_site_id' => $siteId,
-                'm_recharge_amount' => $deltaAmount,
-                'kwh' => $kwhValue,
-                'm_fixed_charge' => $validated['m_fixed_charge'] ?? null,
-                'm_unit_charge' => $validated['m_unit_charge'] ?? null,
-                'm_sanction_load' => $validated['m_sanction_load'] ?? null,
-                'dg_fixed_charge' => $validated['dg_fixed_charge'] ?? null,
-                'dg_unit_charge' => $validated['dg_unit_charge'] ?? null,
-                'dg_sanction_load' => $validated['dg_sanction_load'] ?? null,
-            ]);
-            
-            \Log::info('Created new record', [
-                'amount' => $deltaAmount,
-                'kwh' => $kwhValue
-            ]);
+        $updateData = [
+            'm_recharge_amount' => ($rechargeSetting->m_recharge_amount ?? 0) + $deltaAmount,
+            'm_fixed_charge' => $validated['m_fixed_charge'] ?? $rechargeSetting->m_fixed_charge ?? null,
+            'm_unit_charge' => $validated['m_unit_charge'] ?? $rechargeSetting->m_unit_charge ?? null,
+            'm_sanction_load_r' => $validated['m_sanction_load_r'] ?? $rechargeSetting->m_sanction_load_r ?? null,
+            'm_sanction_load_y' => $validated['m_sanction_load_y'] ?? $rechargeSetting->m_sanction_load_y ?? null,
+            'm_sanction_load_b' => $validated['m_sanction_load_b'] ?? $rechargeSetting->m_sanction_load_b ?? null,
+            'dg_fixed_charge' => $validated['dg_fixed_charge'] ?? $rechargeSetting->dg_fixed_charge ?? null,
+            'dg_unit_charge' => $validated['dg_unit_charge'] ?? $rechargeSetting->dg_unit_charge ?? null,
+            'dg_sanction_load_r' => $validated['dg_sanction_load_r'] ?? $rechargeSetting->dg_sanction_load_r ?? null,
+            'dg_sanction_load_y' => $validated['dg_sanction_load_y'] ?? $rechargeSetting->dg_sanction_load_y ?? null,
+            'dg_sanction_load_b' => $validated['dg_sanction_load_b'] ?? $rechargeSetting->dg_sanction_load_b ?? null,
+        ];
+
+        if (!is_null($kwhValue)) {
+            $updateData['kwh'] = $kwhValue;
         }
 
-        // Add to recharge history table
+        if ($rechargeSetting) {
+            $rechargeSetting->update($updateData);
+        } else {
+            $updateData['m_site_id'] = $siteId;
+            $rechargeSetting = RechargeSetting::create($updateData);
+        }
+
+        // Recharge history
         $maxRechargeId = Recharge::where('site_id', $siteId)->max('recharge_id') ?? 0;
-        $newRechargeId = $maxRechargeId + 1;
-        
         Recharge::create([
             'site_id' => $siteId,
-            'recharge_id' => $newRechargeId,
+            'recharge_id' => $maxRechargeId + 1,
             'recharge_amount' => $deltaAmount,
             'kwh' => $kwhValue,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
 
-        \Log::info('Created recharge history entry', [
-            'recharge_id' => $newRechargeId,
-            'amount' => $deltaAmount
-        ]);
-
-        // Commit transaction
         DB::commit();
-
-        // Clear cache and session to force fresh data
         \Cache::forget('recharge_settings_' . $siteId);
         session()->forget('recharge_data_' . $siteId);
 
-        return redirect()->back()
-            ->with('success', 'Recharge settings saved successfully!')
-            ->with('refresh_page', true); // Add flag for page refresh
+        return redirect()->back()->with('success', 'Recharge settings saved successfully!')->with('refresh_page', true);
 
     } catch (\Exception $e) {
-        // Rollback transaction on error
         DB::rollBack();
-        
-        \Log::error('Error in storeRechargeSettings: ' . $e->getMessage());
-        \Log::error('Stack trace: ' . $e->getTraceAsString());
-        
-        return redirect()->back()
-            ->with('error', 'Error: ' . $e->getMessage())
-            ->withInput();
+        \Log::error('Error in storeRechargeSettings: '.$e->getMessage());
+        return redirect()->back()->with('error', 'Error: '.$e->getMessage())->withInput();
     }
 }
+
     public function triggerConnectionApi(Request $request)
     {
         $request->validate([

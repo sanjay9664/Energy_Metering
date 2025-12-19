@@ -116,6 +116,18 @@
 .toggle-slider.manual {
     transform: translateX(100%);
 }
+
+
+/* SANCTIONED LOAD INPUTS */
+.mini-input {
+    width: 55px;
+    height: 30px;
+    padding: 2px 6px;
+    font-size: 13px;
+    text-align: center;
+    border-radius: 8px;
+}
+
 </style>
 
 
@@ -547,7 +559,7 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                <div class="row mb-2 align-items-center">
+                                                                <!-- <div class="row mb-2 align-items-center">
                                                                     <label
                                                                         class="col-sm-5 col-form-label fw-medium">Sanction
                                                                         Load:</label>
@@ -566,7 +578,53 @@
 
                                                                         </div>
                                                                     </div>
+                                                                </div> -->
+                                                            <div class="row mb-2 align-items-center">
+                                                                <label class="col-sm-5 col-form-label fw-medium">
+                                                                    Sanction Load:
+                                                                </label>
+
+                                                                <div class="col-sm-7">
+                                                                    <div class="d-flex align-items-center gap-2">
+
+                                                                        <!-- ICON -->
+                                                                        <span class="input-group-text bg-success text-white border-success">
+                                                                            <i class="fa-solid fa-bolt"></i>
+                                                                        </span>
+
+                                                                        <!-- INPUT 1 -->
+                                                                        <input
+                                                                            type="text"
+                                                                            name="m_sanction_load_r"
+                                                                            class="form-control form-control-sm mini-input border-success"
+                                                                            placeholder="R"
+                                                                            value="{{ $rechargeSetting[$site->id]->m_sanction_load_r ?? '' }}">
+
+                                                                        <!-- INPUT 2 -->
+                                                                        <input
+                                                                            type="text"
+                                                                            name="m_sanction_load_y"
+                                                                            class="form-control form-control-sm mini-input border-success"
+                                                                            placeholder="Y"
+                                                                            value="{{ $rechargeSetting[$site->id]->m_sanction_load_y ?? '' }}">
+
+                                                                        <!-- INPUT 3 -->
+                                                                        <input
+                                                                            type="text"
+                                                                            name="m_sanction_load_b"
+                                                                            class="form-control form-control-sm mini-input border-success"
+                                                                            placeholder="B"
+                                                                            value="{{ $rechargeSetting[$site->id]->m_sanction_load_b ?? '' }}">
+
+                                                                        <!-- UNIT -->
+                                                                        <span class="input-group-text bg-success text-white border-success" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">
+                                                                                                kW
+                                                                                            </span>
+
+
+                                                                    </div>
                                                                 </div>
+                                                            </div>
                                                             </div>
                                                         </div>
 
@@ -616,7 +674,7 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                <div class="row mb-2 align-items-center">
+                                                                <!-- <div class="row mb-2 align-items-center">
                                                                     <label
                                                                         class="col-sm-5 col-form-label fw-medium">Sanction
                                                                         Load:</label>
@@ -634,7 +692,53 @@
                                                                                 class="input-group-text bg-danger text-white border-danger">kW</span>
                                                                         </div>
                                                                     </div>
+                                                                </div> -->
+                                                            <div class="row mb-2 align-items-center">
+                                                                <label class="col-sm-5 col-form-label fw-medium">
+                                                                    Sanction Load:
+                                                                </label>
+
+                                                                <div class="col-sm-7">
+                                                                    <div class="d-flex align-items-center gap-2">
+
+                                                                        <!-- ICON -->
+                                                                        <span class="input-group-text bg-success text-white border-success">
+                                                                            <i class="fa-solid fa-bolt"></i>
+                                                                        </span>
+
+                                                                        <!-- INPUT 1 -->
+                                                                        <input
+                                                                            type="text"
+                                                                            name="dg_sanction_load_r"
+                                                                            class="form-control form-control-sm mini-input border-success"
+                                                                            placeholder="R"
+                                                                            value="{{ $rechargeSetting[$site->id]->dg_sanction_load_r ?? '' }}">
+
+                                                                        <!-- INPUT 2 -->
+                                                                        <input
+                                                                            type="text"
+                                                                            name="dg_sanction_load_y"
+                                                                            class="form-control form-control-sm mini-input border-success"
+                                                                            placeholder="Y"
+                                                                            value="{{ $rechargeSetting[$site->id]->dg_sanction_load_y ?? '' }}">
+
+                                                                        <!-- INPUT 3 -->
+                                                                        <input
+                                                                            type="text"
+                                                                            name="dg_sanction_load_b"
+                                                                            class="form-control form-control-sm mini-input border-success"
+                                                                            placeholder="B"
+                                                                            value="{{ $rechargeSetting[$site->id]->dg_sanction_load_b ?? '' }}">
+
+                                                                        <!-- UNIT -->
+                                                                        <span class="input-group-text bg-success text-white border-success" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">
+                                                                                                kW
+                                                                                            </span>
+
+
+                                                                    </div>
                                                                 </div>
+                                                            </div>
                                                             </div>
                                                         </div>
 
@@ -665,7 +769,7 @@
                                                             <div class="d-flex align-items-center gap-3">
                                                                 <!-- Toggle -->
                                                                 <div class="toggle-btn-container">
-                                                                    <div
+                                                                    <!-- <div
                                                                         class="toggle-slider {{ $rechargeSetting[$site->id]->status ?? 'auto' }}">
                                                                     </div>
                                                                     <div class="toggle-option {{ ($rechargeSetting[$site->id]->status ?? 'auto') === 'auto' ? 'active' : '' }}"
@@ -678,7 +782,57 @@
                                                                         Manual
                                                                         <input type="hidden" name="status"
                                                                             value="manual">
-                                                                    </div>
+                                                                    </div> -->
+                                                                    <button type="button"
+                                                                                        class="defaultToggleBtn"
+                                                                                        data-current-status="{{ $rechargeSetting[$site->id]->status ?? 'auto' }}"
+                                                                                        style="
+                                                                                            padding:6px 18px;
+                                                                                            font-size:13px;
+                                                                                            font-weight:600;
+                                                                                            border-radius:999px;
+                                                                                            border:none;
+                                                                                            cursor:pointer;
+                                                                                            color:#fff;
+                                                                                            background:linear-gradient(135deg,#3b82f6,#2563eb);
+                                                                                            box-shadow:0 6px 14px rgba(59,130,246,.35);
+                                                                                            transition:all .25s ease;
+                                                                                        ">
+                                                                                        Default
+                                                                                    </button>
+
+                                                                                    <input type="hidden" name="status"
+                                                                                        value="{{ $rechargeSetting[$site->id]->status ?? 'auto' }}">
+
+                                                                                    <script>
+                                                                                    document.querySelectorAll('.defaultToggleBtn').forEach(btn => {
+
+                                                                                        if (btn.dataset.currentStatus === 'manual') {
+                                                                                            btn.style.background = 'linear-gradient(135deg,#f59e0b,#d97706)';
+                                                                                            btn.style.boxShadow = '0 6px 14px rgba(245,158,11,.35)';
+                                                                                        }
+
+                                                                                        btn.addEventListener('click', function () {
+                                                                                            let next = this.dataset.currentStatus === 'auto' ? 'manual' : 'auto';
+                                                                                            this.dataset.currentStatus = next;
+                                                                                            this.nextElementSibling.value = next;
+
+                                                                                            if (next === 'manual') {
+                                                                                                this.style.background = 'linear-gradient(135deg,#f59e0b,#d97706)';
+                                                                                                this.style.boxShadow = '0 6px 14px rgba(245,158,11,.35)';
+                                                                                            } else {
+                                                                                                this.style.background = 'linear-gradient(135deg,#3b82f6,#2563eb)';
+                                                                                                this.style.boxShadow = '0 6px 14px rgba(59,130,246,.35)';
+                                                                                            }
+                                                                                        });
+
+                                                                                        btn.onmouseover = () => btn.style.transform = 'translateY(-1px)';
+                                                                                        btn.onmouseout  = () => btn.style.transform = 'translateY(0)';
+                                                                                        btn.onmousedown = () => btn.style.transform = 'scale(0.96)';
+                                                                                        btn.onmouseup   = () => btn.style.transform = 'translateY(-1px)';
+                                                                                    });
+                                                                                    </script>
+
                                                                 </div>
 
                                                                 <!-- Connect Button -->

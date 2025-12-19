@@ -401,17 +401,17 @@
                                     <strong>Meter Name:</strong> {{ $sitejsonData->generator }}
                                 </td>
                                 <td data-label="S/N">
-                                    <strong>Meter Number</st||rong> {{ $sitejsonData->serial_number }}
+                                    <strong>Meter Number</strong> {{ $sitejsonData->serial_number }}
                                 </td>
                                 <td data-label="Model">
                                     <strong>Controller:</strong> {{ $sitejsonData->asset_name }}
                                 </td>
                                 <td data-label="Brand">
                                     <!-- <strong>Grid:</strong> {{ $sitejsonData->brand }} -->
-                                    <strong>Grid:</strong> {{ $rechargeSetting->m_sanction_load}}kW
+                                    <strong>Grid:</strong> {{ $rechargeSetting->m_sanction_load_r}}kW
                                 </td>
                                 <td data-label="Capacity">
-                                    <strong>DG:</strong> {{ $rechargeSetting->dg_sanction_load}}kW
+                                    <strong>DG:</strong> {{ $rechargeSetting->dg_sanction_load_r}}kW
                                 </td>
                             </tr>
 
@@ -507,13 +507,13 @@
                 <!-- Avg. Voltage / battery_voltage -->
                 <td style="width:16%;">
                     <?php
-                        $key = $sitejsonData->parameters->oil_temperature->add;
-                        $Grid_Unit = '_';
+                        $key = $sitejsonData->parameters->grid_unit->add;
+                        $grid_unit = '_';
                         foreach ($eventData as $event) {
                             $eventArray = $event->getArrayCopy();
-                            if ($eventArray['module_id'] == $sitejsonData->parameters->oil_temperature->md) {
+                            if ($eventArray['module_id'] == $sitejsonData->parameters->grid_unit->md) {
                                 if (array_key_exists($key, $eventArray)) {
-                                    $Grid_Unit = number_format($eventArray[$key], 2);
+                                    $grid_unit = number_format($eventArray[$key], 2);
                                 }
                                 break;
                             }
@@ -521,7 +521,7 @@
                     ?>
                     <div class="status-box" style="padding:10px; font-size:14px;">
                         <p><strong>Grid_Unit</strong></p>
-                        <span class="status-box">{{ $Grid_Unit }}</span>
+                        <span class="status-box">{{ $grid_unit }}</span>
                     </div>
                 </td>
 
@@ -1346,16 +1346,17 @@
                                     <strong>Meter Name:</strong> {{ $sitejsonData->generator }}
                                 </td>
                                 <td data-label="S/N">
-                                    <strong>Meter Number</strong> {{ $sitejsonData->serial_number }}
+                                    // <strong>Meter Number</strong> {{ $sitejsonData->serial_number }}
+                                    
                                 </td>
                                 <td data-label="Model">
                                     <strong>Controller:</strong> {{ $sitejsonData->asset_name }}
                                 </td>
                                 <td data-label="Brand">
-                                    <strong>Grid:</strong> {{ $rechargeSetting->m_sanction_load}}kW
+                                    <strong>Grid:</strong> {{ $rechargeSetting->m_sanction_load_r}}kW
                                 </td>
                                 <td data-label="Capacity">
-                                    <strong>DG:</strong> {{ $rechargeSetting->dg_sanction_load}}kW
+                                    <strong>DG:</strong> {{ $rechargeSetting->dg_sanction_load_r}}kW
                                 </td>
                             </tr>
                                                         <tr>
@@ -1411,13 +1412,13 @@
         <!-- Avg. Voltage / battery_voltage -->
         <td style="width:16%;">
             <?php
-                $key = $sitejsonData->parameters->oil_temperature->add;
-                $Grid_Unit = '_';
+                $key = $sitejsonData->parameters->grid_unit->add;
+                $grid_unit = '_';
                 foreach ($eventData as $event) {
                     $eventArray = $event->getArrayCopy();
-                    if ($eventArray['module_id'] == $sitejsonData->parameters->oil_temperature->md) {
+                    if ($eventArray['module_id'] == $sitejsonData->parameters->grid_unit->md) {
                         if (array_key_exists($key, $eventArray)) {
-                            $Grid_Unit = number_format($eventArray[$key], 2);
+                            $grid_unit = number_format($eventArray[$key], 2);
                         }
                         break;
                     }
@@ -1425,7 +1426,7 @@
             ?>
             <div class="status-box" style="padding:10px; font-size:14px;">
                 <p><strong>Grid_Unit</strong></p>
-                <span class="status-box">{{ $Grid_Unit }}</span>
+                <span class="status-box">{{ $grid_unit }}</span>
             </div>
         </td>
 

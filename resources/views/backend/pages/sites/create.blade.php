@@ -205,11 +205,23 @@
                                                         style="width: 70%;">
                                                 </div>
                                                 <!-- Serial Number -->
-                                                <div class="d-flex justify-content-between align-items-center mb-2"
+                                                <!-- <div class="d-flex justify-content-between align-items-center mb-2"
                                                     style="font-size: 12px; margin-top: 10px;">
                                                     <span>Meter_No:</span>
                                                     <input type="text" name="serial_number" class="form-control ms-2"
                                                         style="width: 70%;">
+                                                </div> -->
+                                                <div class="card mb-1 shadow-lg border-0">
+                                                    <div class="card-body text-center">
+                                                        <div class="fw-bold text-secondary">Meter_Number</div>
+                                                        
+                                                    </div>
+                                                    <div class="d-flex p-2">
+                                                        <input type="text" name="meter_number_md" class="form-control ms-2"
+                                                            style="width: 50%;" placeholder="MD">
+                                                        <input type="text" name="meter_number_add" class="form-control ms-2"
+                                                            style="width: 50%;" placeholder="ADD">
+                                                    </div>
                                                 </div>
                                                 <!-- Model -->
                                                 <div class="d-flex justify-content-between align-items-center mb-2"
@@ -517,15 +529,15 @@
                                                             <div class="row g-2 justify-content-center">
                                                                 <!-- First row (2 inputs) -->
                                                                 <div class="col-auto">
-                                                                    <input type="text" name="oil_temperature_md"
+                                                                    <input type="text" name="grid_unit_md"
                                                                         class="form-control" style="width: 80px;"
-                                                                        value="{{ old('parameters', $siteData['parameters']['oil_temperature']['md'] ?? '') }}"
+                                                                        value="{{ old('parameters', $siteData['parameters']['grid_unit']['md'] ?? '') }}"
                                                                         placeholder="MD">
                                                                 </div>
                                                                 <div class="col-auto">
-                                                                    <input type="text" name="oil_temperature_add"
+                                                                    <input type="text" name="grid_unit_add"
                                                                         class="form-control" style="width: 80px;"
-                                                                        value="{{ old('parameters', $siteData['parameters']['oil_temperature']['add'] ?? '') }}"
+                                                                        value="{{ old('parameters', $siteData['parameters']['grid_unit']['add'] ?? '') }}"
                                                                         placeholder="ADD">
                                                                 </div>
 
@@ -880,7 +892,7 @@
 
                                     <div class="col-md-3">
                                         <div class="card shadow-sm fw-bold"
-                                            style="height: 900px; width: 100%; font-size: 10px;">
+                                            style="height: 1225px; width: 100%; font-size: 10px;">
                                             <div class="card-header text-center bg-secondary text-white fs-6">
                                                 ALARM STATUS
                                             </div>
@@ -933,17 +945,43 @@
                                                                 name="unit_charge_add_mains" placeholder="ADD">
                                                         </div>
 
-                                                        <!-- Sanction Load Mains -->
+                                                        <!-- Sanction Load Mains_R -->
                                                         <div class="d-flex align-items-center justify-content-start">
                                                             <span class="me-2 rounded-circle"
                                                                 style="width: 10px; height: 10px; background-color: red; animation: blink 1.5s infinite;"></span>
-                                                            <span class="fs-6 fw-medium text-primary">Sanction_Load_Mains</span>
+                                                            <span class="fs-6 fw-medium text-primary">Sanction_Load_Mains_R</span>
                                                         </div>
                                                         <div class="d-flex">
                                                             <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                                name="sanction_load_md_mains" placeholder="MD">
+                                                                name="sanction_load_md_mains_r" placeholder="MD">
                                                             <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                                name="sanction_load_add_mains"
+                                                                name="sanction_load_add_mains_r"
+                                                                placeholder="ADD">
+                                                        </div>
+                                                         <!-- Sanction Load Mains_Y -->
+                                                          <div class="d-flex align-items-center justify-content-start">
+                                                            <span class="me-2 rounded-circle"
+                                                                style="width: 10px; height: 10px; background-color: red; animation: blink 1.5s infinite;"></span>
+                                                            <span class="fs-6 fw-medium text-primary">Sanction_Load_Mains_Y</span>
+                                                        </div>
+                                                        <div class="d-flex">
+                                                            <input type="text" class="form-control ms-2" style="width: 50%;"
+                                                                name="sanction_load_md_mains_y" placeholder="MD">
+                                                            <input type="text" class="form-control ms-2" style="width: 50%;"
+                                                                name="sanction_load_add_mains_y"
+                                                                placeholder="ADD">
+                                                        </div>
+                                                        <!-- Sanction Load Mains_B -->
+                                                          <div class="d-flex align-items-center justify-content-start">
+                                                            <span class="me-2 rounded-circle"
+                                                                style="width: 10px; height: 10px; background-color: red; animation: blink 1.5s infinite;"></span>
+                                                            <span class="fs-6 fw-medium text-primary">Sanction_Load_Mains_B</span>
+                                                        </div>
+                                                        <div class="d-flex">
+                                                            <input type="text" class="form-control ms-2" style="width: 50%;"
+                                                                name="sanction_load_md_mains_b" placeholder="MD">
+                                                            <input type="text" class="form-control ms-2" style="width: 50%;"
+                                                                name="sanction_load_add_mains_b"
                                                                 placeholder="ADD">
                                                         </div>
 
@@ -973,17 +1011,43 @@
                                                                 name="unit_charge_add_dg" placeholder="ADD">
                                                         </div>
 
-                                                        <!-- Sanction_Load_DG -->
+                                                        <!-- Sanction_Load_DG_R -->
                                                         <div class="d-flex align-items-center justify-content-start">
                                                             <span class="me-2 rounded-circle"
                                                                 style="width: 10px; height: 10px; background-color: green; animation: blink 1.5s infinite;"></span>
-                                                            <span class="fs-6 fw-medium text-primary">Sanction_Load_DG</span>
+                                                            <span class="fs-6 fw-medium text-primary">Sanction_Load_DG_R</span>
                                                         </div>
                                                         <div class="d-flex">
                                                             <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                                name="sanction_load_md_dg" placeholder="MD">
+                                                                name="sanction_load_md_dg_r" placeholder="MD">
                                                             <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                                name="sanction_load_add_dg" placeholder="ADD">
+                                                                name="sanction_load_add_dg_r" placeholder="ADD">
+                                                        </div>
+                                                    </div>
+                                                    <!-- Sanction_Load_DG_Y -->
+                                                      <div class="d-flex align-items-center justify-content-start">
+                                                            <span class="me-2 rounded-circle"
+                                                                style="width: 10px; height: 10px; background-color: green; animation: blink 1.5s infinite;"></span>
+                                                            <span class="fs-6 fw-medium text-primary">Sanction_Load_DG_Y</span>
+                                                        </div>
+                                                        <div class="d-flex">
+                                                            <input type="text" class="form-control ms-2" style="width: 50%;"
+                                                                name="sanction_load_md_dg_y" placeholder="MD">
+                                                            <input type="text" class="form-control ms-2" style="width: 50%;"
+                                                                name="sanction_load_add_dg_r" placeholder="ADD">
+                                                        </div>
+                                                    </div>
+                                                     <!-- Sanction_Load_DG_B -->
+                                                       <div class="d-flex align-items-center justify-content-start">
+                                                            <span class="me-2 rounded-circle"
+                                                                style="width: 10px; height: 10px; background-color: green; animation: blink 1.5s infinite;"></span>
+                                                            <span class="fs-6 fw-medium text-primary">Sanction_Load_DG_B</span>
+                                                        </div>
+                                                        <div class="d-flex">
+                                                            <input type="text" class="form-control ms-2" style="width: 50%;"
+                                                                name="sanction_load_md_dg_b" placeholder="MD">
+                                                            <input type="text" class="form-control ms-2" style="width: 50%;"
+                                                                name="sanction_load_add_dg_b" placeholder="ADD">
                                                         </div>
                                                     </div>
                                                     <!-- Right Column -->
