@@ -1466,80 +1466,145 @@ class SiteController extends Controller
 //             ->withInput();
 //     }
 // }
-public function storeRechargeSettings(Request $request)
-{
-    DB::beginTransaction();
-    try {
-        $validated = $request->validate([
-            'm_site_id' => 'required|integer|exists:sites,id',
-            'm_recharge_amount' => 'nullable|numeric',
-            'm_fixed_charge' => 'nullable|numeric',
-            'm_unit_charge' => 'nullable|numeric',
-            'm_sanction_load_r' => 'nullable|numeric',
-            'm_sanction_load_y' => 'nullable|numeric',
-            'm_sanction_load_b' => 'nullable|numeric',
-            'dg_fixed_charge' => 'nullable|numeric',
-            'dg_unit_charge' => 'nullable|numeric',
-            'dg_sanction_load_r' => 'nullable|numeric',
-            'dg_sanction_load_y' => 'nullable|numeric',
-            'dg_sanction_load_b' => 'nullable|numeric',
-            'kwh' => 'nullable|numeric',
-        ]);
 
-        $siteId = $validated['m_site_id'];
-        $deltaAmount = $validated['m_recharge_amount'] ?? 0;
-        $kwhValue = $validated['kwh'] ?? null;
+    public function storeRechargeSettings(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $validated = $request->validate([
+                'm_site_id' => 'required|integer|exists:sites,id',
+                'm_recharge_amount' => 'nullable|numeric',
+                'm_fixed_charge' => 'nullable|numeric',
+                'm_unit_charge' => 'nullable|numeric',
+                'm_sanction_load_r' => 'nullable|numeric',
+                'm_sanction_load_y' => 'nullable|numeric',
+                'm_sanction_load_b' => 'nullable|numeric',
+                'dg_fixed_charge' => 'nullable|numeric',
+                'dg_unit_charge' => 'nullable|numeric',
+                'dg_sanction_load_r' => 'nullable|numeric',
+                'dg_sanction_load_y' => 'nullable|numeric',
+                'dg_sanction_load_b' => 'nullable|numeric',
+                'kwh' => 'nullable|numeric',
+            ]);
 
-        $rechargeSetting = RechargeSetting::where('m_site_id', $siteId)->first();
+            $siteId = $validated['m_site_id'];
+            $deltaAmount = $validated['m_recharge_amount'] ?? 0;
+            $kwhValue = $validated['kwh'] ?? null;
 
-        $updateData = [
-            'm_recharge_amount' => ($rechargeSetting->m_recharge_amount ?? 0) + $deltaAmount,
-            'm_fixed_charge' => $validated['m_fixed_charge'] ?? $rechargeSetting->m_fixed_charge ?? null,
-            'm_unit_charge' => $validated['m_unit_charge'] ?? $rechargeSetting->m_unit_charge ?? null,
-            'm_sanction_load_r' => $validated['m_sanction_load_r'] ?? $rechargeSetting->m_sanction_load_r ?? null,
-            'm_sanction_load_y' => $validated['m_sanction_load_y'] ?? $rechargeSetting->m_sanction_load_y ?? null,
-            'm_sanction_load_b' => $validated['m_sanction_load_b'] ?? $rechargeSetting->m_sanction_load_b ?? null,
-            'dg_fixed_charge' => $validated['dg_fixed_charge'] ?? $rechargeSetting->dg_fixed_charge ?? null,
-            'dg_unit_charge' => $validated['dg_unit_charge'] ?? $rechargeSetting->dg_unit_charge ?? null,
-            'dg_sanction_load_r' => $validated['dg_sanction_load_r'] ?? $rechargeSetting->dg_sanction_load_r ?? null,
-            'dg_sanction_load_y' => $validated['dg_sanction_load_y'] ?? $rechargeSetting->dg_sanction_load_y ?? null,
-            'dg_sanction_load_b' => $validated['dg_sanction_load_b'] ?? $rechargeSetting->dg_sanction_load_b ?? null,
+            $rechargeSetting = RechargeSetting::where('m_site_id', $siteId)->first();
+
+            $updateData = [
+                'm_recharge_amount' => ($rechargeSetting->m_recharge_amount ?? 0) + $deltaAmount,
+                'm_fixed_charge' => $validated['m_fixed_charge'] ?? $rechargeSetting->m_fixed_charge ?? null,
+                'm_unit_charge' => $validated['m_unit_charge'] ?? $rechargeSetting->m_unit_charge ?? null,
+                'm_sanction_load_r' => $validated['m_sanction_load_r'] ?? $rechargeSetting->m_sanction_load_r ?? null,
+                'm_sanction_load_y' => $validated['m_sanction_load_y'] ?? $rechargeSetting->m_sanction_load_y ?? null,
+                'm_sanction_load_b' => $validated['m_sanction_load_b'] ?? $rechargeSetting->m_sanction_load_b ?? null,
+                'dg_fixed_charge' => $validated['dg_fixed_charge'] ?? $rechargeSetting->dg_fixed_charge ?? null,
+                'dg_unit_charge' => $validated['dg_unit_charge'] ?? $rechargeSetting->dg_unit_charge ?? null,
+                'dg_sanction_load_r' => $validated['dg_sanction_load_r'] ?? $rechargeSetting->dg_sanction_load_r ?? null,
+                'dg_sanction_load_y' => $validated['dg_sanction_load_y'] ?? $rechargeSetting->dg_sanction_load_y ?? null,
+                'dg_sanction_load_b' => $validated['dg_sanction_load_b'] ?? $rechargeSetting->dg_sanction_load_b ?? null,
+            ];
+
+            if (!is_null($kwhValue)) {
+                $updateData['kwh'] = $kwhValue;
+            }
+
+            if ($rechargeSetting) {
+                $rechargeSetting->update($updateData);
+            } else {
+                $updateData['m_site_id'] = $siteId;
+                $rechargeSetting = RechargeSetting::create($updateData);
+            }
+
+            // Recharge history
+            $maxRechargeId = Recharge::where('site_id', $siteId)->max('recharge_id') ?? 0;
+            Recharge::create([
+                'site_id' => $siteId,
+                'recharge_id' => $maxRechargeId + 1,
+                'recharge_amount' => $deltaAmount,
+                'kwh' => $kwhValue,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            DB::commit();
+
+            // PUSH DATA TO DEVICE AFTER SUCCESSFUL RECHARGE
+            $this->pushRechargeToDeviceInternal($siteId, 1);
+
+            \Cache::forget('recharge_settings_' . $siteId);
+            session()->forget('recharge_data_' . $siteId);
+
+            return redirect()->back()->with('success', 'Recharge settings saved successfully!')->with('refresh_page', true);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Error in storeRechargeSettings: '.$e->getMessage());
+            return redirect()->back()->with('error', 'Error: '.$e->getMessage())->withInput();
+        }
+    }
+
+    private function pushRechargeToDeviceInternal($siteId, $status = 1)
+    {
+        $site = Site::select('data')->where('id', $siteId)->first();
+        if (!$site) return;
+
+        $siteJson = json_decode($site->data, true);
+
+        $moduleId = $siteJson['alarm_status']['recharge']['md'] ?? null;
+
+        if (!$moduleId) {
+            \Log::error('Module ID missing in site JSON', ['siteId' => $siteId]);
+            return;
+        }
+
+        $requiredKeys = [
+            'recharge',
+            'unit_charge_dg',
+            'fixed_charge_dg',
+            'unit_charge_mains',
+            'fixed_charge_mains',
+            'sanction_load_dg_b',
+            'sanction_load_dg_r',
+            'sanction_load_dg_y',
+            'sanction_load_mains_b',
+            'sanction_load_mains_r',
+            'sanction_load_mains_y',
         ];
 
-        if (!is_null($kwhValue)) {
-            $updateData['kwh'] = $kwhValue;
+        $deviceData = array_intersect_key(
+            $siteJson['alarm_status'] ?? [],
+            array_flip($requiredKeys)
+        );
+
+        $payload = [
+            'argValue' => 1,
+            'cmdArg'   => $status,
+            'moduleId' => (string) $moduleId,
+            'cmdField' => 'recharge_settings',
+            'data'     => $deviceData,
+        ];
+
+        try {
+            $response = Http::timeout(10)->post(
+                'http://app.sochiot.com:8082/api/config-engine/device/command/push/remote',
+                $payload
+            );
+
+            \Log::info('Recharge pushed successfully', [
+                'site_id' => $siteId,
+                'module_id' => $moduleId,
+                'payload' => json_encode($payload),
+                'response' => json_encode($response->json()),
+                'status' => 'SUCCESS',
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Recharge Push Error', ['error' => $e->getMessage()]);
         }
-
-        if ($rechargeSetting) {
-            $rechargeSetting->update($updateData);
-        } else {
-            $updateData['m_site_id'] = $siteId;
-            $rechargeSetting = RechargeSetting::create($updateData);
-        }
-
-        // Recharge history
-        $maxRechargeId = Recharge::where('site_id', $siteId)->max('recharge_id') ?? 0;
-        Recharge::create([
-            'site_id' => $siteId,
-            'recharge_id' => $maxRechargeId + 1,
-            'recharge_amount' => $deltaAmount,
-            'kwh' => $kwhValue,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        DB::commit();
-        \Cache::forget('recharge_settings_' . $siteId);
-        session()->forget('recharge_data_' . $siteId);
-
-        return redirect()->back()->with('success', 'Recharge settings saved successfully!')->with('refresh_page', true);
-
-    } catch (\Exception $e) {
-        DB::rollBack();
-        \Log::error('Error in storeRechargeSettings: '.$e->getMessage());
-        return redirect()->back()->with('error', 'Error: '.$e->getMessage())->withInput();
     }
-}
 
     public function triggerConnectionApi(Request $request)
     {
@@ -1719,7 +1784,6 @@ public function storeRechargeSettings(Request $request)
         }
     }
 
-
     // ************************excel **********************
 
     public function downloadReport(Request $request)
@@ -1802,84 +1866,82 @@ public function storeRechargeSettings(Request $request)
         return $query->orderBy('recharges.created_at', 'asc')->get();
     }
 
+    //Api for application
+    public function mobileSiteDetails($slug)
+    {
+        $site = Site::where('slug', $slug)->first();
 
-
-  //Api for application
-public function mobileSiteDetails($slug)
-{
-    $site = Site::where('slug', $slug)->first();
-
-    if (!$site) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Site not found'
-        ], 404);
-    }
-
-    $siteJson = json_decode($site->data, true);
-
-    // Extract md values (module_id)
-    $mdValues = $this->extractMdFields($siteJson);
-    $moduleId = collect($mdValues)->filter()->first();
-
-    // MongoDB fields
-    $client = new MongoClient('mongodb://isaqaadmin:password@44.240.110.54:27017/isa_qa');
-    $collection = $client->isa_qa->device_events;
-
-    $event = null;
-    if ($moduleId) {
-        $event = $collection->findOne(
-            ['module_id' => (int) $moduleId],
-            ['sort' => ['createdAt' => -1]]
-        );
-    }
-
-    // Defaults
-    $gridBalance = null;
-    $gridUnit = null;
-    $dgUnit = null;
-    $supplyStatus = null;
-    $updatedAt = null;
-
-    if ($event) {
-        $gridBalance  = $event['grid_Balance'] ?? null;
-        $gridUnit     = $event['grid_unit'] ?? null;
-        $dgUnit       = $event['dg_unit'] ?? null;
-        $supplyStatus = $event['supply_status'] ?? null;
-
-        if (isset($event['createdAt'])) {
-            $updatedAt = $event['createdAt']
-                ->toDateTime()
-                ->setTimezone(new \DateTimeZone('Asia/Kolkata'))
-                ->format('d-m-Y H:i:s');
+        if (!$site) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Site not found'
+            ], 404);
         }
+
+        $siteJson = json_decode($site->data, true);
+
+        // Extract md values (module_id)
+        $mdValues = $this->extractMdFields($siteJson);
+        $moduleId = collect($mdValues)->filter()->first();
+
+        // MongoDB fields
+        $client = new MongoClient('mongodb://isaqaadmin:password@44.240.110.54:27017/isa_qa');
+        $collection = $client->isa_qa->device_events;
+
+        $event = null;
+        if ($moduleId) {
+            $event = $collection->findOne(
+                ['module_id' => (int) $moduleId],
+                ['sort' => ['createdAt' => -1]]
+            );
+        }
+
+        // Defaults
+        $gridBalance = null;
+        $gridUnit = null;
+        $dgUnit = null;
+        $supplyStatus = null;
+        $updatedAt = null;
+
+        if ($event) {
+            $gridBalance  = $event['grid_Balance'] ?? null;
+            $gridUnit     = $event['grid_unit'] ?? null;
+            $dgUnit       = $event['dg_unit'] ?? null;
+            $supplyStatus = $event['supply_status'] ?? null;
+
+            if (isset($event['createdAt'])) {
+                $updatedAt = $event['createdAt']
+                    ->toDateTime()
+                    ->setTimezone(new \DateTimeZone('Asia/Kolkata'))
+                    ->format('d-m-Y H:i:s');
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+
+            // from local db
+            'asset_information' => [
+                'custom_name'   => $siteJson['asset_name'] ?? null,
+                'site_name'     => $site->site_name,
+                'location'      => $siteJson['group'] ?? null,
+                'meter_name'    => $siteJson['generator'] ?? null,
+                'meter_number'  => $siteJson['serial_number'] ?? null,
+                'controller'    => $siteJson['asset_name'] ?? null,
+                'grid_kw'       => 5.0,   // added after knowing where it comming from
+                'dg_kw'         => 50.0   // will change after the finding where it is comming
+            ],
+
+            //live events from mongodb
+            'live_data' => [
+                'grid_balance'     => $gridBalance,
+                'grid_unit'        => $gridUnit,
+                'dg_unit'          => $dgUnit,
+                'connection_status'=> 'DISCONNECTED', // can be dynamic later
+                'supply_status'    => $supplyStatus,
+                'updated_at'       => $updatedAt
+            ]
+        ]);
     }
-
-    return response()->json([
-        'success' => true,
-
-        // from local db
-        'asset_information' => [
-            'custom_name'   => $siteJson['asset_name'] ?? null,
-            'site_name'     => $site->site_name,
-            'location'      => $siteJson['group'] ?? null,
-            'meter_name'    => $siteJson['generator'] ?? null,
-            'meter_number'  => $siteJson['serial_number'] ?? null,
-            'controller'    => $siteJson['asset_name'] ?? null,
-            'grid_kw'       => 5.0,   // added after knowing where it comming from
-            'dg_kw'         => 50.0   // will change after the finding where it is comming
-        ],
-
-        //live events from mongodb
-        'live_data' => [
-            'grid_balance'     => $gridBalance,
-            'grid_unit'        => $gridUnit,
-            'dg_unit'          => $dgUnit,
-            'connection_status'=> 'DISCONNECTED', // can be dynamic later
-            'supply_status'    => $supplyStatus,
-            'updated_at'       => $updatedAt
-        ]
-    ]);
-}
 
 }
