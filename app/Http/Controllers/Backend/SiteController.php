@@ -1467,84 +1467,84 @@ class SiteController extends Controller
 //     }
 // }
 
-    public function storeRechargeSettings(Request $request)
-    {
-        DB::beginTransaction();
-        try {
-            $validated = $request->validate([
-                'm_site_id' => 'required|integer|exists:sites,id',
-                'm_recharge_amount' => 'nullable|numeric',
-                'm_fixed_charge' => 'nullable|numeric',
-                'm_unit_charge' => 'nullable|numeric',
-                'm_sanction_load_r' => 'nullable|numeric',
-                'm_sanction_load_y' => 'nullable|numeric',
-                'm_sanction_load_b' => 'nullable|numeric',
-                'dg_fixed_charge' => 'nullable|numeric',
-                'dg_unit_charge' => 'nullable|numeric',
-                'dg_sanction_load_r' => 'nullable|numeric',
-                'dg_sanction_load_y' => 'nullable|numeric',
-                'dg_sanction_load_b' => 'nullable|numeric',
-                'kwh' => 'nullable|numeric',
-            ]);
+    // public function storeRechargeSettings(Request $request)
+    // {
+    //     DB::beginTransaction();
+    //     try {
+    //         $validated = $request->validate([
+    //             'm_site_id' => 'required|integer|exists:sites,id',
+    //             'm_recharge_amount' => 'nullable|numeric',
+    //             'm_fixed_charge' => 'nullable|numeric',
+    //             'm_unit_charge' => 'nullable|numeric',
+    //             'm_sanction_load_r' => 'nullable|numeric',
+    //             'm_sanction_load_y' => 'nullable|numeric',
+    //             'm_sanction_load_b' => 'nullable|numeric',
+    //             'dg_fixed_charge' => 'nullable|numeric',
+    //             'dg_unit_charge' => 'nullable|numeric',
+    //             'dg_sanction_load_r' => 'nullable|numeric',
+    //             'dg_sanction_load_y' => 'nullable|numeric',
+    //             'dg_sanction_load_b' => 'nullable|numeric',
+    //             'kwh' => 'nullable|numeric',
+    //         ]);
 
-            $siteId = $validated['m_site_id'];
-            $deltaAmount = $validated['m_recharge_amount'] ?? 0;
-            $kwhValue = $validated['kwh'] ?? null;
+    //         $siteId = $validated['m_site_id'];
+    //         $deltaAmount = $validated['m_recharge_amount'] ?? 0;
+    //         $kwhValue = $validated['kwh'] ?? null;
 
-            $rechargeSetting = RechargeSetting::where('m_site_id', $siteId)->first();
+    //         $rechargeSetting = RechargeSetting::where('m_site_id', $siteId)->first();
 
-            $updateData = [
-                'm_recharge_amount' => ($rechargeSetting->m_recharge_amount ?? 0) + $deltaAmount,
-                'm_fixed_charge' => $validated['m_fixed_charge'] ?? $rechargeSetting->m_fixed_charge ?? null,
-                'm_unit_charge' => $validated['m_unit_charge'] ?? $rechargeSetting->m_unit_charge ?? null,
-                'm_sanction_load_r' => $validated['m_sanction_load_r'] ?? $rechargeSetting->m_sanction_load_r ?? null,
-                'm_sanction_load_y' => $validated['m_sanction_load_y'] ?? $rechargeSetting->m_sanction_load_y ?? null,
-                'm_sanction_load_b' => $validated['m_sanction_load_b'] ?? $rechargeSetting->m_sanction_load_b ?? null,
-                'dg_fixed_charge' => $validated['dg_fixed_charge'] ?? $rechargeSetting->dg_fixed_charge ?? null,
-                'dg_unit_charge' => $validated['dg_unit_charge'] ?? $rechargeSetting->dg_unit_charge ?? null,
-                'dg_sanction_load_r' => $validated['dg_sanction_load_r'] ?? $rechargeSetting->dg_sanction_load_r ?? null,
-                'dg_sanction_load_y' => $validated['dg_sanction_load_y'] ?? $rechargeSetting->dg_sanction_load_y ?? null,
-                'dg_sanction_load_b' => $validated['dg_sanction_load_b'] ?? $rechargeSetting->dg_sanction_load_b ?? null,
-            ];
+    //         $updateData = [
+    //             'm_recharge_amount' => ($rechargeSetting->m_recharge_amount ?? 0) + $deltaAmount,
+    //             'm_fixed_charge' => $validated['m_fixed_charge'] ?? $rechargeSetting->m_fixed_charge ?? null,
+    //             'm_unit_charge' => $validated['m_unit_charge'] ?? $rechargeSetting->m_unit_charge ?? null,
+    //             'm_sanction_load_r' => $validated['m_sanction_load_r'] ?? $rechargeSetting->m_sanction_load_r ?? null,
+    //             'm_sanction_load_y' => $validated['m_sanction_load_y'] ?? $rechargeSetting->m_sanction_load_y ?? null,
+    //             'm_sanction_load_b' => $validated['m_sanction_load_b'] ?? $rechargeSetting->m_sanction_load_b ?? null,
+    //             'dg_fixed_charge' => $validated['dg_fixed_charge'] ?? $rechargeSetting->dg_fixed_charge ?? null,
+    //             'dg_unit_charge' => $validated['dg_unit_charge'] ?? $rechargeSetting->dg_unit_charge ?? null,
+    //             'dg_sanction_load_r' => $validated['dg_sanction_load_r'] ?? $rechargeSetting->dg_sanction_load_r ?? null,
+    //             'dg_sanction_load_y' => $validated['dg_sanction_load_y'] ?? $rechargeSetting->dg_sanction_load_y ?? null,
+    //             'dg_sanction_load_b' => $validated['dg_sanction_load_b'] ?? $rechargeSetting->dg_sanction_load_b ?? null,
+    //         ];
 
-            if (!is_null($kwhValue)) {
-                $updateData['kwh'] = $kwhValue;
-            }
+    //         if (!is_null($kwhValue)) {
+    //             $updateData['kwh'] = $kwhValue;
+    //         }
 
-            if ($rechargeSetting) {
-                $rechargeSetting->update($updateData);
-            } else {
-                $updateData['m_site_id'] = $siteId;
-                $rechargeSetting = RechargeSetting::create($updateData);
-            }
+    //         if ($rechargeSetting) {
+    //             $rechargeSetting->update($updateData);
+    //         } else {
+    //             $updateData['m_site_id'] = $siteId;
+    //             $rechargeSetting = RechargeSetting::create($updateData);
+    //         }
 
-            // Recharge history
-            $maxRechargeId = Recharge::where('site_id', $siteId)->max('recharge_id') ?? 0;
-            Recharge::create([
-                'site_id' => $siteId,
-                'recharge_id' => $maxRechargeId + 1,
-                'recharge_amount' => $deltaAmount,
-                'kwh' => $kwhValue,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+    //         // Recharge history
+    //         $maxRechargeId = Recharge::where('site_id', $siteId)->max('recharge_id') ?? 0;
+    //         Recharge::create([
+    //             'site_id' => $siteId,
+    //             'recharge_id' => $maxRechargeId + 1,
+    //             'recharge_amount' => $deltaAmount,
+    //             'kwh' => $kwhValue,
+    //             'created_at' => now(),
+    //             'updated_at' => now(),
+    //         ]);
 
-            DB::commit();
+    //         DB::commit();
 
-            // PUSH DATA TO DEVICE AFTER SUCCESSFUL RECHARGE
-            $this->pushRechargeToDeviceInternal($siteId, 1);
+    //         // PUSH DATA TO DEVICE AFTER SUCCESSFUL RECHARGE
+    //         $this->pushRechargeToDeviceInternal($siteId, 1);
 
-            \Cache::forget('recharge_settings_' . $siteId);
-            session()->forget('recharge_data_' . $siteId);
+    //         \Cache::forget('recharge_settings_' . $siteId);
+    //         session()->forget('recharge_data_' . $siteId);
 
-            return redirect()->back()->with('success', 'Recharge settings saved successfully!')->with('refresh_page', true);
+    //         return redirect()->back()->with('success', 'Recharge settings saved successfully!')->with('refresh_page', true);
 
-        } catch (\Exception $e) {
-            DB::rollBack();
-            \Log::error('Error in storeRechargeSettings: '.$e->getMessage());
-            return redirect()->back()->with('error', 'Error: '.$e->getMessage())->withInput();
-        }
-    }
+    //     } catch (\Exception $e) {
+    //         DB::rollBack();
+    //         \Log::error('Error in storeRechargeSettings: '.$e->getMessage());
+    //         return redirect()->back()->with('error', 'Error: '.$e->getMessage())->withInput();
+    //     }
+    // }
 
     // private function pushRechargeToDeviceInternal($siteId, $status = 1)
     // {
@@ -1606,253 +1606,325 @@ class SiteController extends Controller
     //     }
     // }
 
-private function pushRechargeToDeviceInternal($siteId, $status = 1)
+
+    // top both function commnet because check the code 
+    
+public function storeRechargeSettings(Request $request)
 {
-    $site = Site::select('data')->where('id', $siteId)->first();
-    if (!$site) return;
-
-    $siteJson = json_decode($site->data, true);
-    $moduleId = $siteJson['alarm_status']['recharge']['md'] ?? null;
-
-    if (!$moduleId) {
-        \Log::error('Module ID missing', ['siteId' => $siteId]);
-        return;
-    }
-
-    $fields = [
-        'recharge' => 'recharge',
-        'unit_charge_dg' => 'unit_charge_dg',
-        'fixed_charge_dg' => 'fixed_charge_dg',
-        'unit_charge_mains' => 'unit_charge_mains',
-        'fixed_charge_mains' => 'fixed_charge_mains',
-        'sanction_load_dg_b' => 'sanction_load_dg_b',
-        'sanction_load_dg_r' => 'sanction_load_dg_r',
-        'sanction_load_dg_y' => 'sanction_load_dg_y',
-        'sanction_load_mains_b' => 'sanction_load_mains_b',
-        'sanction_load_mains_r' => 'sanction_load_mains_r',
-        'sanction_load_mains_y' => 'sanction_load_mains_y',
-    ];
-
-    $totalFields = count($fields);
-    $current = 0;
-
-    foreach ($fields as $fieldKey => $cmdField) {
-        if (!isset($siteJson['alarm_status'][$fieldKey])) {
-            continue;
-        }
-
-        $fieldValue = $siteJson['alarm_status'][$fieldKey];
-        $current++;
-
-        // Log current progress
-        \Log::info("Progress: {$current}/{$totalFields} - Sending {$fieldKey} = {$fieldValue}");
-
-        // Har field ke liye alag API call
-        if ($fieldKey == 'recharge') {
-            $this->pushRecharge($moduleId, $fieldValue, $status);
-        } elseif ($fieldKey == 'unit_charge_dg') {
-            $this->pushUnitChargeDG($moduleId, $fieldValue, $status);
-        } elseif ($fieldKey == 'fixed_charge_dg') {
-            $this->pushFixedChargeDG($moduleId, $fieldValue, $status);
-        } elseif ($fieldKey == 'unit_charge_mains') {
-            $this->pushUnitChargeMains($moduleId, $fieldValue, $status);
-        } elseif ($fieldKey == 'fixed_charge_mains') {
-            $this->pushFixedChargeMains($moduleId, $fieldValue, $status);
-        } elseif ($fieldKey == 'sanction_load_dg_b') {
-            $this->pushSanctionLoadDGB($moduleId, $fieldValue, $status);
-        } elseif ($fieldKey == 'sanction_load_dg_r') {
-            $this->pushSanctionLoadDGR($moduleId, $fieldValue, $status);
-        } elseif ($fieldKey == 'sanction_load_dg_y') {
-            $this->pushSanctionLoadDGY($moduleId, $fieldValue, $status);
-        } elseif ($fieldKey == 'sanction_load_mains_b') {
-            $this->pushSanctionLoadMainsB($moduleId, $fieldValue, $status);
-        } elseif ($fieldKey == 'sanction_load_mains_r') {
-            $this->pushSanctionLoadMainsR($moduleId, $fieldValue, $status);
-        } elseif ($fieldKey == 'sanction_load_mains_y') {
-            $this->pushSanctionLoadMainsY($moduleId, $fieldValue, $status);
-        }
-
-        // Thoda delay de do taki meter process kar sake
-        sleep(2);
-    }
-
-    \Log::info('All fields pushed successfully', ['site_id' => $siteId]);
-}
-
-// Recharge
-private function pushRecharge($moduleId, $value, $status)
-{
-    $payload = [
-        'argValue' => $value,
-        'cmdArg'   => $status,
-        'moduleId' => (string) $moduleId,
-        'cmdField' => 'recharge',
-        'data'     => ['recharge' => $value],
-    ];
-    $this->sendCommand($payload, 'recharge');
-}
-
-// Unit Charge DG
-private function pushUnitChargeDG($moduleId, $value, $status)
-{
-    $payload = [
-        'argValue' => $value,
-        'cmdArg'   => $status,
-        'moduleId' => (string) $moduleId,
-        'cmdField' => 'unit_charge_dg',
-        'data'     => ['unit_charge_dg' => $value],
-    ];
-    $this->sendCommand($payload, 'unit_charge_dg');
-}
-
-// Fixed Charge DG
-private function pushFixedChargeDG($moduleId, $value, $status)
-{
-    $payload = [
-        'argValue' => $value,
-        'cmdArg'   => $status,
-        'moduleId' => (string) $moduleId,
-        'cmdField' => 'fixed_charge_dg',
-        'data'     => ['fixed_charge_dg' => $value],
-    ];
-    $this->sendCommand($payload, 'fixed_charge_dg');
-}
-
-// Unit Charge Mains
-private function pushUnitChargeMains($moduleId, $value, $status)
-{
-    $payload = [
-        'argValue' => $value,
-        'cmdArg'   => $status,
-        'moduleId' => (string) $moduleId,
-        'cmdField' => 'unit_charge_mains',
-        'data'     => ['unit_charge_mains' => $value],
-    ];
-    $this->sendCommand($payload, 'unit_charge_mains');
-}
-
-// Fixed Charge Mains
-private function pushFixedChargeMains($moduleId, $value, $status)
-{
-    $payload = [
-        'argValue' => $value,
-        'cmdArg'   => $status,
-        'moduleId' => (string) $moduleId,
-        'cmdField' => 'fixed_charge_mains',
-        'data'     => ['fixed_charge_mains' => $value],
-    ];
-    $this->sendCommand($payload, 'fixed_charge_mains');
-}
-
-// Sanction Load DG B
-private function pushSanctionLoadDGB($moduleId, $value, $status)
-{
-    $payload = [
-        'argValue' => $value,
-        'cmdArg'   => $status,
-        'moduleId' => (string) $moduleId,
-        'cmdField' => 'sanction_load_dg_b',
-        'data'     => ['sanction_load_dg_b' => $value],
-    ];
-    $this->sendCommand($payload, 'sanction_load_dg_b');
-}
-
-// Sanction Load DG R
-private function pushSanctionLoadDGR($moduleId, $value, $status)
-{
-    $payload = [
-        'argValue' => $value,
-        'cmdArg'   => $status,
-        'moduleId' => (string) $moduleId,
-        'cmdField' => 'sanction_load_dg_r',
-        'data'     => ['sanction_load_dg_r' => $value],
-    ];
-    $this->sendCommand($payload, 'sanction_load_dg_r');
-}
-
-// Sanction Load DG Y
-private function pushSanctionLoadDGY($moduleId, $value, $status)
-{
-    $payload = [
-        'argValue' => $value,
-        'cmdArg'   => $status,
-        'moduleId' => (string) $moduleId,
-        'cmdField' => 'sanction_load_dg_y',
-        'data'     => ['sanction_load_dg_y' => $value],
-    ];
-    $this->sendCommand($payload, 'sanction_load_dg_y');
-}
-
-// Sanction Load Mains B
-private function pushSanctionLoadMainsB($moduleId, $value, $status)
-{
-    $payload = [
-        'argValue' => $value,
-        'cmdArg'   => $status,
-        'moduleId' => (string) $moduleId,
-        'cmdField' => 'sanction_load_mains_b',
-        'data'     => ['sanction_load_mains_b' => $value],
-    ];
-    $this->sendCommand($payload, 'sanction_load_mains_b');
-}
-
-// Sanction Load Mains R
-private function pushSanctionLoadMainsR($moduleId, $value, $status)
-{
-    $payload = [
-        'argValue' => $value,
-        'cmdArg'   => $status,
-        'moduleId' => (string) $moduleId,
-        'cmdField' => 'sanction_load_mains_r',
-        'data'     => ['sanction_load_mains_r' => $value],
-    ];
-    $this->sendCommand($payload, 'sanction_load_mains_r');
-}
-
-// Sanction Load Mains Y
-private function pushSanctionLoadMainsY($moduleId, $value, $status)
-{
-    $payload = [
-        'argValue' => $value,
-        'cmdArg'   => $status,
-        'moduleId' => (string) $moduleId,
-        'cmdField' => 'sanction_load_mains_y',
-        'data'     => ['sanction_load_mains_y' => $value],
-    ];
-    $this->sendCommand($payload, 'sanction_load_mains_y');
-}
-
-// Common API Call Function
-private function sendCommand($payload, $fieldName)
-{
+    DB::beginTransaction();
     try {
-        $response = Http::timeout(10)->post(
-            'http://app.sochiot.com:8082/api/config-engine/device/command/push/remote',
-            $payload
-        );
-
-        \Log::info('Command pushed successfully', [
-            'field' => $fieldName,
-            'payload' => $payload,
-            'response' => $response->json(),
+        $validated = $request->validate([
+            'm_site_id' => 'required|integer|exists:sites,id',
+            'm_recharge_amount' => 'nullable|numeric',
+            'm_fixed_charge' => 'nullable|numeric',
+            'm_unit_charge' => 'nullable|numeric',
+            'm_sanction_load_r' => 'nullable|numeric',
+            'm_sanction_load_y' => 'nullable|numeric',
+            'm_sanction_load_b' => 'nullable|numeric',
+            'dg_fixed_charge' => 'nullable|numeric',
+            'dg_unit_charge' => 'nullable|numeric',
+            'dg_sanction_load_r' => 'nullable|numeric',
+            'dg_sanction_load_y' => 'nullable|numeric',
+            'dg_sanction_load_b' => 'nullable|numeric',
+            'kwh' => 'nullable|numeric',
         ]);
 
-        // Network me dikhane ke liye (console/log)
-        echo "✅ Sent: {$fieldName} = {$payload['argValue']}\n";
-        echo "   Response: " . json_encode($response->json()) . "\n";
-        echo "   ---\n";
+        $siteId = $validated['m_site_id'];
+        $deltaAmount = $validated['m_recharge_amount'] ?? 0;
+        $kwhValue = $validated['kwh'] ?? null;
+
+        $rechargeSetting = RechargeSetting::where('m_site_id', $siteId)->first();
+
+        $updateData = [
+            'm_recharge_amount' => ($rechargeSetting->m_recharge_amount ?? 0) + $deltaAmount,
+            'm_fixed_charge' => $validated['m_fixed_charge'] ?? $rechargeSetting->m_fixed_charge ?? null,
+            'm_unit_charge' => $validated['m_unit_charge'] ?? $rechargeSetting->m_unit_charge ?? null,
+            'm_sanction_load_r' => $validated['m_sanction_load_r'] ?? $rechargeSetting->m_sanction_load_r ?? null,
+            'm_sanction_load_y' => $validated['m_sanction_load_y'] ?? $rechargeSetting->m_sanction_load_y ?? null,
+            'm_sanction_load_b' => $validated['m_sanction_load_b'] ?? $rechargeSetting->m_sanction_load_b ?? null,
+            'dg_fixed_charge' => $validated['dg_fixed_charge'] ?? $rechargeSetting->dg_fixed_charge ?? null,
+            'dg_unit_charge' => $validated['dg_unit_charge'] ?? $rechargeSetting->dg_unit_charge ?? null,
+            'dg_sanction_load_r' => $validated['dg_sanction_load_r'] ?? $rechargeSetting->dg_sanction_load_r ?? null,
+            'dg_sanction_load_y' => $validated['dg_sanction_load_y'] ?? $rechargeSetting->dg_sanction_load_y ?? null,
+            'dg_sanction_load_b' => $validated['dg_sanction_load_b'] ?? $rechargeSetting->dg_sanction_load_b ?? null,
+        ];
+
+        if (!is_null($kwhValue)) {
+            $updateData['kwh'] = $kwhValue;
+        }
+
+        if ($rechargeSetting) {
+            $rechargeSetting->update($updateData);
+        } else {
+            $updateData['m_site_id'] = $siteId;
+            $rechargeSetting = RechargeSetting::create($updateData);
+        }
+
+        // Recharge history
+        $maxRechargeId = Recharge::where('site_id', $siteId)->max('recharge_id') ?? 0;
+        Recharge::create([
+            'site_id' => $siteId,
+            'recharge_id' => $maxRechargeId + 1,
+            'recharge_amount' => $deltaAmount,
+            'kwh' => $kwhValue,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        DB::commit();
+
+        // PUSH ALL SETTINGS TO DEVICE - WITH CORRECT FORMAT
+        $devicePushResults = $this->pushIndividualSettingsToDevice($siteId, $rechargeSetting);
+
+        \Cache::forget('recharge_settings_' . $siteId);
+        session()->forget('recharge_data_' . $siteId);
+
+        return redirect()->back()
+            ->with('success', 'Recharge settings saved and pushed to device successfully!')
+            ->with('device_push_results', $devicePushResults)
+            ->with('refresh_page', true);
 
     } catch (\Exception $e) {
-        \Log::error('Command Push Error', [
-            'field' => $fieldName,
-            'error' => $e->getMessage(),
-            'payload' => $payload
-        ]);
-
-        echo "❌ Failed: {$fieldName} - {$e->getMessage()}\n";
+        DB::rollBack();
+        \Log::error('Error in storeRechargeSettings: '.$e->getMessage());
+        return redirect()->back()->with('error', 'Error: '.$e->getMessage())->withInput();
     }
 }
 
+private function pushIndividualSettingsToDevice($siteId, $rechargeSetting)
+{
+    try {
+        // Get site data from database
+        $site = Site::find($siteId);
+        if (!$site || !$site->data) {
+            \Log::error("Site not found or no data for site ID: {$siteId}");
+            return ['success' => false, 'message' => 'Site data not found'];
+        }
+
+        $siteData = json_decode($site->data, true);
+        
+        // DEBUG: Show all alarm_status configurations
+        \Log::info("=== DEVICE CONFIGURATIONS FOR SITE {$siteId} ===");
+        foreach ($siteData['alarm_status'] ?? [] as $key => $config) {
+            \Log::info("{$key}: " . json_encode($config));
+        }
+        
+        $deviceConfigs = $siteData['alarm_status'] ?? [];
+        
+        // Correct field mapping based on your JSON structure
+        $fieldConfigs = [
+            // Mains Charges
+            'm_fixed_charge' => [
+                'device_key' => 'fixed_charge_mains',
+                'multiply' => 1, // No multiplication for fixed charge
+                'input_field' => 'm_fixed_charge',
+                'expected_format' => 'integer' // Rs value
+            ],
+            'm_unit_charge' => [
+                'device_key' => 'unit_charge_mains',
+                'multiply' => 100, // Convert Rs to paisa
+                'input_field' => 'm_unit_charge',
+                'expected_format' => 'integer' // Paisa value
+            ],
+            
+            // DG Charges
+            'dg_fixed_charge' => [
+                'device_key' => 'fixed_charge_dg',
+                'multiply' => 1,
+                'input_field' => 'dg_fixed_charge',
+                'expected_format' => 'integer'
+            ],
+            'dg_unit_charge' => [
+                'device_key' => 'unit_charge_dg',
+                'multiply' => 100, // Convert Rs to paisa
+                'input_field' => 'dg_unit_charge',
+                'expected_format' => 'integer'
+            ],
+            
+            // Mains Sanction Loads (kW to Watts)
+            'm_sanction_load_r' => [
+                'device_key' => 'sanction_load_mains_r',
+                'multiply' => 100, // kW to Watts
+                'input_field' => 'm_sanction_load_r',
+                'expected_format' => 'integer'
+            ],
+            'm_sanction_load_y' => [
+                'device_key' => 'sanction_load_mains_y',
+                'multiply' => 100, // kW to Watts
+                'input_field' => 'm_sanction_load_y',
+                'expected_format' => 'integer'
+            ],
+            'm_sanction_load_b' => [
+                'device_key' => 'sanction_load_mains_b',
+                'multiply' => 100, // kW to Watts
+                'input_field' => 'm_sanction_load_b',
+                'expected_format' => 'integer'
+            ],
+            
+            // DG Sanction Loads (kW to Watts)
+            'dg_sanction_load_r' => [
+                'device_key' => 'sanction_load_dg_r',
+                'multiply' => 100, // kW to Watts
+                'input_field' => 'dg_sanction_load_r',
+                'expected_format' => 'integer'
+            ],
+            'dg_sanction_load_y' => [
+                'device_key' => 'sanction_load_dg_y',
+                'multiply' => 100, // kW to Watts
+                'input_field' => 'dg_sanction_load_y',
+                'expected_format' => 'integer'
+            ],
+            'dg_sanction_load_b' => [
+                'device_key' => 'sanction_load_dg_b',
+                'multiply' => 100, // kW to Watts
+                'input_field' => 'dg_sanction_load_b',
+                'expected_format' => 'integer'
+            ],
+        ];
+
+        $results = [];
+        $successCount = 0;
+        $totalCount = 0;
+
+        foreach ($fieldConfigs as $fieldKey => $config) {
+            $inputValue = $rechargeSetting->{$config['input_field']};
+            
+            if (is_null($inputValue) || $inputValue === '') {
+                continue;
+            }
+
+            $totalCount++;
+
+            if (!isset($deviceConfigs[$config['device_key']])) {
+                \Log::warning("Device config not found: {$config['device_key']}");
+                continue;
+            }
+
+            $deviceSetting = $deviceConfigs[$config['device_key']];
+            
+            if (empty($deviceSetting['md']) || empty($deviceSetting['add'])) {
+                \Log::warning("Missing module/address for: {$config['device_key']}");
+                continue;
+            }
+
+            // Calculate final value
+            $finalValue = (int)($inputValue * $config['multiply']);
+            
+            // FORMAT THE ADDRESS CORRECTLY
+            $cmdField = $this->formatAddressForMeter($deviceSetting['add']);
+            
+            $apiPayload = [
+                'argValue' => 1,
+                'cmdArg' => $finalValue,
+                'moduleId' => (string) $deviceSetting['md'],
+                'cmdField' => $cmdField
+            ];
+
+            \Log::info("🔧 SENDING TO METER:", [
+                'field' => $fieldKey,
+                'input' => $inputValue,
+                'multiplied' => $finalValue,
+                'multiply_factor' => $config['multiply'],
+                'moduleId' => $deviceSetting['md'],
+                'original_add' => $deviceSetting['add'],
+                'formatted_cmdField' => $cmdField,
+                'payload' => $apiPayload
+            ]);
+
+            $apiResponse = $this->sendSingleDeviceCommand($apiPayload, $fieldKey, $siteId);
+            
+            if ($apiResponse['success']) {
+                $successCount++;
+                \Log::info("✅ SUCCESS: {$fieldKey} = {$finalValue} sent to meter");
+            } else {
+                \Log::error("❌ FAILED: {$fieldKey} - " . ($apiResponse['error'] ?? 'Unknown error'));
+            }
+
+            $results[] = [
+                'field' => $fieldKey,
+                'input' => $inputValue,
+                'sent' => $finalValue,
+                'module' => $deviceSetting['md'],
+                'address' => $cmdField,
+                'success' => $apiResponse['success']
+            ];
+
+            sleep(1); // 1 second delay between requests
+        }
+
+        return [
+            'success' => $successCount > 0,
+            'total' => $totalCount,
+            'success_count' => $successCount,
+            'results' => $results
+        ];
+
+    } catch (\Exception $e) {
+        \Log::error('Error pushing settings to device: ' . $e->getMessage());
+        return [
+            'success' => false,
+            'error' => $e->getMessage()
+        ];
+    }
+}
+
+private function formatAddressForMeter($address)
+{
+    // If address is already in correct format, return as is
+    if (strpos($address, ',') !== false) {
+        return $address; // "6,41396"
+    }
+    
+    // If it's a single number, try to format it
+    if (is_numeric($address)) {
+        // Try different formats that might work
+        $possibleFormats = [
+            "6,$address",  // "6,41396"
+            "4,$address",  // "4,41396"
+            "3,$address",  // "3,41396"
+            "$address",    // "41396"
+        ];
+        
+        // You might need to adjust this based on what works for your meter
+        return "6,$address"; // Default format
+    }
+    
+    return $address;
+}
+
+private function sendSingleDeviceCommand($payload, $fieldName, $siteId)
+{
+    $apiUrl = 'http://app.sochiot.com:8082/api/config-engine/device/command/push/remote';
+    
+    try {
+        $client = new \GuzzleHttp\Client();
+        
+        $response = $client->post($apiUrl, [
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+            ],
+            'json' => $payload,
+            'timeout' => 15,
+            'http_errors' => false
+        ]);
+
+        $responseBody = json_decode($response->getBody()->getContents(), true);
+        
+        return [
+            'success' => $response->getStatusCode() === 200,
+            'status_code' => $response->getStatusCode(),
+            'response' => $responseBody
+        ];
+
+    } catch (\Exception $e) {
+        return [
+            'success' => false,
+            'error' => $e->getMessage()
+        ];
+    }
+}
+    
     public function triggerConnectionApi(Request $request)
     {
         $request->validate([
