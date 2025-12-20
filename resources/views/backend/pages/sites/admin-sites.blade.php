@@ -78,10 +78,11 @@
     width: 200px;
     height: 40px;
     border-radius: 20px;
-    background-color: #e9ecef;
+    /* background-color: #e9ecef; */
     position: relative;
     cursor: pointer;
     overflow: hidden;
+    padding: 2px 50px;
 }
 
 .toggle-option {
@@ -367,7 +368,7 @@
 
                                 <td>{{ $sitejsonData['generator'] ?? 'N/A' }}</td>
                                 <td>{{ $sitejsonData['group'] ?? 'N/A' }}</td>
-                                <td>{{ $sitejsonData['serial_number'] ?? 'N/A' }}</td>
+                                <td> {{ $siteData['meter_number']['add'] ?? 'N/A' }}</td>
 
                                 <!-- <td>
                                     @php

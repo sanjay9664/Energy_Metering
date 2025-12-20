@@ -1546,65 +1546,312 @@ class SiteController extends Controller
         }
     }
 
-    private function pushRechargeToDeviceInternal($siteId, $status = 1)
-    {
-        $site = Site::select('data')->where('id', $siteId)->first();
-        if (!$site) return;
+    // private function pushRechargeToDeviceInternal($siteId, $status = 1)
+    // {
+    //     $site = Site::select('data')->where('id', $siteId)->first();
+    //     if (!$site) return;
 
-        $siteJson = json_decode($site->data, true);
+    //     $siteJson = json_decode($site->data, true);
 
-        $moduleId = $siteJson['alarm_status']['recharge']['md'] ?? null;
+    //     $moduleId = $siteJson['alarm_status']['recharge']['md'] ?? null;
 
-        if (!$moduleId) {
-            \Log::error('Module ID missing in site JSON', ['siteId' => $siteId]);
-            return;
+    //     if (!$moduleId) {
+    //         \Log::error('Module ID missing in site JSON', ['siteId' => $siteId]);
+    //         return;
+    //     }
+
+    //     $requiredKeys = [
+    //         'recharge',
+    //         'unit_charge_dg',
+    //         'fixed_charge_dg',
+    //         'unit_charge_mains',
+    //         'fixed_charge_mains',
+    //         'sanction_load_dg_b',
+    //         'sanction_load_dg_r',
+    //         'sanction_load_dg_y',
+    //         'sanction_load_mains_b',
+    //         'sanction_load_mains_r',
+    //         'sanction_load_mains_y',
+    //     ];
+
+    //     $deviceData = array_intersect_key(
+    //         $siteJson['alarm_status'] ?? [],
+    //         array_flip($requiredKeys)
+    //     );
+
+    //     $payload = [
+    //         'argValue' => 1,
+    //         'cmdArg'   => $status,
+    //         'moduleId' => (string) $moduleId,
+    //         'cmdField' => 'recharge_settings',
+    //         'data'     => $deviceData,
+    //     ];
+
+    //     try {
+    //         $response = Http::timeout(10)->post(
+    //             'http://app.sochiot.com:8082/api/config-engine/device/command/push/remote',
+    //             $payload
+    //         );
+
+    //         \Log::info('Recharge pushed successfully', [
+    //             'site_id' => $siteId,
+    //             'module_id' => $moduleId,
+    //             'payload' => json_encode($payload),
+    //             'response' => json_encode($response->json()),
+    //             'status' => 'SUCCESS',
+    //         ]);
+
+    //     } catch (\Exception $e) {
+    //         \Log::error('Recharge Push Error', ['error' => $e->getMessage()]);
+    //     }
+    // }
+
+private function pushRechargeToDeviceInternal($siteId, $status = 1)
+{
+    $site = Site::select('data')->where('id', $siteId)->first();
+    if (!$site) return;
+
+    $siteJson = json_decode($site->data, true);
+    $moduleId = $siteJson['alarm_status']['recharge']['md'] ?? null;
+
+    if (!$moduleId) {
+        \Log::error('Module ID missing', ['siteId' => $siteId]);
+        return;
+    }
+
+    $fields = [
+        'recharge' => 'recharge',
+        'unit_charge_dg' => 'unit_charge_dg',
+        'fixed_charge_dg' => 'fixed_charge_dg',
+        'unit_charge_mains' => 'unit_charge_mains',
+        'fixed_charge_mains' => 'fixed_charge_mains',
+        'sanction_load_dg_b' => 'sanction_load_dg_b',
+        'sanction_load_dg_r' => 'sanction_load_dg_r',
+        'sanction_load_dg_y' => 'sanction_load_dg_y',
+        'sanction_load_mains_b' => 'sanction_load_mains_b',
+        'sanction_load_mains_r' => 'sanction_load_mains_r',
+        'sanction_load_mains_y' => 'sanction_load_mains_y',
+    ];
+
+    $totalFields = count($fields);
+    $current = 0;
+
+    foreach ($fields as $fieldKey => $cmdField) {
+        if (!isset($siteJson['alarm_status'][$fieldKey])) {
+            continue;
         }
 
-        $requiredKeys = [
-            'recharge',
-            'unit_charge_dg',
-            'fixed_charge_dg',
-            'unit_charge_mains',
-            'fixed_charge_mains',
-            'sanction_load_dg_b',
-            'sanction_load_dg_r',
-            'sanction_load_dg_y',
-            'sanction_load_mains_b',
-            'sanction_load_mains_r',
-            'sanction_load_mains_y',
-        ];
+        $fieldValue = $siteJson['alarm_status'][$fieldKey];
+        $current++;
 
-        $deviceData = array_intersect_key(
-            $siteJson['alarm_status'] ?? [],
-            array_flip($requiredKeys)
+        // Log current progress
+        \Log::info("Progress: {$current}/{$totalFields} - Sending {$fieldKey} = {$fieldValue}");
+
+        // Har field ke liye alag API call
+        if ($fieldKey == 'recharge') {
+            $this->pushRecharge($moduleId, $fieldValue, $status);
+        } elseif ($fieldKey == 'unit_charge_dg') {
+            $this->pushUnitChargeDG($moduleId, $fieldValue, $status);
+        } elseif ($fieldKey == 'fixed_charge_dg') {
+            $this->pushFixedChargeDG($moduleId, $fieldValue, $status);
+        } elseif ($fieldKey == 'unit_charge_mains') {
+            $this->pushUnitChargeMains($moduleId, $fieldValue, $status);
+        } elseif ($fieldKey == 'fixed_charge_mains') {
+            $this->pushFixedChargeMains($moduleId, $fieldValue, $status);
+        } elseif ($fieldKey == 'sanction_load_dg_b') {
+            $this->pushSanctionLoadDGB($moduleId, $fieldValue, $status);
+        } elseif ($fieldKey == 'sanction_load_dg_r') {
+            $this->pushSanctionLoadDGR($moduleId, $fieldValue, $status);
+        } elseif ($fieldKey == 'sanction_load_dg_y') {
+            $this->pushSanctionLoadDGY($moduleId, $fieldValue, $status);
+        } elseif ($fieldKey == 'sanction_load_mains_b') {
+            $this->pushSanctionLoadMainsB($moduleId, $fieldValue, $status);
+        } elseif ($fieldKey == 'sanction_load_mains_r') {
+            $this->pushSanctionLoadMainsR($moduleId, $fieldValue, $status);
+        } elseif ($fieldKey == 'sanction_load_mains_y') {
+            $this->pushSanctionLoadMainsY($moduleId, $fieldValue, $status);
+        }
+
+        // Thoda delay de do taki meter process kar sake
+        sleep(2);
+    }
+
+    \Log::info('All fields pushed successfully', ['site_id' => $siteId]);
+}
+
+// Recharge
+private function pushRecharge($moduleId, $value, $status)
+{
+    $payload = [
+        'argValue' => $value,
+        'cmdArg'   => $status,
+        'moduleId' => (string) $moduleId,
+        'cmdField' => 'recharge',
+        'data'     => ['recharge' => $value],
+    ];
+    $this->sendCommand($payload, 'recharge');
+}
+
+// Unit Charge DG
+private function pushUnitChargeDG($moduleId, $value, $status)
+{
+    $payload = [
+        'argValue' => $value,
+        'cmdArg'   => $status,
+        'moduleId' => (string) $moduleId,
+        'cmdField' => 'unit_charge_dg',
+        'data'     => ['unit_charge_dg' => $value],
+    ];
+    $this->sendCommand($payload, 'unit_charge_dg');
+}
+
+// Fixed Charge DG
+private function pushFixedChargeDG($moduleId, $value, $status)
+{
+    $payload = [
+        'argValue' => $value,
+        'cmdArg'   => $status,
+        'moduleId' => (string) $moduleId,
+        'cmdField' => 'fixed_charge_dg',
+        'data'     => ['fixed_charge_dg' => $value],
+    ];
+    $this->sendCommand($payload, 'fixed_charge_dg');
+}
+
+// Unit Charge Mains
+private function pushUnitChargeMains($moduleId, $value, $status)
+{
+    $payload = [
+        'argValue' => $value,
+        'cmdArg'   => $status,
+        'moduleId' => (string) $moduleId,
+        'cmdField' => 'unit_charge_mains',
+        'data'     => ['unit_charge_mains' => $value],
+    ];
+    $this->sendCommand($payload, 'unit_charge_mains');
+}
+
+// Fixed Charge Mains
+private function pushFixedChargeMains($moduleId, $value, $status)
+{
+    $payload = [
+        'argValue' => $value,
+        'cmdArg'   => $status,
+        'moduleId' => (string) $moduleId,
+        'cmdField' => 'fixed_charge_mains',
+        'data'     => ['fixed_charge_mains' => $value],
+    ];
+    $this->sendCommand($payload, 'fixed_charge_mains');
+}
+
+// Sanction Load DG B
+private function pushSanctionLoadDGB($moduleId, $value, $status)
+{
+    $payload = [
+        'argValue' => $value,
+        'cmdArg'   => $status,
+        'moduleId' => (string) $moduleId,
+        'cmdField' => 'sanction_load_dg_b',
+        'data'     => ['sanction_load_dg_b' => $value],
+    ];
+    $this->sendCommand($payload, 'sanction_load_dg_b');
+}
+
+// Sanction Load DG R
+private function pushSanctionLoadDGR($moduleId, $value, $status)
+{
+    $payload = [
+        'argValue' => $value,
+        'cmdArg'   => $status,
+        'moduleId' => (string) $moduleId,
+        'cmdField' => 'sanction_load_dg_r',
+        'data'     => ['sanction_load_dg_r' => $value],
+    ];
+    $this->sendCommand($payload, 'sanction_load_dg_r');
+}
+
+// Sanction Load DG Y
+private function pushSanctionLoadDGY($moduleId, $value, $status)
+{
+    $payload = [
+        'argValue' => $value,
+        'cmdArg'   => $status,
+        'moduleId' => (string) $moduleId,
+        'cmdField' => 'sanction_load_dg_y',
+        'data'     => ['sanction_load_dg_y' => $value],
+    ];
+    $this->sendCommand($payload, 'sanction_load_dg_y');
+}
+
+// Sanction Load Mains B
+private function pushSanctionLoadMainsB($moduleId, $value, $status)
+{
+    $payload = [
+        'argValue' => $value,
+        'cmdArg'   => $status,
+        'moduleId' => (string) $moduleId,
+        'cmdField' => 'sanction_load_mains_b',
+        'data'     => ['sanction_load_mains_b' => $value],
+    ];
+    $this->sendCommand($payload, 'sanction_load_mains_b');
+}
+
+// Sanction Load Mains R
+private function pushSanctionLoadMainsR($moduleId, $value, $status)
+{
+    $payload = [
+        'argValue' => $value,
+        'cmdArg'   => $status,
+        'moduleId' => (string) $moduleId,
+        'cmdField' => 'sanction_load_mains_r',
+        'data'     => ['sanction_load_mains_r' => $value],
+    ];
+    $this->sendCommand($payload, 'sanction_load_mains_r');
+}
+
+// Sanction Load Mains Y
+private function pushSanctionLoadMainsY($moduleId, $value, $status)
+{
+    $payload = [
+        'argValue' => $value,
+        'cmdArg'   => $status,
+        'moduleId' => (string) $moduleId,
+        'cmdField' => 'sanction_load_mains_y',
+        'data'     => ['sanction_load_mains_y' => $value],
+    ];
+    $this->sendCommand($payload, 'sanction_load_mains_y');
+}
+
+// Common API Call Function
+private function sendCommand($payload, $fieldName)
+{
+    try {
+        $response = Http::timeout(10)->post(
+            'http://app.sochiot.com:8082/api/config-engine/device/command/push/remote',
+            $payload
         );
 
-        $payload = [
-            'argValue' => 1,
-            'cmdArg'   => $status,
-            'moduleId' => (string) $moduleId,
-            'cmdField' => 'recharge_settings',
-            'data'     => $deviceData,
-        ];
+        \Log::info('Command pushed successfully', [
+            'field' => $fieldName,
+            'payload' => $payload,
+            'response' => $response->json(),
+        ]);
 
-        try {
-            $response = Http::timeout(10)->post(
-                'http://app.sochiot.com:8082/api/config-engine/device/command/push/remote',
-                $payload
-            );
+        // Network me dikhane ke liye (console/log)
+        echo "✅ Sent: {$fieldName} = {$payload['argValue']}\n";
+        echo "   Response: " . json_encode($response->json()) . "\n";
+        echo "   ---\n";
 
-            \Log::info('Recharge pushed successfully', [
-                'site_id' => $siteId,
-                'module_id' => $moduleId,
-                'payload' => json_encode($payload),
-                'response' => json_encode($response->json()),
-                'status' => 'SUCCESS',
-            ]);
+    } catch (\Exception $e) {
+        \Log::error('Command Push Error', [
+            'field' => $fieldName,
+            'error' => $e->getMessage(),
+            'payload' => $payload
+        ]);
 
-        } catch (\Exception $e) {
-            \Log::error('Recharge Push Error', ['error' => $e->getMessage()]);
-        }
+        echo "❌ Failed: {$fieldName} - {$e->getMessage()}\n";
     }
+}
 
     public function triggerConnectionApi(Request $request)
     {

@@ -401,7 +401,7 @@
                                     <strong>Meter Name:</strong> {{ $sitejsonData->generator }}
                                 </td>
                                 <td data-label="S/N">
-                                    <strong>Meter Number</strong> {{ $sitejsonData->serial_number }}
+                                    <strong>Meter Number</strong> {{ $siteData['meter_number']['add'] ?? '-' }}
                                 </td>
                                 <td data-label="Model">
                                     <strong>Controller:</strong> {{ $sitejsonData->asset_name }}
@@ -1346,7 +1346,7 @@
                                     <strong>Meter Name:</strong> {{ $sitejsonData->generator }}
                                 </td>
                                 <td data-label="S/N">
-                                    // <strong>Meter Number</strong> {{ $sitejsonData->serial_number }}
+                                    <strong>Meter Number</strong> {{ $siteData['meter_number']['add'] ?? '-' }}
                                     
                                 </td>
                                 <td data-label="Model">
