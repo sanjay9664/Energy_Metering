@@ -1691,6 +1691,183 @@ public function storeRechargeSettings(Request $request)
     }
 }
 
+// private function pushIndividualSettingsToDevice($siteId, $rechargeSetting)
+// {
+//     try {
+//         // Get site data from database
+//         $site = Site::find($siteId);
+//         if (!$site || !$site->data) {
+//             \Log::error("Site not found or no data for site ID: {$siteId}");
+//             return ['success' => false, 'message' => 'Site data not found'];
+//         }
+
+//         $siteData = json_decode($site->data, true);
+        
+//         // DEBUG: Show all alarm_status configurations
+//         \Log::info("=== DEVICE CONFIGURATIONS FOR SITE {$siteId} ===");
+//         foreach ($siteData['alarm_status'] ?? [] as $key => $config) {
+//             \Log::info("{$key}: " . json_encode($config));
+//         }
+        
+//         $deviceConfigs = $siteData['alarm_status'] ?? [];
+        
+//         // Correct field mapping based on your JSON structure
+//         $fieldConfigs = [
+//             // Mains Charges
+//             'm_fixed_charge' => [
+//                 'device_key' => 'fixed_charge_mains',
+//                 'multiply' => 1, // No multiplication for fixed charge
+//                 'input_field' => 'm_fixed_charge',
+//                 'expected_format' => 'integer' // Rs value
+//             ],
+//             'm_unit_charge' => [
+//                 'device_key' => 'unit_charge_mains',
+//                 'multiply' => 100, // Convert Rs to paisa
+//                 'input_field' => 'm_unit_charge',
+//                 'expected_format' => 'integer' // Paisa value
+//             ],
+            
+//             // DG Charges
+//             'dg_fixed_charge' => [
+//                 'device_key' => 'fixed_charge_dg',
+//                 'multiply' => 1,
+//                 'input_field' => 'dg_fixed_charge',
+//                 'expected_format' => 'integer'
+//             ],
+//             'dg_unit_charge' => [
+//                 'device_key' => 'unit_charge_dg',
+//                 'multiply' => 100, // Convert Rs to paisa
+//                 'input_field' => 'dg_unit_charge',
+//                 'expected_format' => 'integer'
+//             ],
+            
+//             // Mains Sanction Loads (kW to Watts)
+//             'm_sanction_load_r' => [
+//                 'device_key' => 'sanction_load_mains_r',
+//                 'multiply' => 100, // kW to Watts
+//                 'input_field' => 'm_sanction_load_r',
+//                 'expected_format' => 'integer'
+//             ],
+//             'm_sanction_load_y' => [
+//                 'device_key' => 'sanction_load_mains_y',
+//                 'multiply' => 100, // kW to Watts
+//                 'input_field' => 'm_sanction_load_y',
+//                 'expected_format' => 'integer'
+//             ],
+//             'm_sanction_load_b' => [
+//                 'device_key' => 'sanction_load_mains_b',
+//                 'multiply' => 100, // kW to Watts
+//                 'input_field' => 'm_sanction_load_b',
+//                 'expected_format' => 'integer'
+//             ],
+            
+//             // DG Sanction Loads (kW to Watts)
+//             'dg_sanction_load_r' => [
+//                 'device_key' => 'sanction_load_dg_r',
+//                 'multiply' => 100, // kW to Watts
+//                 'input_field' => 'dg_sanction_load_r',
+//                 'expected_format' => 'integer'
+//             ],
+//             'dg_sanction_load_y' => [
+//                 'device_key' => 'sanction_load_dg_y',
+//                 'multiply' => 100, // kW to Watts
+//                 'input_field' => 'dg_sanction_load_y',
+//                 'expected_format' => 'integer'
+//             ],
+//             'dg_sanction_load_b' => [
+//                 'device_key' => 'sanction_load_dg_b',
+//                 'multiply' => 100, // kW to Watts
+//                 'input_field' => 'dg_sanction_load_b',
+//                 'expected_format' => 'integer'
+//             ],
+//         ];
+
+//         $results = [];
+//         $successCount = 0;
+//         $totalCount = 0;
+
+//         foreach ($fieldConfigs as $fieldKey => $config) {
+//             $inputValue = $rechargeSetting->{$config['input_field']};
+            
+//             if (is_null($inputValue) || $inputValue === '') {
+//                 continue;
+//             }
+
+//             $totalCount++;
+
+//             if (!isset($deviceConfigs[$config['device_key']])) {
+//                 \Log::warning("Device config not found: {$config['device_key']}");
+//                 continue;
+//             }
+
+//             $deviceSetting = $deviceConfigs[$config['device_key']];
+            
+//             if (empty($deviceSetting['md']) || empty($deviceSetting['add'])) {
+//                 \Log::warning("Missing module/address for: {$config['device_key']}");
+//                 continue;
+//             }
+
+//             // Calculate final value
+//             $finalValue = (int)($inputValue * $config['multiply']);
+            
+//             // FORMAT THE ADDRESS CORRECTLY
+//             $cmdField = $this->formatAddressForMeter($deviceSetting['add']);
+            
+//             $apiPayload = [
+//                 'argValue' => 1,
+//                 'cmdArg' => $finalValue,
+//                 'moduleId' => (string) $deviceSetting['md'],
+//                 'cmdField' => $cmdField
+//             ];
+
+//             \Log::info("🔧 SENDING TO METER:", [
+//                 'field' => $fieldKey,
+//                 'input' => $inputValue,
+//                 'multiplied' => $finalValue,
+//                 'multiply_factor' => $config['multiply'],
+//                 'moduleId' => $deviceSetting['md'],
+//                 'original_add' => $deviceSetting['add'],
+//                 'formatted_cmdField' => $cmdField,
+//                 'payload' => $apiPayload
+//             ]);
+
+//             $apiResponse = $this->sendSingleDeviceCommand($apiPayload, $fieldKey, $siteId);
+            
+//             if ($apiResponse['success']) {
+//                 $successCount++;
+//                 \Log::info("✅ SUCCESS: {$fieldKey} = {$finalValue} sent to meter");
+//             } else {
+//                 \Log::error("❌ FAILED: {$fieldKey} - " . ($apiResponse['error'] ?? 'Unknown error'));
+//             }
+
+//             $results[] = [
+//                 'field' => $fieldKey,
+//                 'input' => $inputValue,
+//                 'sent' => $finalValue,
+//                 'module' => $deviceSetting['md'],
+//                 'address' => $cmdField,
+//                 'success' => $apiResponse['success']
+//             ];
+
+//             sleep(1); // 1 second delay between requests
+//         }
+
+//         return [
+//             'success' => $successCount > 0,
+//             'total' => $totalCount,
+//             'success_count' => $successCount,
+//             'results' => $results
+//         ];
+
+//     } catch (\Exception $e) {
+//         \Log::error('Error pushing settings to device: ' . $e->getMessage());
+//         return [
+//             'success' => false,
+//             'error' => $e->getMessage()
+//         ];
+//     }
+// }
+
 private function pushIndividualSettingsToDevice($siteId, $rechargeSetting)
 {
     try {
@@ -1714,12 +1891,21 @@ private function pushIndividualSettingsToDevice($siteId, $rechargeSetting)
         // Correct field mapping based on your JSON structure
         $fieldConfigs = [
             // Mains Charges
+            // 'm_fixed_charge' => [
+            //     'device_key' => 'fixed_charge_mains',
+            //     'multiply' => 1, // No multiplication for fixed charge
+            //     'input_field' => 'm_fixed_charge',
+            //     'expected_format' => 'integer', // Rs value
+            //     'special_calculation' => true // Flag for special calculation
+            // ],
             'm_fixed_charge' => [
-                'device_key' => 'fixed_charge_mains',
-                'multiply' => 1, // No multiplication for fixed charge
-                'input_field' => 'm_fixed_charge',
-                'expected_format' => 'integer' // Rs value
-            ],
+            'device_key' => 'fixed_charge_mains',
+            'multiply' => 100, // Convert to paisa for daily deduction
+            'input_field' => 'm_fixed_charge',
+            'expected_format' => 'integer',
+            'special_calculation' => true,
+            'description' => 'Daily fixed charge deduction amount in paisa'
+        ],
             'm_unit_charge' => [
                 'device_key' => 'unit_charge_mains',
                 'multiply' => 100, // Convert Rs to paisa
@@ -1787,7 +1973,12 @@ private function pushIndividualSettingsToDevice($siteId, $rechargeSetting)
         $totalCount = 0;
 
         foreach ($fieldConfigs as $fieldKey => $config) {
-            $inputValue = $rechargeSetting->{$config['input_field']};
+            // Special calculation for m_fixed_charge
+            if ($fieldKey === 'm_fixed_charge' && ($config['special_calculation'] ?? false)) {
+                $inputValue = $this->calculateFixedCharge($rechargeSetting);
+            } else {
+                $inputValue = $rechargeSetting->{$config['input_field']};
+            }
             
             if (is_null($inputValue) || $inputValue === '') {
                 continue;
@@ -1868,6 +2059,47 @@ private function pushIndividualSettingsToDevice($siteId, $rechargeSetting)
     }
 }
 
+
+/**
+ * Calculate fixed charge based on the formula:
+ * m_fixed_charge * (r + y + b) / days_in_month
+ * 
+ * Note: This will be deducted daily from the balance
+ */
+private function calculateFixedCharge($rechargeSetting)
+{
+    $fixedCharge = $rechargeSetting->m_fixed_charge ?? 0;
+    $sanctionLoadR = $rechargeSetting->m_sanction_load_r ?? 0;
+    $sanctionLoadY = $rechargeSetting->m_sanction_load_y ?? 0;
+    $sanctionLoadB = $rechargeSetting->m_sanction_load_b ?? 0;
+    
+    // Get current month's days
+    $daysInMonth = date('t'); // 't' returns number of days in current month
+    
+    // Calculate total sanction load
+    $totalSanctionLoad = $sanctionLoadR + $sanctionLoadY + $sanctionLoadB;
+    
+    // Apply the formula for DAILY deduction
+    if ($totalSanctionLoad > 0 && $daysInMonth > 0) {
+        $dailyDeduction = ($fixedCharge * $totalSanctionLoad) / $daysInMonth;
+        
+        \Log::info("📊 Daily Fixed Charge Calculation:", [
+            'monthly_fixed_charge' => $fixedCharge,
+            'sanction_load_r' => $sanctionLoadR,
+            'sanction_load_y' => $sanctionLoadY,
+            'sanction_load_b' => $sanctionLoadB,
+            'total_sanction_load' => $totalSanctionLoad,
+            'days_in_month' => $daysInMonth,
+            'daily_deduction' => $dailyDeduction,
+            'rounded_daily_deduction' => round($dailyDeduction, 2)
+        ]);
+        
+        return round($dailyDeduction, 2);
+    }
+    
+    // If no sanction load or invalid days, return original fixed charge divided by days
+    return $fixedCharge / $daysInMonth;
+}
 private function formatAddressForMeter($address)
 {
     // If address is already in correct format, return as is

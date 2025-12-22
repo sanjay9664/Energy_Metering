@@ -368,7 +368,56 @@
 
                                 <td>{{ $sitejsonData['generator'] ?? 'N/A' }}</td>
                                 <td>{{ $sitejsonData['group'] ?? 'N/A' }}</td>
-                                <td> {{ $siteData['meter_number']['add'] ?? 'N/A' }}</td>
+<?php
+$meterMd  = $sitejsonData['meter_number']['md']  ?? null;   
+$meterKey = $sitejsonData['meter_number']['add'] ?? null;  
+$addMeterNumberValue = 0;
+
+// STEP 1: Check if meterMd, meterKey and eventData exist
+if ($meterMd && $meterKey && !empty($eventData)) {
+    var_dump('STEP 1: meterMd, meterKey and eventData exist');
+    var_dump('meterMd: ', $meterMd);
+    var_dump('meterKey: ', $meterKey);
+    var_dump('eventData count: ', count($eventData));
+
+    // STEP 2: Loop through eventData
+    foreach ($eventData as $index => $event) {
+        // Convert ArrayObject to array if necessary
+        $eventArray = $event instanceof \ArrayObject ? $event->getArrayCopy() : (array) $event;
+
+        var_dump("STEP 2: Event #$index", $eventArray);
+
+        // STEP 3: Check module_id exists and matches
+        if (isset($eventArray['module_id'])) {
+            var_dump("STEP 3: module_id exists", $eventArray['module_id']);
+            if ($eventArray['module_id'] == $meterMd) {
+                var_dump("STEP 4: module_id matches meterMd");
+
+                // STEP 4: Check if dynamic key exists in this event
+                if (isset($eventArray[$meterKey])) {
+                    $addMeterNumberValue = $eventArray[$meterKey];
+                    var_dump("STEP 5: Found value for meterKey", $addMeterNumberValue);
+                } else {
+                    var_dump("STEP 5: meterKey not found in this event", array_keys($eventArray));
+                }
+
+                // Stop loop once module matches
+                break;
+            } else {
+                var_dump("STEP 4: module_id does not match", $eventArray['module_id']);
+            }
+        } else {
+            var_dump("STEP 3: module_id missing in this event");
+        }
+    }
+} else {
+    var_dump("STEP 1: Missing meterMd, meterKey, or eventData");
+}
+
+// STEP 6: Final value after loop
+var_dump("STEP 6: Final addMeterNumberValue", $addMeterNumberValue);
+?>
+
 
                                 <!-- <td>
                                     @php
@@ -485,17 +534,7 @@
                                                                                 <i
                                                                                     class="fa-solid fa-indian-rupee-sign"></i>
                                                                             </span>
-                                                                            <!-- <input type="text" name="m_recharge_amount" id="m_recharge_amount_{{ $site->id }}"
-                                                                            class="form-control border-primary"
-                                                                            value="{{ $rechargeSetting[$site->id]->m_recharge_amount ?? '' }}"
-                                                                            placeholder="Enter amount"> -->
-                                                                            <!-- <input type="text" 
-                                                                                name="m_recharge_amount" 
-                                                                                id="m_recharge_amount_{{ $site->id }}" 
-                                                                                class="form-control border-primary" 
-                                                                                value="{{ $rechargeSetting[$site->id]->m_recharge_amount ?? '' }}" 
-                                                                                placeholder="Enter amount"
-                                                                                data-site-id="{{ $site->id }}"> -->
+                                                                            
                                                                             <input type="text" name="m_recharge_amount"
                                                                                 id="m_recharge_amount_{{ $site->id }}"
                                                                                 class="form-control border-primary"
@@ -1190,7 +1229,7 @@
         }
     });
     </script>
-    <script>
+    <!-- <script>
     document.addEventListener("DOMContentLoaded", function() {
 
         /* ---------------------------------------------------------
@@ -1314,8 +1353,237 @@
         });
 
     });
-    </script>
+    </script> -->
 
+    <script>
+   document.addEventListener("DOMContentLoaded", function() {
+    
+    // ✅ Manual Connect/Disconnect Button
+    $(document).on('click', '.connectBtn, .disconnectBtn', function(e) {
+        e.preventDefault();
+
+        let $btn = $(this);
+        let isConnect = $btn.hasClass('connectBtn');
+        let actionType = isConnect ? 'connect' : 'disconnect';
+
+        let siteId = $btn.data('site-id');
+        let argValue = $btn.find('input[name="argValue"]').val();
+        let moduleId = $btn.find('input[name="moduleId"]').val();
+        let cmdArg = $btn.find('input[name="cmdArg"]').val();
+        let cmdField = $btn.find('input[name="cmdField"]').val();
+
+        Swal.fire({
+            title: `Are you sure you want to ${actionType.toUpperCase()}?`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Yes',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/admin/start-process',
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        site_id: siteId,
+                        argValue,
+                        moduleId,
+                        cmdArg,
+                        cmdField,
+                        actionType
+                    },
+                    beforeSend: () => $btn.prop('disabled', true),
+                    success: (response) => {
+                        Swal.fire({
+                            icon: 'success',
+                            title: response.message
+                        });
+                    },
+                    error: (xhr) => {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Something went wrong.'
+                        });
+                    },
+                    complete: () => $btn.prop('disabled', false)
+                });
+            }
+        });
+    });
+
+    // ✅ Range Validations
+    function validateAllInputs() {
+        let isValid = true;
+        let messages = [];
+
+        // 1. Recharge Amount: Max 10000
+        let rechargeInput = document.getElementById(`m_recharge_amount_{{ $site->id }}`);
+        if (rechargeInput) {
+            let rechargeValue = parseFloat(rechargeInput.value) || 0;
+            if (rechargeValue > 10000) {
+                isValid = false;
+                messages.push("Recharge Amount cannot exceed ₹10,000");
+                rechargeInput.classList.add('is-invalid');
+            } else {
+                rechargeInput.classList.remove('is-invalid');
+            }
+        }
+
+        // 2. Unit Charge: Max 100
+        let unitChargeInput = document.querySelector('input[name="m_unit_charge"]');
+        if (unitChargeInput) {
+            let unitChargeValue = parseFloat(unitChargeInput.value) || 0;
+            if (unitChargeValue > 100) {
+                isValid = false;
+                messages.push("Unit Charge cannot exceed 100");
+                unitChargeInput.classList.add('is-invalid');
+            } else {
+                unitChargeInput.classList.remove('is-invalid');
+            }
+        }
+
+        // 3. Mains Sanction Load (R+Y+B): Max 12 kW
+        let r1 = parseFloat(document.querySelector('input[name="m_sanction_load_r"]').value) || 0;
+        let y1 = parseFloat(document.querySelector('input[name="m_sanction_load_y"]').value) || 0;
+        let b1 = parseFloat(document.querySelector('input[name="m_sanction_load_b"]').value) || 0;
+        let totalMains = r1 + y1 + b1;
+        
+        if (totalMains > 12) {
+            isValid = false;
+            messages.push(`Total Mains Sanction Load (R+Y+B = ${totalMains} kW) cannot exceed 12 kW`);
+            document.querySelectorAll('input[name^="m_sanction_load_"]').forEach(input => {
+                input.classList.add('is-invalid');
+            });
+        } else {
+            document.querySelectorAll('input[name^="m_sanction_load_"]').forEach(input => {
+                input.classList.remove('is-invalid');
+            });
+        }
+
+        // 4. DG Sanction Load (R+Y+B): Max 12 kW
+        let r2 = parseFloat(document.querySelector('input[name="dg_sanction_load_r"]').value) || 0;
+        let y2 = parseFloat(document.querySelector('input[name="dg_sanction_load_y"]').value) || 0;
+        let b2 = parseFloat(document.querySelector('input[name="dg_sanction_load_b"]').value) || 0;
+        let totalDG = r2 + y2 + b2;
+        
+        if (totalDG > 12) {
+            isValid = false;
+            messages.push(`Total DG Sanction Load (R+Y+B = ${totalDG} kW) cannot exceed 12 kW`);
+            document.querySelectorAll('input[name^="dg_sanction_load_"]').forEach(input => {
+                input.classList.add('is-invalid');
+            });
+        } else {
+            document.querySelectorAll('input[name^="dg_sanction_load_"]').forEach(input => {
+                input.classList.remove('is-invalid');
+            });
+        }
+
+        // 5. Mains Fixed Charge: Minimum 1
+        let fixedChargeInput = document.querySelector('input[name="m_fixed_charge"]');
+        if (fixedChargeInput) {
+            let fixedChargeValue = parseFloat(fixedChargeInput.value) || 0;
+            if (fixedChargeValue === 0) {
+                isValid = false;
+                messages.push("Mains Fixed Charge must be at least 1");
+                fixedChargeInput.classList.add('is-invalid');
+            } else {
+                fixedChargeInput.classList.remove('is-invalid');
+            }
+        }
+
+        return { isValid, messages };
+    }
+
+    // ✅ Real-time validation for key inputs
+    document.querySelectorAll('input').forEach(input => {
+        input.addEventListener('blur', function() {
+            let validation = validateAllInputs();
+            if (!validation.isValid) {
+                // Show first error message
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Validation Error',
+                    text: validation.messages[0],
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+            }
+        });
+    });
+
+    // ✅ Form submission validation
+    document.querySelector('#rechargeForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        let validation = validateAllInputs();
+        
+        if (!validation.isValid) {
+            // Show all validation errors
+            let errorMessage = validation.messages.join('<br>');
+            Swal.fire({
+                icon: 'error',
+                title: 'Validation Errors',
+                html: errorMessage,
+                confirmButtonText: 'OK'
+            });
+            return false;
+        }
+        
+        // If all validations pass, submit the form
+        this.submit();
+    });
+
+    // ✅ Auto Connect/Disconnect based on table recharge amount
+    document.querySelectorAll(".rechargeStatus").forEach(function(cell) {
+        let siteId = cell.dataset.siteId;
+        let value = parseFloat(cell.dataset.amount) || 0;
+
+        // Positive → connect, Negative → disconnect
+        let status = value > 0 ? 0 : 1;
+        let actionType = status === 0 ? "connect" : "disconnect";
+
+        // Correct button
+        let btnSelector = status === 0 ?
+            `.connectBtn[data-site-id="${siteId}"]` :
+            `.disconnectBtn[data-site-id="${siteId}"]`;
+
+        let $btn = $(btnSelector);
+
+        if ($btn.length === 0) {
+            console.error("Button not found for site:", siteId);
+            return;
+        }
+
+        let moduleId = $btn.find('input[name="moduleId"]').val();
+        let cmdField = $btn.find('input[name="cmdField"]').val();
+        let cmdArg = $btn.find('input[name="cmdArg"]').val();
+
+        console.log(`AUTO ${actionType.toUpperCase()} for Site: ${siteId}, Amount: ${value}`);
+
+        fetch('{{ route('admin.trigger.connection.api') }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({
+                status,
+                site_id: siteId,
+                moduleId,
+                cmdField,
+                cmdArg
+            })
+        })
+        .then(res => res.json())
+        .then(data => console.log("API Response:", data))
+        .catch(err => console.error("API Error:", err));
+    });
+
+});
+</script>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         const toggleSlider = document.querySelector('.toggle-slider');

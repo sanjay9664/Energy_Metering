@@ -24,9 +24,15 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        // Existing schedules
         $schedule->command('sync:frontend-data')->everyFiveMinutes();
         $schedule->command('sync:mongodb')->everyFiveMinutes();
         $schedule->command('charge:deduct-daily')->everyTenMinutes();
+        
+        // New schedule for daily fixed charge deduction at midnight
+        $schedule->command('fixedcharge:deduct-daily')
+            ->dailyAt('00:00')
+            ->timezone('Asia/Kolkata');
     }
 
     /**
