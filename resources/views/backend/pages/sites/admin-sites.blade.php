@@ -300,14 +300,14 @@
 
                                 <?php
                                     $readOn = isset($sitejsonData['parameters']) ? floatval($sitejsonData['parameters']) : 0;
-                                    $fuelMd = $sitejsonData['parameters']['number_of_starts']['md'] ?? null;
+                                    $metermd = $sitejsonData['parameters']['number_of_starts']['md'] ?? null;
                                     $fuelKey = $sitejsonData['parameters']['number_of_starts']['add'] ?? null;
                                     $addValue = 0;
 
                                     foreach ($eventData as $event) {
                                         $eventArray = $event instanceof \ArrayObject ? $event->getArrayCopy() : (array) $event;
 
-                                        if ($fuelMd && isset($eventArray['module_id']) && $eventArray['module_id'] == $fuelMd) {
+                                        if ($metermd && isset($eventArray['module_id']) && $eventArray['module_id'] == $metermd) {
                                             if ($fuelKey && array_key_exists($fuelKey, $eventArray)) {
                                                 $addsupplyValue = $eventArray[$fuelKey];
                                             }
@@ -323,34 +323,34 @@
 
                                 <td class="status-cell">
                                     <?php
-        $readOn = isset($sitejsonData['readOn']) ? floatval($sitejsonData['readOn']) : 0;
-        $fuelMd = $sitejsonData['readOn']['md'] ?? null;
-        $fuelKey = $sitejsonData['readOn']['add'] ?? null;
-        $addValue = '_';
+                                    $readOn = isset($sitejsonData['readOn']) ? floatval($sitejsonData['readOn']) : 0;
+                                    $fuelMd = $sitejsonData['readOn']['md'] ?? null;
+                                    $fuelKey = $sitejsonData['readOn']['add'] ?? null;
+                                    $addValue = '_';
 
-        foreach ($eventData as $event) {
-            $eventArray = $event instanceof \ArrayObject ? $event->getArrayCopy() : (array) $event;
+                                        foreach ($eventData as $event) {
+                                            $eventArray = $event instanceof \ArrayObject ? $event->getArrayCopy() : (array) $event;
 
-            if ($fuelMd && isset($eventArray['module_id']) && $eventArray['module_id'] == $fuelMd) {
-                if ($fuelKey && array_key_exists($fuelKey, $eventArray)) {
-                    $addValue = $eventArray[$fuelKey];
-                }
-                break;
-            }
-        }
+                                            if ($fuelMd && isset($eventArray['module_id']) && $eventArray['module_id'] == $fuelMd) {
+                                                if ($fuelKey && array_key_exists($fuelKey, $eventArray)) {
+                                                    $addValue = $eventArray[$fuelKey];
+                                                }
+                                                break;
+                                            }
+                                        }
 
-        // CONDITION BASED COLOR + TEXT
-        $showText = "Unknown";
-        $color = "gray";
+                                        // CONDITION BASED COLOR + TEXT
+                                        $showText = "Unknown";
+                                        $color = "gray";
 
-        if (strtolower($addValue) === "high") {
-            $showText = "Connected";
-            $color = "green";
-        } elseif (strtolower($addValue) === "low") {
-            $showText = "Disconnected";
-            $color = "red";
-        }
-    ?>
+                                        if (strtolower($addValue) === "high") {
+                                            $showText = "Connected";
+                                            $color = "green";
+                                        } elseif (strtolower($addValue) === "low") {
+                                            $showText = "Disconnected";
+                                            $color = "red";
+                                        }
+                                    ?>
 
                                     <div class="fuel-container">
                                         <div class="fuel-indicator">
@@ -368,56 +368,36 @@
 
                                 <td>{{ $sitejsonData['generator'] ?? 'N/A' }}</td>
                                 <td>{{ $sitejsonData['group'] ?? 'N/A' }}</td>
-<?php
-$meterMd  = $sitejsonData['meter_number']['md']  ?? null;   
-$meterKey = $sitejsonData['meter_number']['add'] ?? null;  
-$addMeterNumberValue = 0;
+                                <?php
+                                        $meterMd  = $sitejsonData['meter_number']['md']  ?? null;
+                                        $meterKey = $sitejsonData['meter_number']['add'] ?? null;
 
-// STEP 1: Check if meterMd, meterKey and eventData exist
-if ($meterMd && $meterKey && !empty($eventData)) {
-    var_dump('STEP 1: meterMd, meterKey and eventData exist');
-    var_dump('meterMd: ', $meterMd);
-    var_dump('meterKey: ', $meterKey);
-    var_dump('eventData count: ', count($eventData));
+                                        $addMeterNumberValue = 0;
 
-    // STEP 2: Loop through eventData
-    foreach ($eventData as $index => $event) {
-        // Convert ArrayObject to array if necessary
-        $eventArray = $event instanceof \ArrayObject ? $event->getArrayCopy() : (array) $event;
+                                        if ($meterMd && $meterKey && !empty($eventData)) {
+                                            foreach ($eventData as $event) {
+                                                $eventArray = $event instanceof \ArrayObject
+                                                    ? $event->getArrayCopy()
+                                                    : (array) $event;
 
-        var_dump("STEP 2: Event #$index", $eventArray);
+                                                // module_id match check
+                                                if (isset($eventArray['module_id']) && $eventArray['module_id'] == $meterMd) {
 
-        // STEP 3: Check module_id exists and matches
-        if (isset($eventArray['module_id'])) {
-            var_dump("STEP 3: module_id exists", $eventArray['module_id']);
-            if ($eventArray['module_id'] == $meterMd) {
-                var_dump("STEP 4: module_id matches meterMd");
+                                                    // dynamic key check
+                                                    if (isset($eventArray[$meterKey])) {
+                                                        $addMeterNumberValue = $eventArray[$meterKey];
+                                                    }
 
-                // STEP 4: Check if dynamic key exists in this event
-                if (isset($eventArray[$meterKey])) {
-                    $addMeterNumberValue = $eventArray[$meterKey];
-                    var_dump("STEP 5: Found value for meterKey", $addMeterNumberValue);
-                } else {
-                    var_dump("STEP 5: meterKey not found in this event", array_keys($eventArray));
-                }
+                                                    break; // stop loop once found
+                                                }
+                                            }
+                                        }
+                                        ?>
 
-                // Stop loop once module matches
-                break;
-            } else {
-                var_dump("STEP 4: module_id does not match", $eventArray['module_id']);
-            }
-        } else {
-            var_dump("STEP 3: module_id missing in this event");
-        }
-    }
-} else {
-    var_dump("STEP 1: Missing meterMd, meterKey, or eventData");
-}
-
-// STEP 6: Final value after loop
-var_dump("STEP 6: Final addMeterNumberValue", $addMeterNumberValue);
-?>
-
+                                <td>
+                                    <span class="controller-status-text {{ $addMeterNumberValue }}"><strong>{{ $addMeterNumberValue }}
+                                        </strong></span>
+                                </td>
 
                                 <!-- <td>
                                     @php
@@ -459,12 +439,60 @@ var_dump("STEP 6: Final addMeterNumberValue", $addMeterNumberValue);
                                 <?php
                                     $setting = $rechargeSetting->where('m_site_id', $site->id)->first();
                                 ?>
+<!-- ***************************************grid unit *************************************** -->
 
-                                <td>{{ $setting->kwh ?? '-' }}</td>
+<?php
+                                    $readOn = isset($sitejsonData['parameters']) ? floatval($sitejsonData['parameters']) : 0;
+                                    $metermd = $sitejsonData['parameters']['grid_unit']['md'] ?? null;
+                                    $fuelKey = $sitejsonData['parameters']['grid_unit']['add'] ?? null;
+                                    $gridUnit = 0;
 
-                                <td class="rechargeStatus" data-site-id="{{ $site->id }}"
+                                    foreach ($eventData as $event) {
+                                        $eventArray = $event instanceof \ArrayObject ? $event->getArrayCopy() : (array) $event;
+
+                                        if ($metermd && isset($eventArray['module_id']) && $eventArray['module_id'] == $metermd) {
+                                            if ($fuelKey && array_key_exists($fuelKey, $eventArray)) {
+                                                $gridUnit = $eventArray[$fuelKey];
+                                            }
+                                            break;
+                                        }
+                                    }
+                                    // dd($addValue);
+                                ?>
+
+                                <td>
+                                    <span class="controller-status-text {{ $gridUnit }}"><strong>{{ $gridUnit }}
+                                        </strong></span>
+                                </td>
+
+                                <!-- <td>{{ $setting->kwh ?? '-' }}</td> -->
+
+                                <!-- <td class="rechargeStatus" data-site-id="{{ $site->id }}"
                                     data-amount="{{ $rechargeSetting[$site->id]->m_recharge_amount ?? 0 }}">
                                     {{ $rechargeSetting[$site->id]->m_recharge_amount ?? 0 }}
+                                </td> -->
+                                <?php
+                                    $readOn = isset($sitejsonData['parameters']) ? floatval($sitejsonData['parameters']) : 0;
+                                    $metermd = $sitejsonData['parameters']['grid_balance']['md'] ?? null;
+                                    $fuelKey = $sitejsonData['parameters']['grid_balance']['add'] ?? null;
+                                    $gridBalance = 0;
+
+                                    foreach ($eventData as $event) {
+                                        $eventArray = $event instanceof \ArrayObject ? $event->getArrayCopy() : (array) $event;
+
+                                        if ($metermd && isset($eventArray['module_id']) && $eventArray['module_id'] == $metermd) {
+                                            if ($fuelKey && array_key_exists($fuelKey, $eventArray)) {
+                                                $gridBalance = $eventArray[$fuelKey];
+                                            }
+                                            break;
+                                        }
+                                    }
+                                    // dd($addValue);
+                                ?>
+
+                                <td>
+                                    <span class="controller-status-text {{ $gridBalance }}"><strong>{{ $gridBalance }}
+                                        </strong></span>
                                 </td>
 
                                 <td class="status-cell">

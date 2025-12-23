@@ -314,21 +314,21 @@ class SiteController extends Controller
                     'md' => $request->input('sanction_load_md_dg_b'),
                     'add' => $request->input('sanction_load_add_dg_b'),
                 ],
-                'oil_pressure_status' => [
-                    'md' => $request->input('oil_pressure_md_status'),
-                    'add' => $request->input('oil_pressure_add_status'),
+                'dg_overload_trip' => [
+                    'md' => $request->input('dg_overload_trip_md'),
+                    'add' => $request->input('dg_overload_trip_add'),
                 ],
-                'battery_level_status' => [
-                    'md' => $request->input('battery_level_md_status'),
-                    'add' => $request->input('battery_level_add_status'),
+                'low_balance_cut' => [
+                    'md' => $request->input('low_balance_cut_md'),
+                    'add' => $request->input('low_balance_cut_add'),
                 ],
-                'low_oil_pressure_status' => [
-                    'md' => $request->input('low_oil_pressure_md_status'),
-                    'add' => $request->input('low_oil_pressure_add_status'),
+                'overload_limit_reached' => [
+                    'md' => $request->input('overload_limit_reached_md'),
+                    'add' => $request->input('overload_limit_reached_add'),
                 ],
-                'high_oil_temperature_status' => [
-                    'md' => $request->input('high_oil_temperature_md_status'),
-                    'add' => $request->input('high_oil_temperature_add_status'),
+                'relay_status' => [
+                    'md' => $request->input('relay_status_md'),
+                    'add' => $request->input('relay_status_add'),
                 ],
                 'over_speed_status' => [
                     'md' => $request->input('over_speed_md_status'),
@@ -607,21 +607,21 @@ class SiteController extends Controller
                     'md' => $request->input('sanction_load_md_dg_b'),
                     'add' => $request->input('sanction_load_add_dg_b'),
                 ],
-                'oil_pressure_status' => [
-                    'md' => $request->input('oil_pressure_md_status'),
-                    'add' => $request->input('oil_pressure_add_status'),
+                'dg_overload_trip' => [
+                    'md' => $request->input('dg_overload_trip_md'),
+                    'add' => $request->input('dg_overload_trip_add'),
                 ],
-                'battery_level_status' => [
-                    'md' => $request->input('battery_level_md_status'),
-                    'add' => $request->input('battery_level_add_status'),
+                'low_balance_cut' => [
+                    'md' => $request->input('low_balance_cut_md'),
+                    'add' => $request->input('low_balance_cut_add'),
                 ],
-                'low_oil_pressure_status' => [
-                    'md' => $request->input('low_oil_pressure_md_status'),
-                    'add' => $request->input('low_oil_pressure_add_status'),
+                'overload_limit_reached' => [
+                    'md' => $request->input('overload_limit_reached_md'),
+                    'add' => $request->input('overload_limit_reached_add'),
                 ],
-                'high_oil_temperature_status' => [
-                    'md' => $request->input('high_oil_temperature_md_status'),
-                    'add' => $request->input('high_oil_temperature_add_status'),
+                'relay_status' => [
+                    'md' => $request->input('relay_status_md'),
+                    'add' => $request->input('relay_status_add'),
                 ],
                 'over_speed_status' => [
                     'md' => $request->input('over_speed_md_status'),
@@ -876,6 +876,7 @@ class SiteController extends Controller
             $eventData = MongodbFrontend::pluck('data')->toArray();
 
             // return $eventData;
+            
 
             usort($eventData, fn($a, $b) => ($b['created_at_timestamp'] ?? 0) <=> ($a['created_at_timestamp'] ?? 0));
 
@@ -935,7 +936,11 @@ class SiteController extends Controller
             $rechargeSetting = RechargeSetting::whereIn('m_site_id', $siteData->pluck('id'))->get()->keyBy('m_site_id');
 
             $sitejsonData = json_decode($siteData->first()->data ?? '{}', true);
-            // return $eventData;
+
+            // return $eventData; 
+             
+            
+            
 
             return view('backend.pages.sites.admin-sites', compact('siteData', 'sitejsonData', 'eventData', 'latestCreatedAt', 'rechargeSetting'));
         }

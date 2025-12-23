@@ -1052,56 +1052,56 @@
                                                     </div>
                                                     <!-- Right Column -->
                                                     <div class="col-xs-6 d-flex flex-column justify-content-around">
-                                                        <!-- Oil Pressure -->
+                                                        <!-- DG Overload trip -->
                                                         <div class="d-flex align-items-center justify-content-start">
                                                             <span class="me-2 rounded-circle"
                                                                 style="width: 10px; height: 10px; background-color: green; animation: blink 1.5s infinite;"></span>
-                                                            <span>Oil Pressure</span>
+                                                            <span>DG Overload trip</span>
                                                         </div>
                                                         <div class="d-flex">
                                                             <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                                name="oil_pressure_md_status" placeholder="MD">
+                                                                name="dg_overload_trip_md" placeholder="MD">
                                                             <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                                name="oil_pressure_add_status" placeholder="ADD">
-                                                        </div>
+                                                                name="dg_overload_trip_add" placeholder="ADD">
+                                                        
 
-                                                        <!-- Battery Level -->
+                                                        <!-- Low Balance cut -->
                                                         <div class="d-flex align-items-center justify-content-start">
                                                             <span class="me-2 rounded-circle"
                                                                 style="width: 10px; height: 10px; background-color: red; animation: blink 1.5s infinite;"></span>
-                                                            <span>Battery Level</span>
+                                                            <span>Low Balance cut</span>
                                                         </div>
                                                         <div class="d-flex">
                                                             <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                                name="battery_level_md_status" placeholder="MD">
+                                                                name="low_balance_cut_md" placeholder="MD">
                                                             <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                                name="battery_level_add_status" placeholder="ADD">
+                                                                name="low_balance_cut_add" placeholder="ADD">
                                                         </div>
 
-                                                        <!-- Low Oil Pressure -->
+                                                        <!-- Overload limit reached -->
                                                         <div class="d-flex align-items-center justify-content-start">
                                                             <span class="me-2 rounded-circle"
                                                                 style="width: 10px; height: 10px; background-color: green; animation: blink 1.5s infinite;"></span>
-                                                            <span>Low oil pressure</span>
+                                                            <span>Overload limit reached</span>
                                                         </div>
                                                         <div class="d-flex">
                                                             <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                                name="low_oil_pressure_md_status" placeholder="MD">
+                                                                name="overload_limit_reached_md" placeholder="MD">   
                                                             <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                                name="low_oil_pressure_add_status" placeholder="ADD">
+                                                                name="overload_limit_reached_add" placeholder="ADD">
                                                         </div>
 
-                                                        <!-- High Oil Temperature -->
+                                                        <!-- Relay Status -->
                                                         <div class="d-flex align-items-center justify-content-start">
                                                             <span class="me-2 rounded-circle"
                                                                 style="width: 10px; height: 10px; background-color: red; animation: blink 1.5s infinite;"></span>
-                                                            <span>High oil temperature</span>
+                                                            <span>Relay Status</span>
                                                         </div>
                                                         <div class="d-flex">
                                                             <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                                name="high_oil_temperature_md_status" placeholder="MD">
+                                                                name="relay_status_md" placeholder="MD">
                                                             <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                                name="high_oil_temperature_add_status" placeholder="ADD">
+                                                                name="relay_status_add" placeholder="ADD">
                                                         </div>
 
                                                         <!-- Over Speed -->

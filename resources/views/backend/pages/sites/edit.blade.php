@@ -1156,71 +1156,71 @@ input {
 
                                                 <!-- Right Column -->
                                                 <div class="col-xs-6 d-flex flex-column justify-content-around">
-                                                    <!-- Oil Pressure -->
+                                                    <!-- DG Overload Trip -->
                                                     <div class="d-flex align-items-center justify-content-start">
                                                         <span class="me-2 rounded-circle"
                                                             style="width: 10px; height: 10px; background-color: green; animation: blink 1.5s infinite;"></span>
-                                                        <span>Oil Pressure</span>
+                                                        <span>DG Overload Trip</span>
                                                     </div>
                                                     <div class="d-flex">
                                                         <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                            name="oil_pressure_md_status"
-                                                            value="{{ old('alarm_status', $siteData['alarm_status']['oil_pressure_status']['md'] ?? '') }}"
+                                                            name="dg_overload_trip_md"
+                                                            value="{{ old('alarm_status', $siteData['alarm_status']['dg_overload_trip']['md'] ?? '') }}"
                                                             placeholder="MD">
                                                         <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                            name="oil_pressure_add_status"
-                                                            value="{{ old('alarm_status', $siteData['alarm_status']['oil_pressured_status']['add'] ?? '') }}"
+                                                            name="dg_overload_trip_add"
+                                                            value="{{ old('alarm_status', $siteData['alarm_status']['dg_overload_trip']['add'] ?? '') }}"
                                                             placeholder="ADD">
                                                     </div>
 
-                                                    <!-- Battery Level -->
+                                                    <!-- Low Balance cut -->
                                                     <div class="d-flex align-items-center justify-content-start">
                                                         <span class="me-2 rounded-circle"
                                                             style="width: 10px; height: 10px; background-color: red; animation: blink 1.5s infinite;"></span>
-                                                        <span>Battery Level</span>
+                                                        <span>Low Balance cut</span>
                                                     </div>
                                                     <div class="d-flex">
                                                         <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                            name="battery_level_md_status"
-                                                            value="{{ old('alarm_status', $siteData['alarm_status']['battery_level_status']['md'] ?? '') }}"
+                                                            name="low_balance_cut_md"
+                                                            value="{{ old('alarm_status', $siteData['alarm_status']['low_balance_cut']['md'] ?? '') }}"
                                                             placeholder="MD">
                                                         <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                            name="battery_level_add_status"
-                                                            value="{{ old('alarm_status', $siteData['alarm_status']['battery_level_status']['add'] ?? '') }}"
+                                                            name="low_balance_cut_add"
+                                                            value="{{ old('alarm_status', $siteData['alarm_status']['low_balance_cut']['add'] ?? '') }}"
                                                             placeholder="ADD">
                                                     </div>
 
-                                                    <!-- Low Oil Pressure -->
+                                                    <!-- Overload limit reached -->
                                                     <div class="d-flex align-items-center justify-content-start">
                                                         <span class="me-2 rounded-circle"
                                                             style="width: 10px; height: 10px; background-color: green; animation: blink 1.5s infinite;"></span>
-                                                        <span>Low oil pressure</span>
+                                                        <span>Overload limit reached</span>
                                                     </div>
                                                     <div class="d-flex">
                                                         <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                            name="low_oil_pressure_md_status"
-                                                            value="{{ old('alarm_status', $siteData['alarm_status']['low_oil_pressure_status']['md'] ?? '') }}"
+                                                            name="overload_limit_reached_md"
+                                                            value="{{ old('alarm_status', $siteData['alarm_status']['overload_limit_reached']['md'] ?? '') }}"
                                                             placeholder="MD">
                                                         <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                            name="low_oil_pressure_add_status"
-                                                            value="{{ old('alarm_status', $siteData['alarm_status']['low_oil_pressure_status']['add'] ?? '') }}"
+                                                            name="overload_limit_reached_add"
+                                                            value="{{ old('alarm_status', $siteData['alarm_status']['overload_limit_reached']['add'] ?? '') }}"
                                                             placeholder="ADD">
                                                     </div>
 
-                                                    <!-- High Oil Temperature -->
+                                                    <!-- Relay Status -->
                                                     <div class="d-flex align-items-center justify-content-start">
                                                         <span class="me-2 rounded-circle"
                                                             style="width: 10px; height: 10px; background-color: red; animation: blink 1.5s infinite;"></span>
-                                                        <span>High oil temperature</span>
+                                                        <span>Relay Status</span>
                                                     </div>
                                                     <div class="d-flex">
                                                         <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                            name="high_oil_temperature_md_status"
-                                                            value="{{ old('alarm_status', $siteData['alarm_status']['high_oil_temperature_status']['md'] ?? '') }}"
+                                                            name="relay_status_md"
+                                                            value="{{ old('alarm_status', $siteData['alarm_status']['relay_status']['md'] ?? '') }}"
                                                             placeholder="MD">
                                                         <input type="text" class="form-control ms-2" style="width: 50%;"
-                                                            name="high_oil_temperature_add_status"
-                                                            value="{{ old('alarm_status', $siteData['alarm_status']['high_oil_temperature_status']['add'] ?? '') }}"
+                                                            name="relay_status_add"
+                                                            value="{{ old('alarm_status', $siteData['alarm_status']['relay_status']['add'] ?? '') }}"
                                                             placeholder="ADD">
                                                     </div>
 

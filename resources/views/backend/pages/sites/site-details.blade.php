@@ -385,8 +385,8 @@
                     <div class="card-header text-center text-white fw-bold fs-4 p-1" style="background: #002E6E;">
                         ASSET INFORMATION
                     </div>
-                    <table class="table table-bordered table-striped table-hover">
-                        <tbody>
+<table class="table table-bordered table-striped table-hover">
+    <tbody>
                             <tr>
                                 <th class="asset" style="background: #002E6E;">
                                     <strong>Custom Name</strong> : {{ $sitejsonData->asset_name }}
@@ -400,19 +400,237 @@
                                 <td data-label="Generator">
                                     <strong>Meter Name:</strong> {{ $sitejsonData->generator }}
                                 </td>
+
+                                
+                 
+                   
+               
                                 <td data-label="S/N">
-                                    <strong>Meter Number</strong> {{ $siteData['meter_number']['add'] ?? '-' }}
+                                    @php
+                                        $key = $sitejsonData->meter_number->add ?? null;
+                                        $md  = $sitejsonData->meter_number->md  ?? null;
+
+                                        $meter_number = '-';
+
+                                        if ($key && $md && !empty($eventData)) {
+                                            foreach ($eventData as $event) {
+                                                $eventArray = $event->getArrayCopy();
+
+                                                if (
+                                                    isset($eventArray['module_id']) &&
+                                                    $eventArray['module_id'] == $md
+                                                ) {
+                                                    if (isset($eventArray[$key])) {
+                                                        // 🔥 comma remove
+                                                        $meter_number = str_replace(',', '', $eventArray[$key]);
+                                                    }
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    @endphp
+
+                                    <strong>Meter Number : {{ $meter_number }}</strong>
                                 </td>
+
                                 <td data-label="Model">
                                     <strong>Controller:</strong> {{ $sitejsonData->asset_name }}
                                 </td>
-                                <td data-label="Brand">
-                                    <!-- <strong>Grid:</strong> {{ $sitejsonData->brand }} -->
-                                    <strong>Grid:</strong> {{ $rechargeSetting->m_sanction_load_r}}kW
-                                </td>
-                                <td data-label="Capacity">
-                                    <strong>DG:</strong> {{ $rechargeSetting->dg_sanction_load_r}}kW
-                                </td>
+                                                     @php
+                                                // Grid Sanction Load
+                                                $grid_r = $rechargeSetting->m_sanction_load_r ?? 0;
+                                                $grid_y = $rechargeSetting->m_sanction_load_y ?? 0;
+                                                $grid_b = $rechargeSetting->m_sanction_load_b ?? 0;
+                                                $grid_total = $grid_r + $grid_y + $grid_b;
+
+                                                // DG Sanction Load
+                                                $dg_r = $rechargeSetting->dg_sanction_load_r ?? 0;
+                                                $dg_y = $rechargeSetting->dg_sanction_load_y ?? 0;
+                                                $dg_b = $rechargeSetting->dg_sanction_load_b ?? 0;
+                                                $dg_total = $dg_r + $dg_y + $dg_b;
+                                            @endphp
+
+                                            <td data-label="Brand">
+                                                <strong>Grid:</strong> {{ $grid_total }} kW
+                                            </td>
+                                            <td data-label="Capacity">
+                                                <strong>DG:</strong> {{ $dg_total }} kW
+                                            </td>
+
+
+                                
+                            </tr>
+
+                          <!-- Warining  data display  Here -->
+                            <tr>
+                                @php
+                                        $key = $sitejsonData->alarm_status->dg_overload_trip->add ?? null;
+                                        
+                                        $md  = $sitejsonData->alarm_status->dg_overload_trip->md  ?? null;
+
+                                        $overload_trip = '-';
+
+                                        if ($key && $md && !empty($eventData)) {
+                                            foreach ($eventData as $event) {
+                                                $eventArray = $event->getArrayCopy();
+
+                                                if (
+                                                    isset($eventArray['module_id']) &&
+                                                    $eventArray['module_id'] == $md
+                                                ) {
+                                                    if (isset($eventArray[$key])) {
+                                                        
+                                                        $overload_trip = str_replace(',', '', $eventArray[$key]);
+                                                    }
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    @endphp
+
+
+                                    <td data-label="Overload_Trip">
+    <strong class="{{ $overload_trip == 0 ? 'text-success' : 'text-danger' }}">
+        Overload_Trip : {{ $overload_trip }}
+    </strong>
+</td>
+
+                                    
+<!-- **************************************************Low_Balance_cut************************************************************** -->
+                                   @php
+                                        $key = $sitejsonData->alarm_status->low_balance_cut->add ?? null;
+                                        
+                                        $md  = $sitejsonData->alarm_status->low_balance_cut->md  ?? null;
+
+                                        $low_balance_cut = '-';
+
+                                        if ($key && $md && !empty($eventData)) {
+                                            foreach ($eventData as $event) {
+                                                $eventArray = $event->getArrayCopy();
+
+                                                if (
+                                                    isset($eventArray['module_id']) &&
+                                                    $eventArray['module_id'] == $md
+                                                ) {
+                                                    if (isset($eventArray[$key])) {
+
+                                                        $low_balance_cut = str_replace(',', '', $eventArray[$key]);
+                                                    }
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    @endphp
+
+
+                                    <td data-label="Low_Balance_cut">
+    <strong class="{{ $low_balance_cut == 0 ? 'text-success' : 'text-danger' }}">
+        Low_Balance_cut : {{ $low_balance_cut }}
+    </strong>
+</td>
+
+                <!-- *********************************************Overload_Limit_Reached******************************************************************* -->
+                                 @php
+                                        $key = $sitejsonData->alarm_status->overload_limit_reached->add ?? null;
+                                        
+                                        $md  = $sitejsonData->alarm_status->overload_limit_reached->md  ?? null;
+
+                                        $overload_limit_reached = '-';
+
+                                        if ($key && $md && !empty($eventData)) {
+                                            foreach ($eventData as $event) {
+                                                $eventArray = $event->getArrayCopy();
+
+                                                if (
+                                                    isset($eventArray['module_id']) &&
+                                                    $eventArray['module_id'] == $md
+                                                ) {
+                                                    if (isset($eventArray[$key])) {
+
+                                                        $overload_limit_reached = str_replace(',', '', $eventArray[$key]);
+                                                    }
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    @endphp
+
+
+                                    <td data-label="Overload_Limit_Reached">
+    <strong class="{{ $overload_limit_reached == 0 ? 'text-success' : 'text-danger' }}">
+        Overload_Limit_Reached : {{ $overload_limit_reached }}
+    </strong>
+</td>
+
+
+<!-- ******************************************************Low_Balance_cut********************************************************** -->
+                                 @php
+                                        $key = $sitejsonData->alarm_status->low_balance_cut->add ?? null;
+                                        
+                                        $md  = $sitejsonData->alarm_status->low_balance_cut->md  ?? null;
+
+                                        $low_balance_cut = '-';
+
+                                        if ($key && $md && !empty($eventData)) {
+                                            foreach ($eventData as $event) {
+                                                $eventArray = $event->getArrayCopy();
+
+                                                if (
+                                                    isset($eventArray['module_id']) &&
+                                                    $eventArray['module_id'] == $md
+                                                ) {
+                                                    if (isset($eventArray[$key])) {
+
+                                                        $low_balance_cut = str_replace(',', '', $eventArray[$key]);
+                                                    }
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    @endphp
+
+
+                                    <td data-label="Low_Balance_cut">
+    <strong class="{{ $low_balance_cut == 0 ? 'text-success' : 'text-danger' }}">
+        Low_Balance_cut : {{ $low_balance_cut }}
+    </strong>
+</td>
+
+
+                                <!-- *********************************relay status display here*********************************************** -->
+                                @php
+                                        $key = $sitejsonData->alarm_status->relay_status->add ?? null;
+                                        
+                                        $md  = $sitejsonData->alarm_status->relay_status->md  ?? null;
+
+                                        $relay_status = '-';
+
+                                        if ($key && $md && !empty($eventData)) {
+                                            foreach ($eventData as $event) {
+                                                $eventArray = $event->getArrayCopy();
+
+                                                if (
+                                                    isset($eventArray['module_id']) &&
+                                                    $eventArray['module_id'] == $md
+                                                ) {
+                                                    if (isset($eventArray[$key])) {
+
+                                                        $relay_status = str_replace(',', '', $eventArray[$key]);
+                                                    }
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    @endphp
+
+
+                                    <td data-label="Relay_Status">
+    <strong class="{{ $relay_status == 0 ? 'text-success' : 'text-danger' }}">
+        Relay_Status : {{ $relay_status }}
+    </strong>
+</td>
+
+                                
                             </tr>
 
                             <tr>
@@ -483,27 +701,29 @@
                                     <!-- sanjay -->
                                     <table
                                         style="width:100%; text-align:center; border-collapse:separate; border-spacing:10px;">
-                                        <tr>
-                                            <!-- Supply / RPM -->
-                                            <td style="width:16%;">
-                                                @php
-                                                $param = $siteData['parameters']['rpm'] ?? null;
-                                                $value = isset($param['md']) ? floatval($param['md']) : null;
-                                                $low = isset($param['low']) ? floatval($param['low']) : null;
-                                                $high = isset($param['high']) ? floatval($param['high']) : null;
-
-                                                if (!is_null($value) && !is_null($low) && !is_null($high)) {
-                                                $status = ($value >= $low && $value <= $high) ? 'normal' : 'abnormal' ;
-                                                    $bgColor=$status==='normal' ? 'green' : 'red' ; } else {
-                                                    $status='abnormal' ; $bgColor='red' ; } @endphp <div
-                                                    class="status-box" style="padding:10px; font-size:14px;">
-                                                    <p><strong>Grid_Balance</strong></p>
-                                                    <span
-                                                        class="status-box">{{ $rechargeSetting->m_recharge_amount }}</span>
-
-                </div>
+                                        <td style="width:16%;">
+                    <?php
+                        $key = $sitejsonData->parameters->grid_balance->add;
+                        $grid_balance = '_';
+                        foreach ($eventData as $event) {
+                            $eventArray = $event->getArrayCopy();
+                            if ($eventArray['module_id'] == $sitejsonData->parameters->grid_balance->md) {
+                                if (array_key_exists($key, $eventArray)) {
+                                    $grid_balance = number_format($eventArray[$key], 2);
+                                }
+                                break;
+                            }
+                        }
+                    ?>
+                    <div class="status-box" style="padding:10px; font-size:14px;">
+                        <p><strong>Grid_Balnace</strong></p>
+                        <span class="status-box">{{ $grid_balance }}</span>
+                    </div>
                 </td>
 
+
+
+                
                 <!-- Avg. Voltage / battery_voltage -->
                 <td style="width:16%;">
                     <?php
@@ -621,7 +841,7 @@
                 </td>
                 </tr>
                 </tbody>
-                </table>
+</table>
             </div>
         </div>
 
@@ -1346,68 +1566,242 @@
                                     <strong>Meter Name:</strong> {{ $sitejsonData->generator }}
                                 </td>
                                 <td data-label="S/N">
-                                    <strong>Meter Number</strong> {{ $siteData['meter_number']['add'] ?? '-' }}
-                                    
+                                    @php
+                                        $key = $sitejsonData->meter_number->add ?? null;
+                                        $md  = $sitejsonData->meter_number->md  ?? null;
+
+                                        $addValue = '-';
+
+                                        if ($key && $md && !empty($eventData)) {
+                                            foreach ($eventData as $event) {
+                                                $eventArray = $event->getArrayCopy();
+
+                                                if (
+                                                    isset($eventArray['module_id']) &&
+                                                    $eventArray['module_id'] == $md
+                                                ) {
+                                                    if (isset($eventArray[$key])) {
+                                                        // 🔥 comma remove
+                                                        $addValue = str_replace(',', '', $eventArray[$key]);
+                                                    }
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    @endphp
+
+                                    <strong>Meter Number : {{ $addValue }}</strong>
                                 </td>
                                 <td data-label="Model">
                                     <strong>Controller:</strong> {{ $sitejsonData->asset_name }}
                                 </td>
+                                @php
+                                    // Grid Sanction Load
+                                    $grid_r = $rechargeSetting->m_sanction_load_r ?? 0;
+                                    $grid_y = $rechargeSetting->m_sanction_load_y ?? 0;
+                                    $grid_b = $rechargeSetting->m_sanction_load_b ?? 0;
+                                    $grid_total = $grid_r + $grid_y + $grid_b;
+
+                                    // DG Sanction Load
+                                    $dg_r = $rechargeSetting->dg_sanction_load_r ?? 0;
+                                    $dg_y = $rechargeSetting->dg_sanction_load_y ?? 0;
+                                    $dg_b = $rechargeSetting->dg_sanction_load_b ?? 0;
+                                    $dg_total = $dg_r + $dg_y + $dg_b;
+                                @endphp
+
                                 <td data-label="Brand">
-                                    <strong>Grid:</strong> {{ $rechargeSetting->m_sanction_load_r}}kW
+                                    <strong>Grid:</strong> {{ $grid_total }} kW
                                 </td>
                                 <td data-label="Capacity">
-                                    <strong>DG:</strong> {{ $rechargeSetting->dg_sanction_load_r}}kW
+                                    <strong>DG:</strong> {{ $dg_total }} kW
                                 </td>
+
                             </tr>
                                                         <tr>
                                                         <td colspan="7">
                                                                     </div>
-                                                                    
-      <?php
-    $keyaa = $sitejsonData->mode_md->add ?? null;
-    $addValueModestatus = null;
 
-    foreach ($eventData as $event) {
-        $eventArraya = $event->getArrayCopy();
-        if (
-            isset($eventArraya['module_id']) &&
-            $eventArraya['module_id'] == ($sitejsonData->mode_md->md ?? null)
-        ) {
-            if ($keyaa && array_key_exists($keyaa, $eventArraya)) {
-                $value = $eventArraya[$keyaa];
-                if (is_numeric($value)) {
-                    $addValueModestatus = (float) $value;
-                }
-            }
-            break;
-        }
-    }
-?>
- 
+
+                        <!-- Warining  data display  Here -->
+                             <tr>
+                              @php
+                                        $key = $sitejsonData->alarm_status->dg_overload_trip->add ?? null;
+                                        
+                                        $md  = $sitejsonData->alarm_status->dg_overload_trip->md  ?? null;
+
+                                        $overload_trip = '-';
+
+                                        if ($key && $md && !empty($eventData)) {
+                                            foreach ($eventData as $event) {
+                                                $eventArray = $event->getArrayCopy();
+
+                                                if (
+                                                    isset($eventArray['module_id']) &&
+                                                    $eventArray['module_id'] == $md
+                                                ) {
+                                                    if (isset($eventArray[$key])) {
+                                                        
+                                                        $overload_trip = str_replace(',', '', $eventArray[$key]);
+                                                    }
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    @endphp
+
+
+                                    <td data-label="Overload_Trip">
+    <strong class="{{ $overload_trip == 0 ? 'text-success' : 'text-danger' }}">
+        Overload_Trip : {{ $overload_trip }}
+    </strong>
+</td>
+
+
+                                  @php
+                                        $key = $sitejsonData->alarm_status->low_balance_cut->add ?? null;
+                                        
+                                        $md  = $sitejsonData->alarm_status->low_balance_cut->md  ?? null;
+
+                                        $low_balance_cut = '-';
+
+                                        if ($key && $md && !empty($eventData)) {
+                                            foreach ($eventData as $event) {
+                                                $eventArray = $event->getArrayCopy();
+
+                                                if (
+                                                    isset($eventArray['module_id']) &&
+                                                    $eventArray['module_id'] == $md
+                                                ) {
+                                                    if (isset($eventArray[$key])) {
+
+                                                        $low_balance_cut = str_replace(',', '', $eventArray[$key]);
+                                                    }
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    @endphp
+
+
+                                    <td data-label="Low_Balance_cut">
+    <strong class="{{ $low_balance_cut == 0 ? 'text-success' : 'text-danger' }}">
+        Low_Balance_cut : {{ $low_balance_cut }}
+    </strong>
+</td>
+
+
+                                @php
+                                        $key = $sitejsonData->alarm_status->overload_limit_reached->add ?? null;
+                                        
+                                        $md  = $sitejsonData->alarm_status->overload_limit_reached->md  ?? null;
+
+                                        $overload_limit_reached = '-';
+
+                                        if ($key && $md && !empty($eventData)) {
+                                            foreach ($eventData as $event) {
+                                                $eventArray = $event->getArrayCopy();
+
+                                                if (
+                                                    isset($eventArray['module_id']) &&
+                                                    $eventArray['module_id'] == $md
+                                                ) {
+                                                    if (isset($eventArray[$key])) {
+
+                                                        $overload_limit_reached = str_replace(',', '', $eventArray[$key]);
+                                                    }
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    @endphp
+
+
+                                    <td data-label="Overload_Limit_Reached">
+                                        <strong class="{{ $overload_limit_reached == 0 ? 'text-success' : 'text-danger' }}">
+                                            Overload_Limit_Reached : {{ $overload_limit_reached }}
+                                        </strong>
+                                    </td>
+
+
+                          
+                                @php
+                                        $key = $sitejsonData->alarm_status->relay_status->add ?? null;
+                                        
+                                        $md  = $sitejsonData->alarm_status->relay_status->md  ?? null;
+
+                                        $relay_status = '-';
+
+                                        if ($key && $md && !empty($eventData)) {
+                                            foreach ($eventData as $event) {
+                                                $eventArray = $event->getArrayCopy();
+
+                                                if (
+                                                    isset($eventArray['module_id']) &&
+                                                    $eventArray['module_id'] == $md
+                                                ) {
+                                                    if (isset($eventArray[$key])) {
+
+                                                        $relay_status = str_replace(',', '', $eventArray[$key]);
+                                                    }
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    @endphp
+
+
+                                            <td data-label="Relay_Status">
+                                                <strong class="{{ $relay_status == 0 ? 'text-success' : 'text-danger' }}">
+                                                    Relay_Status : {{ $relay_status }}
+                                                </strong>
+                                            </td>
+
+                            </tr>
+                                                                    
+                                                <?php
+                                                $keyaa = $sitejsonData->mode_md->add ?? null;
+                                                $addValueModestatus = null;
+
+                                                foreach ($eventData as $event) {
+                                                    $eventArraya = $event->getArrayCopy();
+                                                    if (
+                                                        isset($eventArraya['module_id']) &&
+                                                        $eventArraya['module_id'] == ($sitejsonData->mode_md->md ?? null)
+                                                    ) {
+                                                        if ($keyaa && array_key_exists($keyaa, $eventArraya)) {
+                                                            $value = $eventArraya[$keyaa];
+                                                            if (is_numeric($value)) {
+                                                                $addValueModestatus = (float) $value;
+                                                            }
+                                                        }
+                                                        break;
+                                                    }
+                                                }
+                                            ?>
+                                            
 
 <table style="width:100%; text-align:center; border-collapse:separate; border-spacing:10px;">
     <tr>
         <!-- Supply / RPM -->
         <td style="width:16%;">
-            @php
-                $param = $siteData['parameters']['rpm'] ?? null;
-                $value = isset($param['md']) ? floatval($param['md']) : null;
-                $low = isset($param['low']) ? floatval($param['low']) : null;
-                $high = isset($param['high']) ? floatval($param['high']) : null;
-
-                if (!is_null($value) && !is_null($low) && !is_null($high)) {
-                    $status = ($value >= $low && $value <= $high) ? 'normal' : 'abnormal';
-                    $bgColor = $status === 'normal' ? 'green' : 'red';
-                } else {
-                    $status = 'abnormal';
-                    $bgColor = 'red';
-                }
-            @endphp
-            <div class="status-box" style="padding:10px; font-size:14px;">
-                <p><strong>Grid_Balance</strong></p>
-                <span class="status-box">{{ $rechargeSetting->m_recharge_amount }}</span>
-            </div>
-        </td>
+            <?php
+                        $key = $sitejsonData->parameters->grid_balance->add;
+                        $grid_balance = '_';
+                        foreach ($eventData as $event) {
+                            $eventArray = $event->getArrayCopy();
+                            if ($eventArray['module_id'] == $sitejsonData->parameters->grid_balance->md) {
+                                if (array_key_exists($key, $eventArray)) {
+                                    $grid_balance = number_format($eventArray[$key], 2);
+                                }
+                                break;
+                            }
+                        }
+                    ?>
+                    <div class="status-box" style="padding:10px; font-size:14px;">
+                        <p><strong>Grid_Balnace</strong></p>
+                        <span class="status-box">{{ $grid_balance }}</span>
+                    </div>
+                </td>
 
         <!-- Avg. Voltage / battery_voltage -->
         <td style="width:16%;">
