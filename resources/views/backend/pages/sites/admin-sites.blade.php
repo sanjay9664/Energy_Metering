@@ -297,29 +297,36 @@
                                         {{ $site->site_name }}
                                     </a>
                                 </td>
+<?php
+    $metermd = $sitejsonData['parameters']['number_of_starts']['md'] ?? null;
+    $fuelKey = $sitejsonData['parameters']['number_of_starts']['add'] ?? null;
 
-                                <?php
-                                    $readOn = isset($sitejsonData['parameters']) ? floatval($sitejsonData['parameters']) : 0;
-                                    $metermd = $sitejsonData['parameters']['number_of_starts']['md'] ?? null;
-                                    $fuelKey = $sitejsonData['parameters']['number_of_starts']['add'] ?? null;
-                                    $addValue = 0;
+    // Default value (jab data na mile)
+    $addsupplyValue = null;
 
-                                    foreach ($eventData as $event) {
-                                        $eventArray = $event instanceof \ArrayObject ? $event->getArrayCopy() : (array) $event;
+    foreach ($eventData as $event) {
+        $eventArray = $event instanceof \ArrayObject ? $event->getArrayCopy() : (array) $event;
 
-                                        if ($metermd && isset($eventArray['module_id']) && $eventArray['module_id'] == $metermd) {
-                                            if ($fuelKey && array_key_exists($fuelKey, $eventArray)) {
-                                                $addsupplyValue = $eventArray[$fuelKey];
-                                            }
-                                            break;
-                                        }
-                                    }
-                                    // dd($addValue);
-                                ?>
-                                <td>
-                                    <span class="controller-status-text {{ $addsupplyValue }}"><strong>{{ $addsupplyValue }}
-                                        </strong></span>
-                                </td>
+        if ($metermd && isset($eventArray['module_id']) && $eventArray['module_id'] == $metermd) {
+            if ($fuelKey && array_key_exists($fuelKey, $eventArray)) {
+                $addsupplyValue = $eventArray[$fuelKey];
+            }
+            break;
+        }
+    }
+?>
+<td>
+    @if($addsupplyValue !== null)
+        <span class="badge bg-success">
+            ✔️ {{ $addsupplyValue }}
+        </span>
+    @else
+        <span class="badge bg-secondary">
+            {{ 'N/A' }}
+        </span>
+    @endif
+</td>
+
 
                                 <td class="status-cell">
                                     <?php

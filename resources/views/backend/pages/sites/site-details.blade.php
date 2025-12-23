@@ -48,6 +48,7 @@
     .container-fluid {
         padding: 20px;
         max-width: 100%;
+        margin-top:-37px;
     }
 
     .consumption-section {
