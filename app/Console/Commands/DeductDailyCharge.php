@@ -195,65 +195,124 @@ class DeductDailyCharge extends Command
         }
     }
 
+    // protected function getTotalKwhValue($site)
+    // {
+    //     $this->info("🔍 Debugging Site ID {$site->id}...");
+    //     $data = $site->data;
+    //     if (is_string($data)) {
+    //         $decoded = json_decode($data, true);
+    //         if (json_last_error() === JSON_ERROR_NONE) {
+    //             $data = $decoded;
+    //         } else {
+    //             $this->warn("⚠️ Site ID {$site->id}: data field is not valid JSON.");
+    //             return '_';
+    //         }
+    //     }
+    //     if (!isset($data['total_kwh'])) {
+    //         $this->warn("⚠️ Site ID {$site->id}: total_kwh not found in data field.");
+    //         return '_';
+    //     }
+    //     $totalKwh = $data['total_kwh'];
+
+    //     if (is_string($totalKwh)) {
+    //         $totalKwh = json_decode($totalKwh, true);
+    //     } elseif (is_object($totalKwh)) {
+    //         $totalKwh = (array) $totalKwh;
+    //     }
+
+    //     $this->line("➡️ Raw total_kwh: " . print_r($totalKwh, true));
+
+    //     if (!isset($totalKwh['md']) || !isset($totalKwh['add'])) {
+    //         $this->warn("⚠️ Site ID {$site->id}: Missing md/add in total_kwh.");
+    //         return '_';
+    //     }
+
+    //     $moduleId = $totalKwh['md'];
+    //     $key = $totalKwh['add'];
+
+    //     $this->line("📦 module_id = {$moduleId}, key = {$key}");
+
+    //     $mongoData = \App\Models\MongodbFrontend::where('data->module_id', (int) $moduleId)
+    //         ->latest()
+    //         ->first();
+
+    //     if (!$mongoData) {
+    //         $this->warn("⚠️ Site ID {$site->id}: No MongoDB record found for module_id {$moduleId}");
+    //         return '_';
+    //     }
+
+    //     $data = is_string($mongoData->data)
+    //         ? json_decode($mongoData->data, true)
+    //         : (array) $mongoData->data;
+
+    //     $this->line("📄 MongoDB keys: " . implode(', ', array_keys($data)));
+
+    //     if (array_key_exists($key, $data)) {
+    //         return number_format((float) $data[$key], 2);
+    //     }
+
+    //     $this->warn("⚠️ Key '{$key}' not found in MongoDB record for module_id {$moduleId}");
+    //     return '_';
+    // }
+
     protected function getTotalKwhValue($site)
-    {
-        $this->info("🔍 Debugging Site ID {$site->id}...");
-        $data = $site->data;
-        if (is_string($data)) {
-            $decoded = json_decode($data, true);
-            if (json_last_error() === JSON_ERROR_NONE) {
-                $data = $decoded;
-            } else {
-                $this->warn("⚠️ Site ID {$site->id}: data field is not valid JSON.");
-                return '_';
-            }
+{
+    $this->info("🔍 Debugging Site ID {$site->id}...");
+    $data = $site->data;
+
+    if (is_string($data)) {
+        $decoded = json_decode($data, true);
+        if (json_last_error() === JSON_ERROR_NONE) {
+            $data = $decoded;
+        } else {
+            $this->warn("⚠️ Site ID {$site->id}: data field is not valid JSON.");
+            return 0;
         }
-        if (!isset($data['total_kwh'])) {
-            $this->warn("⚠️ Site ID {$site->id}: total_kwh not found in data field.");
-            return '_';
-        }
-        $totalKwh = $data['total_kwh'];
-
-        if (is_string($totalKwh)) {
-            $totalKwh = json_decode($totalKwh, true);
-        } elseif (is_object($totalKwh)) {
-            $totalKwh = (array) $totalKwh;
-        }
-
-        $this->line("➡️ Raw total_kwh: " . print_r($totalKwh, true));
-
-        if (!isset($totalKwh['md']) || !isset($totalKwh['add'])) {
-            $this->warn("⚠️ Site ID {$site->id}: Missing md/add in total_kwh.");
-            return '_';
-        }
-
-        $moduleId = $totalKwh['md'];
-        $key = $totalKwh['add'];
-
-        $this->line("📦 module_id = {$moduleId}, key = {$key}");
-
-        $mongoData = \App\Models\MongodbFrontend::where('data->module_id', (int) $moduleId)
-            ->latest()
-            ->first();
-
-        if (!$mongoData) {
-            $this->warn("⚠️ Site ID {$site->id}: No MongoDB record found for module_id {$moduleId}");
-            return '_';
-        }
-
-        $data = is_string($mongoData->data)
-            ? json_decode($mongoData->data, true)
-            : (array) $mongoData->data;
-
-        $this->line("📄 MongoDB keys: " . implode(', ', array_keys($data)));
-
-        if (array_key_exists($key, $data)) {
-            return number_format((float) $data[$key], 2);
-        }
-
-        $this->warn("⚠️ Key '{$key}' not found in MongoDB record for module_id {$moduleId}");
-        return '_';
     }
+
+    if (!isset($data['total_kwh'])) {
+        $this->warn("⚠️ Site ID {$site->id}: total_kwh not found.");
+        return 0;
+    }
+
+    $totalKwh = $data['total_kwh'];
+
+    if (is_string($totalKwh)) {
+        $totalKwh = json_decode($totalKwh, true);
+    } elseif (is_object($totalKwh)) {
+        $totalKwh = (array) $totalKwh;
+    }
+
+    $this->line("➡️ Raw total_kwh: " . print_r($totalKwh, true));
+
+    if (empty($totalKwh['md']) || empty($totalKwh['add'])) {
+        $this->warn("⚠️ Site ID {$site->id}: Missing md/add in total_kwh.");
+        return 0;
+    }
+
+    $moduleId = (int) $totalKwh['md'];
+    $key = $totalKwh['add'];
+
+    $mongoData = \App\Models\MongodbFrontend::where('data->module_id', $moduleId)
+        ->latest()
+        ->first();
+
+    if (!$mongoData) {
+        $this->warn("⚠️ No MongoDB record for module_id {$moduleId}");
+        return 0;
+    }
+
+    $mongoArr = is_string($mongoData->data)
+        ? json_decode($mongoData->data, true)
+        : (array) $mongoData->data;
+
+    if (!isset($mongoArr[$key])) {
+        $this->warn("⚠️ Key '{$key}' not found in MongoDB data");
+        return 0;
+    }
+
+    return round((float) $mongoArr[$key], 2); // ✅ FLOAT ONLY
+}
 
     /**
      * Trigger remote API command

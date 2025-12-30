@@ -328,49 +328,42 @@
 </td>
 
 
-                                <td class="status-cell">
-                                    <?php
-                                    $readOn = isset($sitejsonData['readOn']) ? floatval($sitejsonData['readOn']) : 0;
-                                    $fuelMd = $sitejsonData['readOn']['md'] ?? null;
-                                    $fuelKey = $sitejsonData['readOn']['add'] ?? null;
-                                    $addValue = '_';
+                               
+                              <td class="status-cell">
+    <?php
+    $readOn = isset($sitejsonData['readOn']) ? floatval($sitejsonData['readOn']) : 0;
+    $fuelMd = $sitejsonData['readOn']['md'] ?? null;
+    $fuelKey = $sitejsonData['readOn']['add'] ?? null;
+    $addValue = false; // default false
 
-                                        foreach ($eventData as $event) {
-                                            $eventArray = $event instanceof \ArrayObject ? $event->getArrayCopy() : (array) $event;
+    foreach ($eventData as $event) {
+        $eventArray = $event instanceof \ArrayObject ? $event->getArrayCopy() : (array) $event;
 
-                                            if ($fuelMd && isset($eventArray['module_id']) && $eventArray['module_id'] == $fuelMd) {
-                                                if ($fuelKey && array_key_exists($fuelKey, $eventArray)) {
-                                                    $addValue = $eventArray[$fuelKey];
-                                                }
-                                                break;
-                                            }
-                                        }
+        if ($fuelMd && isset($eventArray['module_id']) && $eventArray['module_id'] == $fuelMd) {
+            if ($fuelKey && array_key_exists($fuelKey, $eventArray)) {
+                $addValue = (bool)$eventArray[$fuelKey]; // backend value ko boolean me convert
+            }
+            break;
+        }
+    }
 
-                                        // CONDITION BASED COLOR + TEXT
-                                        $showText = "Unknown";
-                                        $color = "gray";
+    // CONDITION BASED COLOR + TEXT
+    $showText = $addValue ? "Connected" : "Disconnected";
+    $color = $addValue ? "green" : "red";
+    ?>
 
-                                        if (strtolower($addValue) === "high") {
-                                            $showText = "Connected";
-                                            $color = "green";
-                                        } elseif (strtolower($addValue) === "low") {
-                                            $showText = "Disconnected";
-                                            $color = "red";
-                                        }
-                                    ?>
+    <div class="fuel-container">
+        <div class="fuel-indicator">
+            <div class="fuel-level"></div>
 
-                                    <div class="fuel-container">
-                                        <div class="fuel-indicator">
-                                            <div class="fuel-level"></div>
-
-                                            <!-- Status Text -->
-                                            <span class="fuel-indicator" style="padding:6px 10px; border-radius:5px;
-                         background:<?= $color ?>; color:white; font-weight:bold;">
-                                                <?= $showText ?>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </td>
+            <!-- Status Text Small & Clean -->
+            <span class="fuel-indicator" style="padding:4px 8px; border-radius:4px;
+                 font-size:12px; background:<?= $color ?>; color:white; font-weight:bold;">
+                <?= $showText ?>
+            </span>
+        </div>
+    </div>
+</td>
 
 
                                 <td>{{ $sitejsonData['generator'] ?? 'N/A' }}</td>
@@ -834,6 +827,42 @@
                                                                 }
                                                             }
                                                         ?>
+                                                        <?php
+                                                            $readOn = isset($sitejsonData['disconnect']) ? floatval($sitejsonData['disconnect']) : 0;
+                                                            $disconnectMd = $sitejsonData['disconnect']['md'] ?? null;
+                                                            $disconnectAdd = $sitejsonData['disconnect']['add'] ?? null;
+                                                            $disconnectBtnValue = 0;
+                                                     
+                                                            foreach ($eventData as $event) {
+                                                                $eventArray = $event instanceof \ArrayObject ? $event->getArrayCopy() : (array) $event;
+
+                                                                if ($disconnectMd && isset($eventArray['module_id']) && $eventArray['module_id'] == $disconnectMd) {
+                                                                    if ($disconnectAdd && array_key_exists($disconnectAdd, $eventArray)) {
+                                                                        $disconnectBtnValue = $eventArray[$disconnectAdd];
+                                                                    }
+                                                                    break;
+                                                                }
+                                                                
+                                                            }
+                                                        ?>
+                                                        <?php
+                                                            $readOn = isset($sitejsonData['default']) ? floatval($sitejsonData['default']) : 0;
+                                                            $defaultMd = $sitejsonData['default']['md'] ?? null;
+                                                            $defaultAdd = $sitejsonData['default']['add'] ?? null;
+                                                            $disconnectBtnValue = 0;
+                                                     
+                                                            foreach ($eventData as $event) {
+                                                                $eventArray = $event instanceof \ArrayObject ? $event->getArrayCopy() : (array) $event;
+
+                                                                if ($defaultMd && isset($eventArray['module_id']) && $eventArray['module_id'] == $defaultMd) {
+                                                                    if ($defaultAdd && array_key_exists($defaultAdd, $eventArray)) {
+                                                                        $disconnectBtnValue = $eventArray[$defaultAdd];
+                                                                    }
+                                                                    break;
+                                                                }
+                                                                
+                                                            }
+                                                        ?>
 
                                                         <?php
                                                             $setting = $rechargeSetting->where('m_site_id', $site->id)->first();
@@ -843,73 +872,19 @@
                                                         <div class="container mt-5">
                                                             <div class="d-flex align-items-center gap-3">
                                                                 <!-- Toggle -->
-                                                                <div class="toggle-btn-container">
-                                                                    <!-- <div
-                                                                        class="toggle-slider {{ $rechargeSetting[$site->id]->status ?? 'auto' }}">
-                                                                    </div>
-                                                                    <div class="toggle-option {{ ($rechargeSetting[$site->id]->status ?? 'auto') === 'auto' ? 'active' : '' }}"
-                                                                        data-value="auto">
-                                                                        Auto
-                                                                        <input type="hidden" name="status" value="auto">
-                                                                    </div>
-                                                                    <div class="toggle-option {{ ($rechargeSetting[$site->id]->status ?? 'auto') === 'manual' ? 'active' : '' }}"
-                                                                        data-value="manual">
-                                                                        Manual
-                                                                        <input type="hidden" name="status"
-                                                                            value="manual">
-                                                                    </div> -->
-                                                                    <button type="button"
-                                                                                        class="defaultToggleBtn"
-                                                                                        data-current-status="{{ $rechargeSetting[$site->id]->status ?? 'auto' }}"
-                                                                                        style="
-                                                                                            padding:6px 18px;
-                                                                                            font-size:13px;
-                                                                                            font-weight:600;
-                                                                                            border-radius:999px;
-                                                                                            border:none;
-                                                                                            cursor:pointer;
-                                                                                            color:#fff;
-                                                                                            background:linear-gradient(135deg,#3b82f6,#2563eb);
-                                                                                            box-shadow:0 6px 14px rgba(59,130,246,.35);
-                                                                                            transition:all .25s ease;
-                                                                                        ">
-                                                                                        Default
-                                                                                    </button>
+                                                                
 
-                                                                                    <input type="hidden" name="status"
-                                                                                        value="{{ $rechargeSetting[$site->id]->status ?? 'auto' }}">
-
-                                                                                    <script>
-                                                                                    document.querySelectorAll('.defaultToggleBtn').forEach(btn => {
-
-                                                                                        if (btn.dataset.currentStatus === 'manual') {
-                                                                                            btn.style.background = 'linear-gradient(135deg,#f59e0b,#d97706)';
-                                                                                            btn.style.boxShadow = '0 6px 14px rgba(245,158,11,.35)';
-                                                                                        }
-
-                                                                                        btn.addEventListener('click', function () {
-                                                                                            let next = this.dataset.currentStatus === 'auto' ? 'manual' : 'auto';
-                                                                                            this.dataset.currentStatus = next;
-                                                                                            this.nextElementSibling.value = next;
-
-                                                                                            if (next === 'manual') {
-                                                                                                this.style.background = 'linear-gradient(135deg,#f59e0b,#d97706)';
-                                                                                                this.style.boxShadow = '0 6px 14px rgba(245,158,11,.35)';
-                                                                                            } else {
-                                                                                                this.style.background = 'linear-gradient(135deg,#3b82f6,#2563eb)';
-                                                                                                this.style.boxShadow = '0 6px 14px rgba(59,130,246,.35)';
-                                                                                            }
-                                                                                        });
-
-                                                                                        btn.onmouseover = () => btn.style.transform = 'translateY(-1px)';
-                                                                                        btn.onmouseout  = () => btn.style.transform = 'translateY(0)';
-                                                                                        btn.onmousedown = () => btn.style.transform = 'scale(0.96)';
-                                                                                        btn.onmouseup   = () => btn.style.transform = 'translateY(-1px)';
-                                                                                    });
-                                                                                    </script>
-
-                                                                </div>
-
+                                                                <!--DEGAULT  Button -->
+                                                                <button type="button"
+                                                                    class="btn btn-success btn-sm connectBtn"
+                                                                    data-site-id="1">
+                                                                    <input type="hidden" name="moduleId" value="<?= htmlspecialchars($defaultMd) ?>">
+                                                                    <input type="hidden" name="cmdField"
+                                                                        value="<?= htmlspecialchars($defaultAdd) ?>">
+                                                                    <input type="hidden" name="cmdArg" value="1">
+                                                                    <input type="hidden" name="argValue" value="1">
+                                                                    Default
+                                                                </button>
                                                                 <!-- Connect Button -->
                                                                 <button type="button"
                                                                     class="btn btn-success btn-sm connectBtn"
@@ -917,7 +892,7 @@
                                                                     <input type="hidden" name="moduleId" value="<?= htmlspecialchars($connectMd) ?>">
                                                                     <input type="hidden" name="cmdField"
                                                                         value="<?= htmlspecialchars($connectAdd) ?>">
-                                                                    <input type="hidden" name="cmdArg" value="0">
+                                                                    <input type="hidden" name="cmdArg" value="1">
                                                                     <input type="hidden" name="argValue" value="1">
                                                                     Connect
                                                                 </button>
@@ -926,9 +901,9 @@
                                                                 <button type="button"
                                                                     class="btn btn-danger btn-sm disconnectBtn"
                                                                     data-site-id="1">
-                                                                    <input type="hidden" name="moduleId" value="<?= htmlspecialchars($connectMd) ?>">
+                                                                    <input type="hidden" name="moduleId" value="<?= htmlspecialchars($disconnectMd) ?>">
                                                                     <input type="hidden" name="cmdField"
-                                                                        value="<?= htmlspecialchars($connectAdd) ?>">
+                                                                        value="<?= htmlspecialchars($disconnectAdd) ?>">
                                                                     <input type="hidden" name="cmdArg" value="1">
                                                                     <input type="hidden" name="argValue" value="1">
                                                                     Disconnect
@@ -1264,134 +1239,10 @@
         }
     });
     </script>
-    <!-- <script>
-    document.addEventListener("DOMContentLoaded", function() {
-
-        /* ---------------------------------------------------------
-           ✅ MANUAL CONNECT / DISCONNECT BUTTON — NO CHANGE
-        --------------------------------------------------------- */
-        $(document).on('click', '.connectBtn, .disconnectBtn', function(e) {
-            e.preventDefault();
-
-            let $btn = $(this);
-            let isConnect = $btn.hasClass('connectBtn');
-            let actionType = isConnect ? 'connect' : 'disconnect';
-
-            let siteId = $btn.data('site-id');
-            let argValue = $btn.find('input[name="argValue"]').val();
-            let moduleId = $btn.find('input[name="moduleId"]').val();
-            let cmdArg = $btn.find('input[name="cmdArg"]').val();
-            let cmdField = $btn.find('input[name="cmdField"]').val();
-
-            Swal.fire({
-                title: `Are you sure you want to ${actionType.toUpperCase()}?`,
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonText: 'Yes',
-                cancelButtonText: 'Cancel'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: '/admin/start-process',
-                        type: 'POST',
-                        data: {
-                            _token: '{{ csrf_token() }}',
-                            site_id: siteId,
-                            argValue,
-                            moduleId,
-                            cmdArg,
-                            cmdField,
-                            actionType
-                        },
-                        beforeSend: () => $btn.prop('disabled', true),
-                        success: (response) => {
-                            Swal.fire({
-                                icon: 'success',
-                                title: response.message
-                            });
-                        },
-                        error: (xhr) => {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: 'Something went wrong.'
-                            });
-                        },
-                        complete: () => $btn.prop('disabled', false)
-                    });
-                }
-            });
-        });
-
-
-
-
-        /* ---------------------------------------------------------
-           ❗❗ REMOVE INPUT-BASED CONNECT/DISCONNECT
-           Because you don't want input trigger!
-        --------------------------------------------------------- */
-        // ❌ Deleted old input event listener
-
-
-
-
-        /* ---------------------------------------------------------
-           ✅ NEW LOGIC:
-           Recharge amount JO TABLE ME SHOW HO RAHA HAI
-           US VALUE ke hisab se connect/disconnect chalega.
-        --------------------------------------------------------- */
-
-        document.querySelectorAll(".rechargeStatus").forEach(function(cell) {
-
-            let siteId = cell.dataset.siteId;
-            let value = parseFloat(cell.dataset.amount) || 0;
-
-            // Positive → connect, Negative → disconnect
-            let status = value > 0 ? 0 : 1;
-            let actionType = status === 0 ? "connect" : "disconnect";
-
-            // Correct button
-            let btnSelector = status === 0 ?
-                `.connectBtn[data-site-id="${siteId}"]` :
-                `.disconnectBtn[data-site-id="${siteId}"]`;
-
-            let $btn = $(btnSelector);
-
-            if ($btn.length === 0) {
-                console.error("Button not found for site:", siteId);
-                return;
-            }
-
-            let moduleId = $btn.find('input[name="moduleId"]').val();
-            let cmdField = $btn.find('input[name="cmdField"]').val();
-            let cmdArg = $btn.find('input[name="cmdArg"]').val();
-
-            console.log(`AUTO ${actionType.toUpperCase()} for Site: ${siteId}, Amount: ${value}`);
-
-            fetch('{{ route('admin.trigger.connection.api') }}', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        },
-                        body: JSON.stringify({
-                            status,
-                            site_id: siteId,
-                            moduleId,
-                            cmdField,
-                            cmdArg
-                        })
-                    })
-                .then(res => res.json())
-                .then(data => console.log("API Response:", data))
-                .catch(err => console.error("API Error:", err));
-        });
-
-    });
-    </script> -->
+    
 
     <script>
-   document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function() {
     
     // ✅ Manual Connect/Disconnect Button
     $(document).on('click', '.connectBtn, .disconnectBtn', function(e) {
@@ -1447,13 +1298,13 @@
         });
     });
 
-    // ✅ Range Validations
-    function validateAllInputs() {
+    // ✅ Range Validations Function - Modal specific
+    function validateModalInputs(modalElement) {
         let isValid = true;
         let messages = [];
 
         // 1. Recharge Amount: Max 10000
-        let rechargeInput = document.getElementById(`m_recharge_amount_{{ $site->id }}`);
+        let rechargeInput = modalElement.querySelector('input[name="m_recharge_amount"]');
         if (rechargeInput) {
             let rechargeValue = parseFloat(rechargeInput.value) || 0;
             if (rechargeValue > 10000) {
@@ -1466,7 +1317,7 @@
         }
 
         // 2. Unit Charge: Max 100
-        let unitChargeInput = document.querySelector('input[name="m_unit_charge"]');
+        let unitChargeInput = modalElement.querySelector('input[name="m_unit_charge"]');
         if (unitChargeInput) {
             let unitChargeValue = parseFloat(unitChargeInput.value) || 0;
             if (unitChargeValue > 100) {
@@ -1479,43 +1330,55 @@
         }
 
         // 3. Mains Sanction Load (R+Y+B): Max 12 kW
-        let r1 = parseFloat(document.querySelector('input[name="m_sanction_load_r"]').value) || 0;
-        let y1 = parseFloat(document.querySelector('input[name="m_sanction_load_y"]').value) || 0;
-        let b1 = parseFloat(document.querySelector('input[name="m_sanction_load_b"]').value) || 0;
-        let totalMains = r1 + y1 + b1;
+        let r1Input = modalElement.querySelector('input[name="m_sanction_load_r"]');
+        let y1Input = modalElement.querySelector('input[name="m_sanction_load_y"]');
+        let b1Input = modalElement.querySelector('input[name="m_sanction_load_b"]');
         
-        if (totalMains > 12) {
-            isValid = false;
-            messages.push(`Total Mains Sanction Load (R+Y+B = ${totalMains} kW) cannot exceed 12 kW`);
-            document.querySelectorAll('input[name^="m_sanction_load_"]').forEach(input => {
-                input.classList.add('is-invalid');
-            });
-        } else {
-            document.querySelectorAll('input[name^="m_sanction_load_"]').forEach(input => {
-                input.classList.remove('is-invalid');
-            });
+        if (r1Input && y1Input && b1Input) {
+            let r1 = parseFloat(r1Input.value) || 0;
+            let y1 = parseFloat(y1Input.value) || 0;
+            let b1 = parseFloat(b1Input.value) || 0;
+            let totalMains = r1 + y1 + b1;
+            
+            if (totalMains > 12) {
+                isValid = false;
+                messages.push(`Total Mains Sanction Load (R+Y+B = ${totalMains} kW) cannot exceed 12 kW`);
+                [r1Input, y1Input, b1Input].forEach(input => {
+                    input.classList.add('is-invalid');
+                });
+            } else {
+                [r1Input, y1Input, b1Input].forEach(input => {
+                    input.classList.remove('is-invalid');
+                });
+            }
         }
 
         // 4. DG Sanction Load (R+Y+B): Max 12 kW
-        let r2 = parseFloat(document.querySelector('input[name="dg_sanction_load_r"]').value) || 0;
-        let y2 = parseFloat(document.querySelector('input[name="dg_sanction_load_y"]').value) || 0;
-        let b2 = parseFloat(document.querySelector('input[name="dg_sanction_load_b"]').value) || 0;
-        let totalDG = r2 + y2 + b2;
+        let r2Input = modalElement.querySelector('input[name="dg_sanction_load_r"]');
+        let y2Input = modalElement.querySelector('input[name="dg_sanction_load_y"]');
+        let b2Input = modalElement.querySelector('input[name="dg_sanction_load_b"]');
         
-        if (totalDG > 12) {
-            isValid = false;
-            messages.push(`Total DG Sanction Load (R+Y+B = ${totalDG} kW) cannot exceed 12 kW`);
-            document.querySelectorAll('input[name^="dg_sanction_load_"]').forEach(input => {
-                input.classList.add('is-invalid');
-            });
-        } else {
-            document.querySelectorAll('input[name^="dg_sanction_load_"]').forEach(input => {
-                input.classList.remove('is-invalid');
-            });
+        if (r2Input && y2Input && b2Input) {
+            let r2 = parseFloat(r2Input.value) || 0;
+            let y2 = parseFloat(y2Input.value) || 0;
+            let b2 = parseFloat(b2Input.value) || 0;
+            let totalDG = r2 + y2 + b2;
+            
+            if (totalDG > 12) {
+                isValid = false;
+                messages.push(`Total DG Sanction Load (R+Y+B = ${totalDG} kW) cannot exceed 12 kW`);
+                [r2Input, y2Input, b2Input].forEach(input => {
+                    input.classList.add('is-invalid');
+                });
+            } else {
+                [r2Input, y2Input, b2Input].forEach(input => {
+                    input.classList.remove('is-invalid');
+                });
+            }
         }
 
         // 5. Mains Fixed Charge: Minimum 1
-        let fixedChargeInput = document.querySelector('input[name="m_fixed_charge"]');
+        let fixedChargeInput = modalElement.querySelector('input[name="m_fixed_charge"]');
         if (fixedChargeInput) {
             let fixedChargeValue = parseFloat(fixedChargeInput.value) || 0;
             if (fixedChargeValue === 0) {
@@ -1530,12 +1393,12 @@
         return { isValid, messages };
     }
 
-    // ✅ Real-time validation for key inputs
-    document.querySelectorAll('input').forEach(input => {
-        input.addEventListener('blur', function() {
-            let validation = validateAllInputs();
-            if (!validation.isValid) {
-                // Show first error message
+    // ✅ Real-time validation for modal inputs
+    $(document).on('blur', '.modal input', function() {
+        let modal = $(this).closest('.modal')[0];
+        if (modal) {
+            let validation = validateModalInputs(modal);
+            if (!validation.isValid && validation.messages.length > 0) {
                 Swal.fire({
                     icon: 'error',
                     title: 'Validation Error',
@@ -1546,17 +1409,17 @@
                     timer: 3000
                 });
             }
-        });
+        }
     });
 
     // ✅ Form submission validation
-    document.querySelector('#rechargeForm').addEventListener('submit', function(e) {
+    $(document).on('submit', '#rechargeForm', function(e) {
         e.preventDefault();
         
-        let validation = validateAllInputs();
+        let modal = $(this).closest('.modal')[0];
+        let validation = validateModalInputs(modal);
         
         if (!validation.isValid) {
-            // Show all validation errors
             let errorMessage = validation.messages.join('<br>');
             Swal.fire({
                 icon: 'error',
@@ -1617,7 +1480,66 @@
         .catch(err => console.error("API Error:", err));
     });
 
+    
+
 });
+</script>
+
+
+<!-- default button  -->
+<script>
+    // ✅ Default Button
+$(document).on('click', '.defaultBtn', function (e) {
+    e.preventDefault();
+
+    let $btn = $(this);
+
+    let siteId   = $btn.data('site-id');
+    let argValue = $btn.find('input[name="argValue"]').val();
+    let moduleId = $btn.find('input[name="moduleId"]').val();
+    let cmdArg   = $btn.find('input[name="cmdArg"]').val();
+    let cmdField = $btn.find('input[name="cmdField"]').val();
+
+    Swal.fire({
+        title: 'Are you sure you want to set DEFAULT?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: '/admin/start-process',
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    site_id: siteId,
+                    argValue,
+                    moduleId,
+                    cmdArg,
+                    cmdField,
+                    actionType: 'default'   // 👈 important
+                },
+                beforeSend: () => $btn.prop('disabled', true),
+                success: (response) => {
+                    Swal.fire({
+                        icon: 'success',
+                        title: response.message || 'Default set successfully'
+                    });
+                },
+                error: () => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Something went wrong.'
+                    });
+                },
+                complete: () => $btn.prop('disabled', false)
+            });
+        }
+    });
+});
+
 </script>
     <script>
     document.addEventListener('DOMContentLoaded', function() {

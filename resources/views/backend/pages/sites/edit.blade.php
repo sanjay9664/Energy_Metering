@@ -430,7 +430,7 @@ input {
                                 </div>
 
                                 <div class="col-md-3">
-                                    <div class="card" style="width: 100%; height: 1350px;">
+                                    <div class="card" style="width: 100%; height: 1500px;">
                                         <div class="card-header text-center bg-secondary text-white">
                                             ENGINE PARAMETERS
                                         </div>
@@ -504,7 +504,7 @@ input {
                                                     </div>
                                                     <hr />
                                                 <div class="col text-center fw-bold  p-2 shadow-lg border-0">
-                                                     GRID UNIT
+                                                     GRID UNIT/KWH
                                                                          <div class="text-center py-1">
                                                             <i class="fas fa-thermometer-half mb-2 text-primary"
                                                                 style="font-size: 2rem;"></i>
@@ -571,7 +571,7 @@ input {
                                                 
                                                 
                                                 <div class="col text-center fw-bold  p-2 shadow-lg border-0">
-                                                    DG UNIT 
+                                                    DG UNIT/KVAH
                                                     <div class="text-center py-1">
                                                             <i class="fas fa-tachometer-alt mb-2 text-success" style="font-size: 1rem;"></i>
 
@@ -764,8 +764,8 @@ input {
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="text-center py-1">
-                                               <span class="d-block fw-bold mb-1">Connection/Disconnection</span>
+                                        <div class="text-center py-1">
+                                               <span class="d-block fw-bold mb-1">Force Relay_ON</span>
                                                         <div class="row g-2 justify-content-center">
                                                             <!-- First row (2 inputs) -->
                                                             <div class="col-auto">
@@ -781,9 +781,64 @@ input {
                                                                     placeholder="ADD">
                                                             </div>
 
-                                                        </div>
+                                         </div>
                                         </div>
+                                        
+                                    
+ <!-- *************************************************************** forcefully off ***************************************************************************** -->
+
+<div class="text-center py-1">
+                                               <span class="d-block fw-bold mb-1">Force Relay_Off</span>
+                                                        <div class="row g-2 justify-content-center">
+                                                            <!-- First row (2 inputs) -->
+                                                            <div class="col-auto">
+                                                                <input type="text" name="disconnect_md"
+                                                                    class="form-control" style="width: 80px;"
+                                                                    value="{{ old('parameters', $siteData['disconnect']['md'] ?? '') }}"
+                                                                    placeholder="MD">
+                                                            </div>
+                                                            <div class="col-auto">
+                                                                <input type="text" name="disconnect_add"
+                                                                    class="form-control" style="width: 80px;"
+                                                                    value="{{ old('parameters', $siteData['disconnect']['add'] ?? '') }}"
+                                                                    placeholder="ADD">
+                                                            </div>
+
+                                         </div>
+</div>
+
+
+
+
+<!-- *************************************************************** forcefully end**************************************************************************** -->
+                                   
+<!-- *************************************************************** relay default*************************************************************** -->
+         
+<div class=" text-center py-1">
+                                               <span class="d-block fw-bold mb-1">Relay Default</span>
+                                                        <div class="row g-2 justify-content-center">
+                                                            <!-- First row (2 inputs) -->
+                                                            <div class="col-auto">
+                                                                <input type="text" name="default_md"
+                                                                    class="form-control" style="width: 80px;"
+                                                                    value="{{ old('parameters', $siteData['default']['md'] ?? '') }}"
+                                                                    placeholder="MD">
+                                                            </div>
+                                                            <div class="col-auto">
+                                                                <input type="text" name="default_add"
+                                                                    class="form-control" style="width: 80px;"
+                                                                    value="{{ old('parameters', $siteData['default']['add'] ?? '') }}"
+                                                                    placeholder="ADD">
+                                                            </div>
+
+                                         </div>
                                         </div>
+        
+        <!-- *************************************************************** relay default End******************************************************* -->
+
+
+
+</div>
                                     </div>
                                 </div>
 

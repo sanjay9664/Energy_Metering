@@ -48,7 +48,7 @@
     .container-fluid {
         padding: 20px;
         max-width: 100%;
-        margin-top:-37px;
+        margin-top:-28px;
     }
 
     .consumption-section {
@@ -490,11 +490,13 @@
                                     @endphp
 
 
-                                    <td data-label="Overload_Trip">
-    <strong class="{{ $overload_trip == 0 ? 'text-success' : 'text-danger' }}">
+          <td data-label="Overload_Trip" 
+    class="{{ $overload_trip == 0 ? 'bg-success text-white' : 'bg-danger text-white' }}">
+    <strong>
         Overload_Trip : {{ $overload_trip }}
     </strong>
 </td>
+
 
                                     
 <!-- **************************************************Low_Balance_cut************************************************************** -->
@@ -524,11 +526,13 @@
                                     @endphp
 
 
-                                    <td data-label="Low_Balance_cut">
-    <strong class="{{ $low_balance_cut == 0 ? 'text-success' : 'text-danger' }}">
+                       <td data-label="Low_Balance_cut" 
+    class="{{ $low_balance_cut == 0 ? 'bg-success text-white' : 'bg-danger text-white' }}">
+    <strong>
         Low_Balance_cut : {{ $low_balance_cut }}
     </strong>
 </td>
+
 
                 <!-- *********************************************Overload_Limit_Reached******************************************************************* -->
                                  @php
@@ -557,80 +561,21 @@
                                     @endphp
 
 
-                                    <td data-label="Overload_Limit_Reached">
-    <strong class="{{ $overload_limit_reached == 0 ? 'text-success' : 'text-danger' }}">
+          <td data-label="Overload_Limit_Reached" 
+    class="{{ $overload_limit_reached == 0 ? 'bg-success text-white' : 'bg-danger text-white' }}">
+    <strong>
         Overload_Limit_Reached : {{ $overload_limit_reached }}
     </strong>
 </td>
 
 
+
 <!-- ******************************************************Low_Balance_cut********************************************************** -->
-                                 @php
-                                        $key = $sitejsonData->alarm_status->low_balance_cut->add ?? null;
-                                        
-                                        $md  = $sitejsonData->alarm_status->low_balance_cut->md  ?? null;
-
-                                        $low_balance_cut = '-';
-
-                                        if ($key && $md && !empty($eventData)) {
-                                            foreach ($eventData as $event) {
-                                                $eventArray = $event->getArrayCopy();
-
-                                                if (
-                                                    isset($eventArray['module_id']) &&
-                                                    $eventArray['module_id'] == $md
-                                                ) {
-                                                    if (isset($eventArray[$key])) {
-
-                                                        $low_balance_cut = str_replace(',', '', $eventArray[$key]);
-                                                    }
-                                                    break;
-                                                }
-                                            }
-                                        }
-                                    @endphp
-
-
-                                    <td data-label="Low_Balance_cut">
-    <strong class="{{ $low_balance_cut == 0 ? 'text-success' : 'text-danger' }}">
-        Low_Balance_cut : {{ $low_balance_cut }}
-    </strong>
-</td>
+                              
 
 
                                 <!-- *********************************relay status display here*********************************************** -->
-                                @php
-                                        $key = $sitejsonData->alarm_status->relay_status->add ?? null;
-                                        
-                                        $md  = $sitejsonData->alarm_status->relay_status->md  ?? null;
-
-                                        $relay_status = '-';
-
-                                        if ($key && $md && !empty($eventData)) {
-                                            foreach ($eventData as $event) {
-                                                $eventArray = $event->getArrayCopy();
-
-                                                if (
-                                                    isset($eventArray['module_id']) &&
-                                                    $eventArray['module_id'] == $md
-                                                ) {
-                                                    if (isset($eventArray[$key])) {
-
-                                                        $relay_status = str_replace(',', '', $eventArray[$key]);
-                                                    }
-                                                    break;
-                                                }
-                                            }
-                                        }
-                                    @endphp
-
-
-                                    <td data-label="Relay_Status">
-    <strong class="{{ $relay_status == 0 ? 'text-success' : 'text-danger' }}">
-        Relay_Status : {{ $relay_status }}
-    </strong>
-</td>
-
+                              
                                 
                             </tr>
 
@@ -741,7 +686,7 @@
                         }
                     ?>
                     <div class="status-box" style="padding:10px; font-size:14px;">
-                        <p><strong>Grid_Unit</strong></p>
+                        <p><strong>Grid_Unit/KWH</strong></p>
                         <span class="status-box">{{ $grid_unit }}</span>
                     </div>
                 </td>
@@ -762,49 +707,47 @@
                     }
                 ?>
                     <div class="status-box" style="padding:10px; font-size:14px;">
-                        <p><strong>DG_Unit</strong></p>
+                        <p><strong>DG_Unit/KVAH</strong></p>
                         <span class="status-box">{{ $Dg_Unit }}</span>
                     </div>
                 </td>
 
                 <!-- Current L2 / oil_temperature -->
-                <td style="width:16%;">
-                    <?php
-                        $key = $sitejsonData->readOn->add;
-                        $Connection_status = '_';
-                        foreach ($eventData as $event) {
-                            $eventArray = $event->getArrayCopy();
-                            if ($eventArray['module_id'] == $sitejsonData->readOn->md) {
-                                if (array_key_exists($key, $eventArray)) {
-                                    $Connection_status = $eventArray[$key];
-                                }
-                                break;
-                            }
-                        }
+               <td style="width:16%;">
+    <?php
+        $key = $sitejsonData->readOn->add;
+        $Connection_status = false; // default false
 
-        // APPLY CONDITION FOR COLOR & TEXT
-        $statusText = "Unknown";
-        $statusColor = "gray";
-
-        if (strtolower($Connection_status) === "high") {
-            $statusText = "Connected";
-            $statusColor = "green";
-        } elseif (strtolower($Connection_status) === "low") {
-            $statusText = "Disconnected";
-            $statusColor = "red";
+        foreach ($eventData as $event) {
+            $eventArray = $event->getArrayCopy();
+            if ($eventArray['module_id'] == $sitejsonData->readOn->md) {
+                if (array_key_exists($key, $eventArray)) {
+                    // Convert backend value to boolean
+                    $Connection_status = filter_var($eventArray[$key], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+                    if ($Connection_status === null) {
+                        $Connection_status = false; // default false
+                    }
+                }
+                break;
+            }
         }
+
+        // Set status text and color
+        $statusText = $Connection_status ? "Connected" : "Disconnected";
+        $statusColor = $Connection_status ? "green" : "red";
     ?>
 
-                    <div class="status-box" style="padding:10px; font-size:14px;">
-                        <p><strong>Connection_Status</strong></p>
+    <div class="status-box" style="padding:10px; font-size:14px;">
+        <p><strong>Connection Status</strong></p>
 
-                        <span class="status-box" style="padding:6px 10px; border-radius:5px; 
-                     background:<?= $statusColor ?>; 
-                     color:white; font-weight:bold;">
-                            <?= $statusText ?>
-                        </span>
-                    </div>
-                </td>
+        <span class="status-box" style="padding:4px 8px; border-radius:4px; 
+             background:<?= $statusColor ?>; 
+             color:white; font-weight:bold; font-size:12px;">
+            <?= $statusText ?>
+        </span>
+    </div>
+</td>
+
 
 
                 <!-- Current L3 / number_of_starts -->
@@ -1648,11 +1591,13 @@
                                     @endphp
 
 
-                                    <td data-label="Overload_Trip">
-    <strong class="{{ $overload_trip == 0 ? 'text-success' : 'text-danger' }}">
+             <td data-label="Overload_Trip" 
+    class="{{ $overload_trip == 0 ? 'bg-success text-white' : 'bg-danger text-white' }}">
+    <strong>
         Overload_Trip : {{ $overload_trip }}
     </strong>
 </td>
+
 
 
                                   @php
@@ -1681,11 +1626,13 @@
                                     @endphp
 
 
-                                    <td data-label="Low_Balance_cut">
-    <strong class="{{ $low_balance_cut == 0 ? 'text-success' : 'text-danger' }}">
+                                    <td data-label="Low_Balance_cut" 
+    class="{{ $low_balance_cut == 0 ? 'bg-success text-white' : 'bg-danger text-white' }}">
+    <strong>
         Low_Balance_cut : {{ $low_balance_cut }}
     </strong>
 </td>
+
 
 
                                 @php
@@ -1714,46 +1661,17 @@
                                     @endphp
 
 
-                                    <td data-label="Overload_Limit_Reached">
-                                        <strong class="{{ $overload_limit_reached == 0 ? 'text-success' : 'text-danger' }}">
-                                            Overload_Limit_Reached : {{ $overload_limit_reached }}
-                                        </strong>
-                                    </td>
+                                    <td data-label="Overload_Limit_Reached" 
+    class="{{ $overload_limit_reached == 0 ? 'bg-success text-white' : 'bg-danger text-white' }}">
+    <strong>
+        Overload_Limit_Reached : {{ $overload_limit_reached }}
+    </strong>
+</td>
+
 
 
                           
-                                @php
-                                        $key = $sitejsonData->alarm_status->relay_status->add ?? null;
-                                        
-                                        $md  = $sitejsonData->alarm_status->relay_status->md  ?? null;
-
-                                        $relay_status = '-';
-
-                                        if ($key && $md && !empty($eventData)) {
-                                            foreach ($eventData as $event) {
-                                                $eventArray = $event->getArrayCopy();
-
-                                                if (
-                                                    isset($eventArray['module_id']) &&
-                                                    $eventArray['module_id'] == $md
-                                                ) {
-                                                    if (isset($eventArray[$key])) {
-
-                                                        $relay_status = str_replace(',', '', $eventArray[$key]);
-                                                    }
-                                                    break;
-                                                }
-                                            }
-                                        }
-                                    @endphp
-
-
-                                            <td data-label="Relay_Status">
-                                                <strong class="{{ $relay_status == 0 ? 'text-success' : 'text-danger' }}">
-                                                    Relay_Status : {{ $relay_status }}
-                                                </strong>
-                                            </td>
-
+                               
                             </tr>
                                                                     
                                                 <?php
@@ -1817,7 +1735,7 @@
                 }
             ?>
             <div class="status-box" style="padding:10px; font-size:14px;">
-                <p><strong>Grid_Unit</strong></p>
+                <p><strong>Grid_Unit/KWH</strong></p>
                 <span class="status-box">{{ $grid_unit }}</span>
             </div>
         </td>
@@ -1838,50 +1756,47 @@
                 }
             ?>
             <div class="status-box" style="padding:10px; font-size:14px;">
-                <p><strong>DG_Unit</strong></p>
+                <p><strong>DG_Unit/KVAH</strong></p>
                 <span class="status-box">{{ $Dg_Unit }}</span>
             </div>
         </td>
 
         <!-- Current L2 / oil_temperature -->
-        <td style="width:16%;">
-                    <?php
-                        $key = $sitejsonData->readOn->add;
-                        $Connection_status = '_';
-                        foreach ($eventData as $event) {
-                            $eventArray = $event->getArrayCopy();
-                            if ($eventArray['module_id'] == $sitejsonData->readOn->md) {
-                                if (array_key_exists($key, $eventArray)) {
-                                    $Connection_status = $eventArray[$key];
-                                }
-                                break;
-                            }
-                        }
+       <td style="width:16%;">
+    <?php
+        $key = $sitejsonData->readOn->add;
+        $Connection_status = false; // default false
 
-        // APPLY CONDITION FOR COLOR & TEXT
-        $statusText = "Unknown";
-        $statusColor = "gray";
-
-        if (strtolower($Connection_status) === "high") {
-            $statusText = "Connected";
-            $statusColor = "green";
-        } elseif (strtolower($Connection_status) === "low") {
-            $statusText = "Disconnected";
-            $statusColor = "red";
+        foreach ($eventData as $event) {
+            $eventArray = $event->getArrayCopy();
+            if ($eventArray['module_id'] == $sitejsonData->readOn->md) {
+                if (array_key_exists($key, $eventArray)) {
+                    // Convert backend value to boolean
+                    $Connection_status = filter_var($eventArray[$key], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+                    if ($Connection_status === null) {
+                        $Connection_status = false; // default false
+                    }
+                }
+                break;
+            }
         }
+
+        // Set status text and color
+        $statusText = $Connection_status ? "Connected" : "Disconnected";
+        $statusColor = $Connection_status ? "green" : "red";
     ?>
 
     <div class="status-box" style="padding:10px; font-size:14px;">
-        <p><strong>Connection_Status</strong></p>
+        <p><strong>Connection Status</strong></p>
 
-        <span class="status-box"
-              style="padding:6px 10px; border-radius:5px; 
-                     background:<?= $statusColor ?>; 
-                     color:white; font-weight:bold;">
+        <span class="status-box" style="padding:4px 8px; border-radius:4px; 
+             background:<?= $statusColor ?>; 
+             color:white; font-weight:bold; font-size:12px;">
             <?= $statusText ?>
         </span>
     </div>
 </td>
+
 
         <!-- Current L3 / number_of_starts -->
             <td style="width:16%;">
